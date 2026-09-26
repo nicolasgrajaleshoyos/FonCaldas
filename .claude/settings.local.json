@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sk -o /dev/null -w \"home %{http_code}\\\\n\" https://foncaldas.test/)",
+      "Bash(curl -sk -o /dev/null -w \"servicios %{http_code}\\\\n\" https://foncaldas.test/servicios)",
+      "Bash(curl -sk -o /dev/null -w \"redes-sociales\\(expect 404\\) %{http_code}\\\\n\" https://foncaldas.test/redes-sociales)",
+      "Bash(tasklist //FI \"IMAGENAME eq chrome.exe\")"
+    ]
+  }
+}

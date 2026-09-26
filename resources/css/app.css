@@ -1,0 +1,429 @@
+@import "tailwindcss";
+
+/* MODO OSCURO: activado a mano con la clase .dark en <html> (no solo por
+   preferencia del sistema), para que el interruptor sol/luna funcione. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+.page-bg {
+    transition: background-color .3s ease;
+}
+
+.dark .page-bg {
+    background-color: #0B1220;
+    background-image:
+        radial-gradient(42rem 42rem at 6% -10%, rgba(12,103,163,.35), transparent 55%),
+        radial-gradient(34rem 34rem at 106% 8%, rgba(11,139,123,.30), transparent 55%),
+        radial-gradient(30rem 30rem at 50% 105%, rgba(250,204,21,.14), transparent 55%);
+}
+
+/* TIPOGRAFÍA DE TÍTULOS: fuente propia (Sora) para todo título de página
+   y de sección, distinta a Inter (texto normal del sitio) — le da a los
+   encabezados una identidad más marcada y "de diseño". */
+.page-title-text,
+.section-title {
+    font-family: 'Sora', Inter, sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+}
+
+/* TÍTULO DE PÁGINA (x-page-header): el ícono "aparece" con resorte + un
+   anillo de color que se expande, y el texto se desliza justo después.
+   A propósito distinto del subrayado de x-section-title. */
+@keyframes page-title-icon-in {
+    0% { transform: scale(.5) rotate(-15deg); opacity: 0; }
+    60% { transform: scale(1.08) rotate(4deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes page-title-icon-ring {
+    from { box-shadow: 0 0 0 0 rgba(12,103,163,.35); }
+    to { box-shadow: 0 0 0 14px rgba(12,103,163,0); }
+}
+
+@keyframes page-title-text-in {
+    from { opacity: 0; transform: translateX(-14px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.page-title-icon {
+    animation:
+        page-title-icon-in .5s cubic-bezier(.34,1.56,.64,1) both,
+        page-title-icon-ring 1.1s .35s ease-out 1;
+}
+
+.page-title-text {
+    display: inline-block;
+    animation: page-title-text-in .5s .15s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-title-icon,
+    .page-title-text {
+        animation: none;
+    }
+}
+
+:root {
+
+    --background: #f4f6f8;
+
+    --card: rgba(255,255,255,0.72);
+
+    --border: rgba(255,255,255,0.7);
+
+    --shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 8px 24px rgba(15, 23, 42, 0.06);
+
+    --radius-xl: 28px;
+
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* FONDO DE PÁGINA: mismas manchas de color suaves del hero de Inicio,
+   para que ninguna página quede en gris/blanco plano.
+   Nota: sin background-attachment:fixed a propósito — en iOS Safari ese
+   valor se ignora y el fondo se vería blanco liso en el celular. */
+.page-bg {
+    background-color: #EAF2F8;
+    background-image:
+        radial-gradient(42rem 42rem at 6% -10%, rgba(12,103,163,.30), transparent 55%),
+        radial-gradient(34rem 34rem at 106% 8%, rgba(11,139,123,.28), transparent 55%),
+        radial-gradient(30rem 30rem at 50% 105%, rgba(250,204,21,.20), transparent 55%);
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* TÍTULOS DE SECCIÓN: entra con un pequeño deslizamiento + fade, y el
+   subrayado de color se "dibuja" después. Reutilizable en todo el sitio. */
+@keyframes section-title-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes section-title-underline {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+.section-title {
+    display: inline-block;
+    position: relative;
+    animation: section-title-in .6s ease-out both;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    height: 4px;
+    width: 3rem;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #0C67A3, #0B8B7B);
+    animation: section-title-underline .5s .35s cubic-bezier(.22,1,.36,1) both;
+}
+
+.section-title--center::after {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.section-title--light::after {
+    background: linear-gradient(90deg, #FACC15, #ffffff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .section-title,
+    .section-title::after {
+        animation: none;
+    }
+}
+
+/* MASCOTA: flotación suave + sombra de color para que "resalte" en 3D
+   sin ser el banner gigante de antes */
+@keyframes mascot-float {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-14px) rotate(3deg); }
+}
+
+.mascot-float {
+    animation: mascot-float 4.5s ease-in-out infinite;
+    filter: drop-shadow(0 22px 16px rgba(11, 72, 112, .28));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mascot-float {
+        animation: none;
+    }
+}
+
+/* LOGO DE MARCA: resplandor pulsante que sigue el contorno real del logo
+   (no una caja) para separarlo del fondo azul oscuro sin taparlo */
+@keyframes brand-glow {
+    0%, 100% {
+        filter: drop-shadow(0 0 4px rgba(255,255,255,.4)) drop-shadow(0 0 12px rgba(255,255,255,.25));
+    }
+    50% {
+        filter: drop-shadow(0 0 8px rgba(255,255,255,.65)) drop-shadow(0 0 20px rgba(255,255,255,.4));
+    }
+}
+
+.brand-logo {
+    animation: brand-glow 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand-logo {
+        animation: none;
+        filter: drop-shadow(0 0 6px rgba(255,255,255,.4));
+    }
+}
+
+body {
+    background: var(--background);
+}
+
+/* ACCESIBILIDAD: foco visible en navegación por teclado */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #0C67A3;
+    outline-offset: 2px;
+}
+
+/* SKELETON DE CARGA: evita el flash en blanco de banners mientras cargan (ver app.js) */
+img.img-loading {
+    background: linear-gradient(90deg, #e2e8f0 25%, #eef1f5 37%, #e2e8f0 63%);
+    background-size: 400% 100%;
+    animation: img-skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes img-skeleton-shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    img.img-loading {
+        animation: none;
+        background: #e2e8f0;
+    }
+}
+
+/* CARDS MODERNAS */
+.card-modern {
+
+    background: var(--card);
+
+    backdrop-filter: blur(16px);
+
+    -webkit-backdrop-filter: blur(16px);
+
+    border: 1px solid var(--border);
+
+    box-shadow: var(--shadow);
+
+    border-radius: var(--radius-xl);
+
+}
+
+/* BOTONES */
+.btn-pill {
+
+    height: 44px;
+
+    padding-inline: 22px;
+
+    border-radius: 999px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    transition: all .25s ease;
+
+}
+
+/* NAVBAR BUTTON */
+.nav-pill {
+
+    border: 1px solid rgba(255,255,255,.16);
+
+    background: rgba(255,255,255,.08);
+
+    backdrop-filter: blur(12px);
+
+    color: white;
+
+}
+
+.nav-pill:hover {
+
+    background: rgba(255,255,255,.16);
+
+}
+
+/* NAVBAR LINK: subrayado animado en vez de píldoras con borde */
+.nav-link {
+
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: rgba(255,255,255,.92);
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    padding: 8px 12px;
+
+    border-radius: 10px;
+
+    white-space: nowrap;
+
+    transition: color .2s ease, background-color .2s ease;
+
+}
+
+.nav-link::after {
+
+    content: '';
+
+    position: absolute;
+
+    left: 12px;
+
+    right: 12px;
+
+    bottom: 3px;
+
+    height: 2px;
+
+    border-radius: 2px;
+
+    background: white;
+
+    transform: scaleX(0);
+
+    transform-origin: left;
+
+    transition: transform .25s ease;
+
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+
+    color: white;
+
+    background: rgba(255,255,255,.08);
+
+}
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after,
+.nav-link.is-active::after {
+
+    transform: scaleX(1);
+
+}
+
+.nav-link.is-active {
+
+    color: white;
+
+    background: rgba(255,255,255,.12);
+
+    font-weight: 600;
+
+}
+
+.nav-link .chevron {
+
+    transition: transform .2s ease;
+
+}
+
+.nav-link[aria-expanded="true"] .chevron {
+
+    transform: rotate(180deg);
+
+}
+
+/* DARK BUTTON */
+.btn-dark {
+
+    background: #111827;
+
+    color: white;
+
+    box-shadow:
+        0 1px 2px rgba(0,0,0,.06),
+        0 8px 18px rgba(17,24,39,.16);
+
+}
+
+.btn-dark:hover {
+
+    transform: translateY(-1px);
+
+    background: #1e293b;
+
+}
+
+/* SUCCESS BUTTON */
+.btn-success {
+
+    background: #22c55e;
+
+    color: white;
+
+    box-shadow:
+        0 1px 2px rgba(0,0,0,.04),
+        0 10px 22px rgba(34,197,94,.22);
+
+}
+
+.btn-success:hover {
+
+    transform: translateY(-1px);
+
+    background: #16a34a;
+
+}
+
+/* DROPDOWN */
+.dropdown-modern {
+
+    background: rgba(255,255,255,.92);
+
+    backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(255,255,255,.75);
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.08);
+
+    border-radius: 24px;
+
+}
