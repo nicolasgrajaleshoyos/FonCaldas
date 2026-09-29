@@ -38,6 +38,24 @@
                         </select>
                     </div>
 
+                    <div id="descripcion-producto"
+                    class="hidden mt-4 rounded-xl border border-slate-200 dark:border-slate-700
+            bg-slate-50 dark:bg-slate-900/40 px-4 py-3">
+
+    <p class="text-sm text-slate-600 dark:text-slate-400">
+        <span class="font-semibold text-slate-700 dark:text-slate-200">
+            Producto seleccionado:
+        </span>
+
+        <span id="nombre-producto"></span>
+    </p>
+
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        Los campos y condiciones de este producto se ajustarán cuando FONCALDAS confirme sus reglas.
+    </p>
+
+</div>
+
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
                             Monto inicial
@@ -65,7 +83,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                            Aportes
+                            Aportes (si corresponde)
                         </label>
 
                         <input type="number"
@@ -103,4 +121,35 @@
     </div>
 </div>
 
+<script>
+    const selectorAhorro = document.getElementById('producto_ahorro');
+    const descripcionProducto = document.getElementById('descripcion-producto');
+    const nombreProducto = document.getElementById('nombre-producto');
+
+    const camposAhorro = document.querySelectorAll(
+        'input[placeholder="Pendiente de confirmación"], input[placeholder="Si corresponde"]'
+    );
+
+    selectorAhorro.addEventListener('change', function () {
+        const opcionSeleccionada = this.options[this.selectedIndex];
+
+        // Limpiar valores al cambiar de producto
+        camposAhorro.forEach(function (campo) {
+            campo.value = '';
+        });
+
+        if (this.value !== '') {
+            nombreProducto.textContent = opcionSeleccionada.text;
+            descripcionProducto.classList.remove('hidden');
+
+            camposAhorro.forEach(function (campo) {
+                campo.placeholder =
+                    'Pendiente de confirmación para ' + opcionSeleccionada.text;
+            });
+        } else {
+            nombreProducto.textContent = '';
+            descripcionProducto.classList.add('hidden');
+        }
+    });
+</script>
 @endsection
