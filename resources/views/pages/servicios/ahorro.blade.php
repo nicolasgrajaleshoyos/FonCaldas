@@ -53,6 +53,13 @@
             </div>
 
         </div>
+<!--Boton Simulador-->
+        <div class="mt-8 text-center">
+    <a href="{{ route('simuladores.ahorro') }}"
+        class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[#0C67A3] text-white font-semibold hover:bg-[#09598d] transition">
+        Simular ahorro
+    </a>
+</div>
 
         <!-- VENTAJAS -->
         <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-8 mb-6">

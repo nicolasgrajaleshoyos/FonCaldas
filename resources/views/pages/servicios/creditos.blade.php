@@ -16,14 +16,14 @@
 
     <!-- TARJETA 1 -->
     <a href="{{ route('creditos.expres') }}"
-       class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
+        class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
         <!-- IMAGEN (más alta) -->
         <div class="h-[320px] overflow-hidden">
             <img src="{{ asset('images/credexpress.png') }}"
-                 loading="lazy"
-                 class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
-                 alt="Crédito Expres">
+                loading="lazy"
+                    class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
+                    alt="Crédito Expres">
         </div>
 
         <!-- TEXTO ABAJO -->
@@ -42,13 +42,13 @@
 
     <!-- TARJETA 2 -->
     <a href="{{ route('creditos.lineas') }}"
-       class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
+        class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
         <div class="h-[320px] overflow-hidden">
             <img src="{{ asset('images/lineascred.png') }}"
-                 loading="lazy"
-                 class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
-                 alt="Líneas de crédito">
+                    loading="lazy"
+                    class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
+                    alt="Líneas de crédito">
         </div>
 
         <div class="p-6">
@@ -66,13 +66,13 @@
 
     <!-- TARJETA 3 -->
     <a href="{{ asset('pdf/ReglamentoDeCredito.pdf') }}" target="_blank" rel="noopener"
-       class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
+            class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
         <div class="h-[320px] overflow-hidden">
             <img src="{{ asset('images/reglcred.png') }}"
-                 loading="lazy"
-                 class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
-                 alt="Reglamento de crédito">
+                    loading="lazy"
+                    class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
+            alt="Reglamento de crédito">
         </div>
 
         <div class="p-6">
@@ -88,6 +88,13 @@
 
     </a>
 
+</div>
+<!--Boton Simulador-->
+<div class="mt-8 text-center">
+    <a href="{{ route('simuladores.credito') }}"
+        class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[#0C67A3] text-white font-semibold hover:bg-[#09598d] transition">
+        Simular crédito
+    </a>
 </div>
 
         <x-back-link :route="route('servicios')" label="← Volver a servicios" />
