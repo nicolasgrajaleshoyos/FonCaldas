@@ -15,6 +15,8 @@ use App\Http\Controllers\PqrsController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\TransparenciaController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SimuladorCreditoController;
+use App\Http\Controllers\SimuladorAhorroController;
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -112,3 +114,9 @@ Route::redirect('/inicio/organigrama', '/institucional#organigrama');
 Route::view('/creditos/expres', 'creditos.expres')->name('creditos.expres');
 
 Route::view('/creditos/lineas', 'creditos.lineas')->name('creditos.lineas');
+
+Route::get('/simuladores/credito', [SimuladorCreditoController::class, 'index'])
+    ->name('simuladores.credito');
+
+Route::get('/simuladores/ahorro', [SimuladorAhorroController::class, 'index'])
+    ->name('simuladores.ahorro');
