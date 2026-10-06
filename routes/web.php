@@ -93,6 +93,15 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/parametros-financieros', [ParametroFinancieroController::class, 'index'])->name('parametros-financieros.index');
         Route::post('/parametros-financieros/tasas', [ParametroFinancieroController::class, 'guardar'])->name('parametros-financieros.tasas.guardar');
+        Route::get('/parametros-financieros/{producto}/historial', [ParametroFinancieroController::class, 'historial'])
+            ->name('parametros-financieros.historial');
+
+        Route::get('/parametros-financieros/tasas/{tasa}/editar', [ParametroFinancieroController::class, 'editar'])
+            ->name('parametros-financieros.tasas.editar');
+        Route::put('/parametros-financieros/tasas/{tasa}', [ParametroFinancieroController::class, 'actualizar'])
+            ->name('parametros-financieros.tasas.actualizar');
+        Route::patch('/parametros-financieros/tasas/{tasa}/desactivar', [ParametroFinancieroController::class, 'desactivar'])
+            ->name('parametros-financieros.tasas.desactivar');
 
         Route::get('/tipos-tramite', [TramiteTipoController::class, 'index'])->name('tramite-tipos.index');
         Route::post('/tipos-tramite', [TramiteTipoController::class, 'store'])->name('tramite-tipos.store');

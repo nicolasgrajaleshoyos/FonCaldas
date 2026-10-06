@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class ParametroFinanciero extends Model
 {
@@ -31,5 +32,19 @@ class ParametroFinanciero extends Model
     public function producto(): BelongsTo
     {
         return $this->belongsTo(ProductoFinanciero::class, 'producto_financiero_id');
+    }
+
+    public function scopeVigente(Builder $consulta): Builder
+    {
+        $hoy = now()->toDateString();
+
+        return $consulta
+            ->where('activo', true)
+            ->whereDate('fecha_inicio_vigencia', '<=', $hoy)
+            ->where(function (Builder $consulta) use ($hoy) {
+                $consulta
+                    ->whereNull('fecha_fin_vigencia')
+                    ->orWhereDate('fecha_fin_vigencia', '>=', $hoy);
+            });
     }
 }

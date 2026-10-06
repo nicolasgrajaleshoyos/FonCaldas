@@ -45,8 +45,8 @@
                         <select name="producto_financiero_id"
                             required
                             class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                   bg-white dark:bg-slate-900
-                                   text-slate-900 dark:text-slate-100 px-4 py-3">
+                                    bg-white dark:bg-slate-900
+                                    text-slate-900 dark:text-slate-100 px-4 py-3">
 
                             <option value="">Selecciona un producto</option>
 
@@ -78,8 +78,8 @@
                                 min="0"
                                 required
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                      bg-white dark:bg-slate-900
-                                      text-slate-900 dark:text-slate-100 px-4 py-3">
+                                        bg-white dark:bg-slate-900
+                                        text-slate-900 dark:text-slate-100 px-4 py-3">
 
                             @error('valor')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -97,8 +97,8 @@
                                 placeholder="Según información oficial de FONCALDAS"
                                 required
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                      bg-white dark:bg-slate-900
-                                      text-slate-900 dark:text-slate-100 px-4 py-3">
+                                        bg-white dark:bg-slate-900
+                                        text-slate-900 dark:text-slate-100 px-4 py-3">
 
                             @error('unidad')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -119,8 +119,8 @@
                                 value="{{ old('fecha_inicio_vigencia') }}"
                                 required
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                      bg-white dark:bg-slate-900
-                                      text-slate-900 dark:text-slate-100 px-4 py-3">
+                                        bg-white dark:bg-slate-900
+                                        text-slate-900 dark:text-slate-100 px-4 py-3">
 
                             @error('fecha_inicio_vigencia')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -136,8 +136,8 @@
                                 name="fecha_fin_vigencia"
                                 value="{{ old('fecha_fin_vigencia') }}"
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                      bg-white dark:bg-slate-900
-                                      text-slate-900 dark:text-slate-100 px-4 py-3">
+                                        bg-white dark:bg-slate-900
+                                        text-slate-900 dark:text-slate-100 px-4 py-3">
 
                             @error('fecha_fin_vigencia')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -154,14 +154,14 @@
                         <textarea name="descripcion"
                             rows="3"
                             class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                     bg-white dark:bg-slate-900
-                                     text-slate-900 dark:text-slate-100 px-4 py-3">{{ old('descripcion') }}</textarea>
+                                        bg-white dark:bg-slate-900
+                                        text-slate-900 dark:text-slate-100 px-4 py-3">{{ old('descripcion') }}</textarea>
                     </div>
 
                     <button type="submit"
                         class="rounded-lg bg-[#0C67A3] px-5 py-3
-                               text-white font-semibold
-                               hover:bg-[#095c8f] transition">
+                                text-white font-semibold
+                                hover:bg-[#095c8f] transition">
                         Registrar tasa
                     </button>
 
@@ -216,7 +216,7 @@
 
                         @foreach ($productos as $producto)
                             @php
-                                $tasa = $producto->parametros->first();
+                                $tasa = $producto->tasaVigente;
                             @endphp
 
                             <tr>
@@ -268,7 +268,19 @@
                                 </td>
 
                                 <td class="px-3 py-4 text-slate-600 dark:text-slate-400">
-                                    {{ $producto->parametros->count() }} registro(s)
+                                    <div class="flex flex-col gap-1">
+
+                                        <span class="text-slate-400">
+                                            {{ $producto->parametros->count() }} registro(s)
+                                        </span>
+
+                                        <a
+                                            href="{{ route('admin.parametros-financieros.historial', $producto) }}"
+                                            class="text-sky-400 hover:text-sky-300 font-medium">
+                                            Ver historial
+                                        </a>
+
+                                    </div>
                                 </td>
 
                             </tr>
