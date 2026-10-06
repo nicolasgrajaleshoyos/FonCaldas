@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PqrsController as AdminPqrsController;
 use App\Http\Controllers\Admin\SolicitudController as AdminSolicitudController;
 use App\Http\Controllers\Admin\TramiteTipoController;
 use App\Http\Controllers\Admin\UsuarioController;
+use App\Http\Controllers\Admin\ParametroFinancieroController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PqrsController;
@@ -89,6 +90,9 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/usuarios/{usuario}/editar', [UsuarioController::class, 'edit'])->name('usuarios.edit');
         Route::put('/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('usuarios.update');
         Route::post('/usuarios/{usuario}/toggle', [UsuarioController::class, 'toggleActive'])->name('usuarios.toggle');
+
+        Route::get('/parametros-financieros', [ParametroFinancieroController::class, 'index'])->name('parametros-financieros.index');
+        Route::post('/parametros-financieros/tasas', [ParametroFinancieroController::class, 'guardar'])->name('parametros-financieros.tasas.guardar');
 
         Route::get('/tipos-tramite', [TramiteTipoController::class, 'index'])->name('tramite-tipos.index');
         Route::post('/tipos-tramite', [TramiteTipoController::class, 'store'])->name('tramite-tipos.store');
