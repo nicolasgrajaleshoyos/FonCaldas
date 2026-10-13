@@ -102,14 +102,16 @@
                                 Plazo
                             </label>
 
-                            <input
-                                id="plazo-credito"
-                                type="text"
-                                disabled
-                                placeholder="Selecciona una línea de crédito"
+                            <div
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                   bg-slate-100 dark:bg-slate-900
-                                   text-slate-500 px-4 py-3">
+                                bg-slate-50 dark:bg-slate-900/40
+                                px-4 py-3">
+                                <span
+                                    id="texto-plazo"
+                                    class="text-sm font-medium text-slate-700 dark:text-slate-200">
+                                    Selecciona una línea de crédito
+                                </span>
+                            </div>
 
                             <p
                                 id="ayuda-plazo"
@@ -117,6 +119,7 @@
                             </p>
 
                         </div>
+
 
                         <!-- DATO ESPECÍFICO -->
                         <div id="campo-especifico">
@@ -133,8 +136,8 @@
                                 disabled
                                 placeholder="Selecciona una línea de crédito"
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                   bg-slate-100 dark:bg-slate-900
-                                   text-slate-500 px-4 py-3">
+                                    bg-slate-100 dark:bg-slate-900
+                                    text-slate-500 px-4 py-3">
 
                             <p
                                 id="ayuda-especifica"
@@ -152,9 +155,9 @@
                             type="button"
                             disabled
                             class="w-full inline-flex items-center justify-center px-6 py-3 rounded-xl
-                               bg-[#0B4870]/60
-                               text-white/70
-                               font-semibold cursor-not-allowed">
+                                bg-[#0B4870]/60
+                                text-white/70
+                                font-semibold cursor-not-allowed">
                             Simular
                         </button>
 
@@ -179,7 +182,7 @@
         const tasaProducto = document.getElementById('tasa-producto');
 
         const montoSolicitado = document.getElementById('monto-solicitado');
-        const plazoCredito = document.getElementById('plazo-credito');
+        const textoPlazo = document.getElementById('texto-plazo');
         const datoEspecifico = document.getElementById('dato-especifico');
 
         const labelMonto = document.getElementById('label-monto');
@@ -283,7 +286,6 @@
             const configuracion = configuracionProductos[this.value];
 
             montoSolicitado.value = '';
-            plazoCredito.value = '';
             datoEspecifico.value = '';
             montoSolicitado.disabled = true;
             datoEspecifico.disabled = true;
@@ -318,7 +320,7 @@
                 if (configuracion) {
 
                     labelPlazo.textContent = 'Plazo';
-                    plazoCredito.placeholder = configuracion.plazo;
+                    textoPlazo.textContent = configuracion.plazo;
 
                     ayudaMonto.textContent =
                         configuracion.ayudaMonto;
@@ -345,7 +347,7 @@
 
                 } else {
 
-                    plazoCredito.placeholder =
+                    textoPlazo.textContent =
                         'Pendiente de confirmación';
 
                     labelEspecifico.textContent =
@@ -375,7 +377,7 @@
                 montoSolicitado.placeholder =
                     'Selecciona una línea de crédito';
 
-                plazoCredito.placeholder =
+                textoPlazo.textContent =
                     'Selecciona una línea de crédito';
 
                 datoEspecifico.placeholder =
@@ -434,6 +436,7 @@
                     'El monto solicitado no debe superar el 90 % del valor elegible recibido el año anterior.';
 
                 ayudaMonto.classList.remove('text-red-500');
+                ayudaMonto.classList.add('text-slate-500');
                 return;
             }
 
@@ -443,12 +446,14 @@
                 ayudaMonto.textContent =
                     'El monto solicitado supera el 90 % del valor elegible permitido para esta línea.';
 
+                ayudaMonto.classList.remove('text-slate-500');
                 ayudaMonto.classList.add('text-red-500');
             } else {
                 ayudaMonto.textContent =
                     'El monto se encuentra dentro del límite de referencia permitido.';
 
                 ayudaMonto.classList.remove('text-red-500');
+                ayudaMonto.classList.add('text-slate-500');
             }
         }
 
@@ -476,11 +481,13 @@
             if (monto > ingresoBasico) {
                 ayudaMonto.textContent =
                     'El monto solicitado supera el ingreso básico mensual permitido como referencia.';
+                ayudaMonto.classList.remove('text-slate-500');
                 ayudaMonto.classList.add('text-red-500');
             } else {
                 ayudaMonto.textContent =
                     'El monto se encuentra dentro del límite de referencia permitido.';
                 ayudaMonto.classList.remove('text-red-500');
+                ayudaMonto.classList.add('text-slate-500');
             }
         }
 
