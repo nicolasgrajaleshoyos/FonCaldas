@@ -49,7 +49,7 @@
             <!-- PANEL DE SERVICIOS -->
             <div class="min-w-0 relative pt-10">
 
-                <x-mascot class="absolute -top-2 right-6 z-10 w-28 h-28 md:w-36 md:h-36" />
+                <x-mascot pose="hola" class="absolute -top-2 right-6 z-10 w-28 h-28 md:w-36 md:h-36" />
 
                 <div class="relative rounded-3xl bg-[#0B4870] p-8 shadow-xl overflow-hidden">
 

@@ -8,7 +8,7 @@
 
         <!-- HEADER -->
         <div class="flex flex-col items-center mb-10">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="celular" class="mb-4" />
             <x-page-header
                 icon="phone"
                 title="Contacto"

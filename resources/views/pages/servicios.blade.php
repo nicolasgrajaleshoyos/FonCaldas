@@ -6,7 +6,7 @@
     <div class="max-w-6xl mx-auto">
 
         <div class="flex flex-col items-center mb-4">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="abierto" class="mb-4" />
             <x-page-header
                 title="Servicios Foncaldas"
                 subtitle="Descubre nuestras soluciones para ahorrar, obtener créditos, afiliarte y aprovechar convenios exclusivos."

@@ -7,7 +7,7 @@
 <div class="min-h-screen page-bg py-14">
     <div class="max-w-3xl mx-auto px-6">
         <div class="flex flex-col items-center mb-10">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="formal" class="mb-4" />
             <x-page-header
                 icon="clipboard"
                 title="Peticiones, quejas, reclamos y sugerencias"

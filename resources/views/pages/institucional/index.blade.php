@@ -6,11 +6,14 @@
 
     <div class="max-w-6xl mx-auto px-6">
 
-        <x-page-header
-            icon="compass"
-            title="Institucional"
-            subtitle="Misión, visión, órganos de dirección, personal y organigrama de Foncaldas."
-            center />
+        <div class="flex flex-col items-center">
+            <x-mascot pose="formal" class="mb-4" />
+            <x-page-header
+                icon="compass"
+                title="Institucional"
+                subtitle="Misión, visión, órganos de dirección, personal y organigrama de Foncaldas."
+                center />
+        </div>
 
         <!-- NAV DE SECCIONES -->
         <div class="flex flex-wrap justify-center gap-3 mb-14">

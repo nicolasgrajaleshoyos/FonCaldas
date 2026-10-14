@@ -8,7 +8,7 @@
 
         <!-- HEADER -->
         <div class="flex flex-col items-center mb-12">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="estadistica" class="mb-4" />
             <x-page-header
                 icon="shield"
                 title="Transparencia y Gobierno Corporativo"

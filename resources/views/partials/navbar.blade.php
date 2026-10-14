@@ -3,7 +3,7 @@
 
         <!-- LOGO -->
         <a href="{{ url('/') }}" class="flex items-center shrink-0">
-            <img src="{{ asset('images/logo-lockup.png') }}" alt="Foncaldas — Fondo de Empleados" class="brand-logo h-16 w-auto object-contain">
+            <img src="{{ asset('images/logo-blanco-recortado.png') }}" alt="Foncaldas — Fondo de Empleados" class="h-16 w-auto object-contain">
         </a>
 
         <!-- DESKTOP NAV -->

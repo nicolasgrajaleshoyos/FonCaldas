@@ -7,7 +7,7 @@
 
         <!-- HEADER -->
         <div class="flex flex-col items-center mb-12">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="campeon" class="mb-4" />
             <x-page-header
                 icon="calendar"
                 title="Eventos"

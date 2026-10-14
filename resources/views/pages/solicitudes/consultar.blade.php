@@ -6,7 +6,7 @@
 <div class="min-h-screen page-bg py-14">
     <div class="max-w-md mx-auto px-6">
         <div class="flex flex-col items-center mb-10">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="pensando" class="mb-4" />
             <x-page-header
                 icon="search"
                 title="Consulta el estado de tu solicitud"

@@ -4,7 +4,7 @@
         <!-- MARCA -->
         <div class="md:col-span-2">
             <a href="{{ url('/') }}" class="inline-flex items-center mb-4">
-                <img src="{{ asset('images/logo-lockup.png') }}" alt="Foncaldas — Fondo de Empleados" class="h-10 w-auto object-contain">
+                <img src="{{ asset('images/logo-blanco-recortado.png') }}" alt="Foncaldas — Fondo de Empleados" class="h-14 w-auto object-contain">
             </a>
             <p class="text-sm leading-relaxed max-w-sm text-slate-400">
                 Fondo de empleados al servicio del bienestar de nuestros afiliados en Manizales: ahorro, crédito, afiliaciones y convenios.

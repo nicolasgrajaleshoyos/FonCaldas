@@ -163,28 +163,6 @@ html {
     }
 }
 
-/* LOGO DE MARCA: resplandor pulsante que sigue el contorno real del logo
-   (no una caja) para separarlo del fondo azul oscuro sin taparlo */
-@keyframes brand-glow {
-    0%, 100% {
-        filter: drop-shadow(0 0 4px rgba(255,255,255,.4)) drop-shadow(0 0 12px rgba(255,255,255,.25));
-    }
-    50% {
-        filter: drop-shadow(0 0 8px rgba(255,255,255,.65)) drop-shadow(0 0 20px rgba(255,255,255,.4));
-    }
-}
-
-.brand-logo {
-    animation: brand-glow 3s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .brand-logo {
-        animation: none;
-        filter: drop-shadow(0 0 6px rgba(255,255,255,.4));
-    }
-}
-
 body {
     background: var(--background);
 }

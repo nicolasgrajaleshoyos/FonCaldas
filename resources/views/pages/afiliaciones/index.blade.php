@@ -6,11 +6,14 @@
 
     <div class="max-w-4xl mx-auto px-6">
 
-        <x-page-header
-            icon="users"
-            title="Afiliaciones"
-            subtitle="Todo lo que necesitas para saber si puedes asociarte, cómo hacerlo y qué beneficios obtienes."
-            center />
+        <div class="flex flex-col items-center">
+            <x-mascot pose="pulgar" class="mb-4" />
+            <x-page-header
+                icon="users"
+                title="Afiliaciones"
+                subtitle="Todo lo que necesitas para saber si puedes asociarte, cómo hacerlo y qué beneficios obtienes."
+                center />
+        </div>
 
         <!-- NAV DE SECCIONES -->
         <div class="flex flex-wrap justify-center gap-3 mb-14">

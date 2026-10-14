@@ -10,7 +10,7 @@
 <div class="min-h-screen page-bg py-14">
     <div class="max-w-2xl mx-auto px-6">
         <div class="flex flex-col items-center mb-10">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="pulgar" class="mb-4" />
             <x-page-header
                 icon="clipboard"
                 title="Solicitud {{ $solicitud->codigo }}"
