@@ -5,9 +5,7 @@
 
         <div class="max-w-6xl mx-auto px-6">
 
-            <x-page-header
-                icon="card"
-                title="Simulación de crédito"
+            <x-page-header icon="card" title="Simulación de crédito"
                 subtitle="Estimación orientativa. Las condiciones serán confirmadas por FONCALDAS." />
 
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-8">
@@ -18,15 +16,12 @@
                     <div class="lg:col-span-2 space-y-5">
 
                         <div>
-                            <label
-                                for="producto_credito"
+                            <label for="producto_credito"
                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
                                 Selecciona un producto
                             </label>
 
-                            <select
-                                id="producto_credito"
-                                name="producto_credito"
+                            <select id="producto_credito" name="producto_credito"
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
                                    bg-white dark:bg-slate-900
                                    text-slate-800 dark:text-slate-100
@@ -35,9 +30,7 @@
                                 <option value="">Línea de crédito</option>
 
                                 @foreach ($productos as $producto)
-                                    <option
-                                        value="{{ $producto->codigo }}"
-                                        data-tasa="{{ $producto->tasaVigente?->valor }}"
+                                    <option value="{{ $producto->codigo }}" data-tasa="{{ $producto->tasaVigente?->valor }}"
                                         data-unidad="{{ $producto->tasaVigente?->unidad }}">
                                         {{ $producto->nombre }}
                                     </option>
@@ -46,8 +39,7 @@
                         </div>
 
                         <!-- INFORMACIÓN DEL PRODUCTO -->
-                        <div
-                            id="descripcion-producto"
+                        <div id="descripcion-producto"
                             class="hidden mt-4 rounded-xl border border-slate-200 dark:border-slate-700
                                bg-slate-50 dark:bg-slate-900/40 px-4 py-3">
                             <p class="text-sm text-slate-600 dark:text-slate-400">
@@ -58,9 +50,7 @@
                                 <span id="nombre-producto"></span>
                             </p>
 
-                            <p
-                                id="tasa-producto"
-                                class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+                            <p id="tasa-producto" class="mt-2 text-sm text-slate-600 dark:text-slate-300">
                             </p>
 
                             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -71,24 +61,18 @@
                         <!-- MONTO -->
                         <div id="campo-monto">
 
-                            <label
-                                id="label-monto"
+                            <label id="label-monto"
                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
                                 Monto solicitado
                             </label>
 
-                            <input
-                                id="monto-solicitado"
-                                type="number"
-                                disabled
+                            <input id="monto-solicitado" type="number" disabled
                                 placeholder="Selecciona una línea de crédito"
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
                                    bg-slate-100 dark:bg-slate-900
                                    text-slate-500 px-4 py-3">
 
-                            <p
-                                id="ayuda-monto"
-                                class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            <p id="ayuda-monto" class="mt-2 text-xs text-slate-500 dark:text-slate-400">
                             </p>
 
                         </div>
@@ -96,8 +80,7 @@
                         <!-- PLAZO -->
                         <div id="campo-plazo">
 
-                            <label
-                                id="label-plazo"
+                            <label id="label-plazo"
                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
                                 Plazo
                             </label>
@@ -106,16 +89,12 @@
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
                                 bg-slate-50 dark:bg-slate-900/40
                                 px-4 py-3">
-                                <span
-                                    id="texto-plazo"
-                                    class="text-sm font-medium text-slate-700 dark:text-slate-200">
+                                <span id="texto-plazo" class="text-sm font-medium text-slate-700 dark:text-slate-200">
                                     Selecciona una línea de crédito
                                 </span>
                             </div>
 
-                            <p
-                                id="ayuda-plazo"
-                                class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            <p id="ayuda-plazo" class="mt-2 text-xs text-slate-500 dark:text-slate-400">
                             </p>
 
                         </div>
@@ -124,24 +103,18 @@
                         <!-- DATO ESPECÍFICO -->
                         <div id="campo-especifico">
 
-                            <label
-                                id="label-especifico"
+                            <label id="label-especifico"
                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
                                 Información adicional
                             </label>
 
-                            <input
-                                id="dato-especifico"
-                                type="text"
-                                disabled
+                            <input id="dato-especifico" type="text" disabled
                                 placeholder="Selecciona una línea de crédito"
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600
                                     bg-slate-100 dark:bg-slate-900
                                     text-slate-500 px-4 py-3">
 
-                            <p
-                                id="ayuda-especifica"
-                                class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            <p id="ayuda-especifica" class="mt-2 text-xs text-slate-500 dark:text-slate-400">
                             </p>
 
                         </div>
@@ -151,9 +124,7 @@
                     <!-- COLUMNA DERECHA -->
                     <div class="flex flex-col justify-end">
 
-                        <button
-                            type="button"
-                            disabled
+                        <button type="button" disabled
                             class="w-full inline-flex items-center justify-center px-6 py-3 rounded-xl
                                 bg-[#0B4870]/60
                                 text-white/70
@@ -161,7 +132,7 @@
                             Simular
                         </button>
 
-                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-3">
+                        <p class="text-sm text-center text-slate-500 dark:text-slate-400 mt-3">
                             Los campos varían según el producto.
                         </p>
 
@@ -289,7 +260,15 @@
             datoEspecifico.value = '';
             montoSolicitado.disabled = true;
             datoEspecifico.disabled = true;
-            ayudaMonto.classList.remove('text-red-500');
+            ayudaMonto.classList.remove(
+                'text-red-500',
+                'dark:text-red-400'
+            );
+
+            ayudaMonto.classList.add(
+                'text-slate-500',
+                'dark:text-slate-400'
+            );
 
             if (this.value !== '') {
 
@@ -393,7 +372,6 @@
 
         function validarAvances() {
             if (selectorCredito.value !== 'credito_avances') {
-                ayudaMonto.classList.remove('text-red-500');
                 return;
             }
 
@@ -401,27 +379,55 @@
             const sueldoBasico = parseFloat(datoEspecifico.value);
 
             if (isNaN(monto) || isNaN(sueldoBasico)) {
-                ayudaMonto.textContent =
-                    'El monto solicitado no debe superar el 50 % del sueldo básico.';
-                ayudaMonto.classList.remove('text-red-500');
+                mostrarAyudaMonto(
+                    'El monto solicitado no debe superar el 50 % del sueldo básico.'
+                );
                 return;
             }
 
             const montoMaximo = sueldoBasico * 0.5;
 
             if (monto > montoMaximo) {
-                ayudaMonto.textContent =
-                    'El monto solicitado supera el 50 % del sueldo básico permitido para esta línea.';
-                ayudaMonto.classList.add('text-red-500');
+                mostrarErrorMonto(
+                    'El monto solicitado supera el 50 % del sueldo básico permitido para esta línea.'
+                );
             } else {
-                ayudaMonto.textContent =
-                    'El monto se encuentra dentro del límite de referencia permitido.';
-                ayudaMonto.classList.remove('text-red-500');
+                mostrarAyudaMonto(
+                    'El monto se encuentra dentro del límite de referencia permitido.'
+                );
             }
         }
 
         montoSolicitado.addEventListener('input', validarAvances);
         datoEspecifico.addEventListener('input', validarAvances);
+
+        function mostrarErrorMonto(mensaje) {
+            ayudaMonto.textContent = mensaje;
+
+            ayudaMonto.classList.remove(
+                'text-slate-500',
+                'dark:text-slate-400'
+            );
+
+            ayudaMonto.classList.add(
+                'text-red-500',
+                'dark:text-red-400'
+            );
+        }
+
+        function mostrarAyudaMonto(mensaje) {
+            ayudaMonto.textContent = mensaje;
+
+            ayudaMonto.classList.remove(
+                'text-red-500',
+                'dark:text-red-400'
+            );
+
+            ayudaMonto.classList.add(
+                'text-slate-500',
+                'dark:text-slate-400'
+            );
+        }
 
         function validarBonificacion() {
             if (selectorCredito.value !== 'credito_bonificacion') {
@@ -432,28 +438,22 @@
             const valorElegible = parseFloat(datoEspecifico.value);
 
             if (isNaN(monto) || isNaN(valorElegible)) {
-                ayudaMonto.textContent =
-                    'El monto solicitado no debe superar el 90 % del valor elegible recibido el año anterior.';
-
-                ayudaMonto.classList.remove('text-red-500');
-                ayudaMonto.classList.add('text-slate-500');
+                mostrarAyudaMonto(
+                    'El monto solicitado no debe superar el 90 % del valor elegible recibido el año anterior.'
+                );
                 return;
             }
 
             const montoMaximo = valorElegible * 0.90;
 
             if (monto > montoMaximo) {
-                ayudaMonto.textContent =
-                    'El monto solicitado supera el 90 % del valor elegible permitido para esta línea.';
-
-                ayudaMonto.classList.remove('text-slate-500');
-                ayudaMonto.classList.add('text-red-500');
+                mostrarErrorMonto(
+                    'El monto solicitado supera el 90 % del valor elegible permitido para esta línea.'
+                );
             } else {
-                ayudaMonto.textContent =
-                    'El monto se encuentra dentro del límite de referencia permitido.';
-
-                ayudaMonto.classList.remove('text-red-500');
-                ayudaMonto.classList.add('text-slate-500');
+                mostrarAyudaMonto(
+                    'El monto se encuentra dentro del límite de referencia permitido.'
+                );
             }
         }
 
@@ -473,21 +473,20 @@
             const ingresoBasico = parseFloat(datoEspecifico.value);
 
             if (isNaN(monto) || isNaN(ingresoBasico)) {
-                ayudaMonto.textContent =
-                    'El monto solicitado no debe superar el 100 % del ingreso básico mensual.';
+                mostrarAyudaMonto(
+                    'El monto solicitado no debe superar el 100 % del ingreso básico mensual.'
+                );
                 return;
             }
 
             if (monto > ingresoBasico) {
-                ayudaMonto.textContent =
-                    'El monto solicitado supera el ingreso básico mensual permitido como referencia.';
-                ayudaMonto.classList.remove('text-slate-500');
-                ayudaMonto.classList.add('text-red-500');
+                mostrarErrorMonto(
+                    'El monto solicitado supera el ingreso básico mensual permitido como referencia.'
+                );
             } else {
-                ayudaMonto.textContent =
-                    'El monto se encuentra dentro del límite de referencia permitido.';
-                ayudaMonto.classList.remove('text-red-500');
-                ayudaMonto.classList.add('text-slate-500');
+                mostrarAyudaMonto(
+                    'El monto se encuentra dentro del límite de referencia permitido.'
+                );
             }
         }
 
