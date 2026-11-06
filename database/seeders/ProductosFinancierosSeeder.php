@@ -16,6 +16,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Línea de crédito para atender necesidades inmediatas del asociado.',
                 'activo' => true,
+                'simulable' => true,
             ],
             [
                 'nombre' => 'Crédito Bonos',
@@ -23,6 +24,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Línea de crédito de corto plazo con pago en cuota única.',
                 'activo' => true,
+                'simulable' => false,
             ],
             [
                 'nombre' => 'Crédito Bonificación',
@@ -30,6 +32,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Crédito asociado al valor de bonificación recibido por el asociado.',
                 'activo' => true,
+                'simulable' => false,
             ],
             [
                 'nombre' => 'Crédito Cuota Única - junio',
@@ -37,6 +40,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Crédito con pago único asociado al período de junio.',
                 'activo' => true,
+                'simulable' => false,
             ],
             [
                 'nombre' => 'Crédito Cuota Única - diciembre',
@@ -44,6 +48,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Crédito con pago único asociado al período de diciembre.',
                 'activo' => true,
+                'simulable' => false,
             ],
             [
                 'nombre' => 'Crédito Libre Inversión',
@@ -51,6 +56,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Línea de crédito para financiar bienes de consumo o servicios.',
                 'activo' => true,
+                'simulable' => true,
             ],
             [
                 'nombre' => 'Crédito Compra de Cartera',
@@ -58,6 +64,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Línea destinada a cancelar obligaciones del asociado con otras entidades.',
                 'activo' => true,
+                'simulable' => true,
             ],
             [
                 'nombre' => 'Crédito Vehículo',
@@ -65,13 +72,15 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Línea para financiación de vehículo nuevo o usado.',
                 'activo' => true,
+                'simulable' => true,
             ],
             [
                 'nombre' => 'Crédito Motocicleta',
                 'codigo' => 'credito_motocicleta',
                 'tipo' => 'credito',
-                'descripcion' => 'Línea para financiación de motocicleta nueva.',
+                'descripcion' => 'Línea para financiación de motocicleta nueva o usada.',
                 'activo' => true,
+                'simulable' => true,
             ],
             [
                 'nombre' => 'Crédito Tecnología',
@@ -79,6 +88,15 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'credito',
                 'descripcion' => 'Línea destinada a la adquisición de productos tecnológicos.',
                 'activo' => true,
+                'simulable' => true,
+            ],
+            [
+                'nombre' => 'Crédito Turismo',
+                'codigo' => 'credito_turismo',
+                'tipo' => 'credito',
+                'descripcion' => 'Línea de crédito para turismo.',
+                'activo' => true,
+                'simulable' => true,
             ],
             [
                 'nombre' => 'Ahorro Ordinario',
@@ -86,6 +104,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'ahorro',
                 'descripcion' => 'Producto de ahorro ordinario de FONCALDAS.',
                 'activo' => true,
+                'simulable' => true,
             ],
             [
                 'nombre' => 'Ahorro CDAT',
@@ -93,6 +112,7 @@ class ProductosFinancierosSeeder extends Seeder
                 'tipo' => 'ahorro',
                 'descripcion' => 'Certificado de depósito de ahorro a término.',
                 'activo' => true,
+                'simulable' => true,
             ],
         ];
 

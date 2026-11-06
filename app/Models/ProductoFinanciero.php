@@ -20,6 +20,7 @@ class ProductoFinanciero extends Model
 
     protected $casts = [
         'activo' => 'boolean',
+        'simulable' => 'boolean',
     ];
 
     public function parametros(): HasMany
