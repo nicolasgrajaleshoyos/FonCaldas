@@ -31,7 +31,8 @@
 
                                 @foreach ($productos as $producto)
                                     <option value="{{ $producto->codigo }}" data-tasa="{{ $producto->tasaVigente?->valor }}"
-                                        data-unidad="{{ $producto->tasaVigente?->unidad }}">
+                                        data-unidad="{{ $producto->tasaVigente?->unidad }}"
+                                        data-simulable="{{ $producto->simulable ? '1' : '0' }}">
                                         {{ $producto->nombre }}
                                     </option>
                                 @endforeach
@@ -55,6 +56,22 @@
 
                             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
                                 Las condiciones específicas de esta línea están pendientes de confirmación por FONCALDAS.
+                            </p>
+
+
+                        </div>
+
+                        <div id="producto-informativo"
+                            class="hidden mt-4 rounded-xl border border-sky-200 dark:border-sky-800
+                                 bg-sky-50 dark:bg-sky-950/30 px-5 py-4">
+
+                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                                Producto informativo
+                            </p>
+
+                            <p id="texto-producto-informativo" class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+                                Este producto corresponde a una modalidad de pago único y no requiere simulación financiera.
+                                Sus condiciones se presentan únicamente con carácter informativo.
                             </p>
                         </div>
 
@@ -124,17 +141,17 @@
                     <!-- COLUMNA DERECHA -->
                     <div class="flex flex-col justify-end">
 
-                        <button type="button" disabled
+                        <button id="boton-simular" type="button" disabled
                             class="w-full inline-flex items-center justify-center px-6 py-3 rounded-xl
                                 bg-[#0B4870]/60
                                 text-white/70
                                 font-semibold cursor-not-allowed">
                             Simular
-                        </button>
+                            </button>
 
-                        <p class="text-sm text-center text-slate-500 dark:text-slate-400 mt-3">
-                            Los campos varían según el producto.
-                        </p>
+                            <p class="text-sm text-center text-slate-500 dark:text-slate-400 mt-3">
+                                Los campos varían según el producto.
+                            </p>
 
                     </div>
 
@@ -155,6 +172,15 @@
         const montoSolicitado = document.getElementById('monto-solicitado');
         const textoPlazo = document.getElementById('texto-plazo');
         const datoEspecifico = document.getElementById('dato-especifico');
+
+        const campoMonto = document.getElementById('campo-monto');
+        const campoPlazo = document.getElementById('campo-plazo');
+        const campoEspecifico = document.getElementById('campo-especifico');
+
+        const botonSimular = document.getElementById('boton-simular');
+
+        const productoInformativo = document.getElementById('producto-informativo');
+        const textoProductoInformativo = document.getElementById('texto-producto-informativo');
 
         const labelMonto = document.getElementById('label-monto');
         const labelPlazo = document.getElementById('label-plazo');
@@ -242,10 +268,21 @@
             },
 
             credito_tecnologia: {
-                plazo: 'Pendiente de confirmación',
-                ayudaMonto: 'La página de FONCALDAS muestra una tasa de referencia, pero faltan reglas completas de cálculo.',
-                labelEspecifico: 'Valor del artículo tecnológico',
-                ayudaEspecifica: 'Pendiente de confirmar límites, plazo y demás condiciones.'
+                plazo: 'Hasta 48 meses',
+                ayudaMonto: 'El monto máximo se encuentra pendiente de confirmación por FONCALDAS.',
+                labelEspecifico: 'Valor de la cotización',
+                ayudaEspecifica: 'Esta línea requiere cotización. El monto máximo exacto está pendiente de confirmación.',
+                habilitarMonto: true,
+                habilitarEspecifico: true
+            },
+
+            credito_turismo: {
+                plazo: 'Hasta 48 meses',
+                ayudaMonto: 'El monto máximo se encuentra pendiente de confirmación por FONCALDAS.',
+                labelEspecifico: 'Valor de la cotización',
+                ayudaEspecifica: 'Las condiciones complementarias de esta línea están pendientes de confirmación por FONCALDAS.',
+                habilitarMonto: true,
+                habilitarEspecifico: true
             }
         };
 
@@ -254,6 +291,7 @@
             const opcionSeleccionada = this.options[this.selectedIndex];
             const tasa = opcionSeleccionada.dataset.tasa;
             const unidad = opcionSeleccionada.dataset.unidad;
+            const simulable = opcionSeleccionada.dataset.simulable === '1';
             const configuracion = configuracionProductos[this.value];
 
             montoSolicitado.value = '';
@@ -275,6 +313,28 @@
                 nombreProducto.textContent = opcionSeleccionada.text;
                 descripcionProducto.classList.remove('hidden');
 
+                if (!simulable) {
+                    productoInformativo.classList.remove('hidden');
+
+                    campoMonto.classList.add('hidden');
+                    campoPlazo.classList.add('hidden');
+                    campoEspecifico.classList.add('hidden');
+
+                    botonSimular.classList.add('hidden');
+
+                    tasaProducto.textContent = '';
+
+                    return;
+                }
+
+                productoInformativo.classList.add('hidden');
+
+                campoMonto.classList.remove('hidden');
+                campoPlazo.classList.remove('hidden');
+                campoEspecifico.classList.remove('hidden');
+
+                botonSimular.classList.remove('hidden');
+
                 if (tasa) {
 
                     const tasaFormateada = parseFloat(tasa).toString();
@@ -293,6 +353,7 @@
                 }
 
                 labelMonto.textContent = 'Monto solicitado';
+
                 montoSolicitado.placeholder =
                     'Pendiente de habilitación del cálculo';
 
@@ -348,6 +409,14 @@
                 nombreProducto.textContent = '';
                 tasaProducto.textContent = '';
                 descripcionProducto.classList.add('hidden');
+
+                productoInformativo.classList.add('hidden');
+
+                campoMonto.classList.remove('hidden');
+                campoPlazo.classList.remove('hidden');
+                campoEspecifico.classList.remove('hidden');
+
+                botonSimular.classList.remove('hidden');
 
                 labelMonto.textContent = 'Monto solicitado';
                 labelPlazo.textContent = 'Plazo';
@@ -429,68 +498,5 @@
             );
         }
 
-        function validarBonificacion() {
-            if (selectorCredito.value !== 'credito_bonificacion') {
-                return;
-            }
-
-            const monto = parseFloat(montoSolicitado.value);
-            const valorElegible = parseFloat(datoEspecifico.value);
-
-            if (isNaN(monto) || isNaN(valorElegible)) {
-                mostrarAyudaMonto(
-                    'El monto solicitado no debe superar el 90 % del valor elegible recibido el año anterior.'
-                );
-                return;
-            }
-
-            const montoMaximo = valorElegible * 0.90;
-
-            if (monto > montoMaximo) {
-                mostrarErrorMonto(
-                    'El monto solicitado supera el 90 % del valor elegible permitido para esta línea.'
-                );
-            } else {
-                mostrarAyudaMonto(
-                    'El monto se encuentra dentro del límite de referencia permitido.'
-                );
-            }
-        }
-
-        montoSolicitado.addEventListener('input', validarBonificacion);
-        datoEspecifico.addEventListener('input', validarBonificacion);
-
-        function validarCuotaUnica() {
-            const esCuotaUnica =
-                selectorCredito.value === 'credito_cuota_unica_junio' ||
-                selectorCredito.value === 'credito_cuota_unica_diciembre';
-
-            if (!esCuotaUnica) {
-                return;
-            }
-
-            const monto = parseFloat(montoSolicitado.value);
-            const ingresoBasico = parseFloat(datoEspecifico.value);
-
-            if (isNaN(monto) || isNaN(ingresoBasico)) {
-                mostrarAyudaMonto(
-                    'El monto solicitado no debe superar el 100 % del ingreso básico mensual.'
-                );
-                return;
-            }
-
-            if (monto > ingresoBasico) {
-                mostrarErrorMonto(
-                    'El monto solicitado supera el ingreso básico mensual permitido como referencia.'
-                );
-            } else {
-                mostrarAyudaMonto(
-                    'El monto se encuentra dentro del límite de referencia permitido.'
-                );
-            }
-        }
-
-        montoSolicitado.addEventListener('input', validarCuotaUnica);
-        datoEspecifico.addEventListener('input', validarCuotaUnica);
     </script>
 @endsection
