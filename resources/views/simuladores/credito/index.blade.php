@@ -147,11 +147,11 @@
                                 text-white/70
                                 font-semibold cursor-not-allowed">
                             Simular
-                            </button>
+                        </button>
 
-                            <p class="text-sm text-center text-slate-500 dark:text-slate-400 mt-3">
-                                Los campos varían según el producto.
-                            </p>
+                        <p class="text-sm text-center text-slate-500 dark:text-slate-400 mt-3">
+                            Los campos varían según el producto.
+                        </p>
 
                     </div>
 
@@ -237,9 +237,13 @@
 
             credito_libre_inversion: {
                 plazo: 'Hasta 72 meses',
-                ayudaMonto: 'El monto está sujeto a capacidad de pago, endeudamiento y garantías.',
-                labelEspecifico: 'Información para capacidad de pago',
-                ayudaEspecifica: 'La metodología exacta de capacidad de pago está pendiente de confirmación.'
+                ayudaMonto: 'El monto está sujeto a las condiciones y al estudio de crédito de FONCALDAS.',
+                labelEspecifico: 'Antigüedad de afiliación (años)',
+                ayudaEspecifica: 'La tasa depende de la antigüedad de afiliación. Para más de 15 años se informó una tasa de referencia del 1,35 %. Los demás rangos están pendientes de confirmación.',
+                habilitarMonto: true,
+                habilitarEspecifico: true,
+                tipoEspecifico: 'number',
+                placeholderEspecifico: 'Ej. 16'
             },
 
             credito_compra_cartera: {
@@ -335,7 +339,12 @@
 
                 botonSimular.classList.remove('hidden');
 
-                if (tasa) {
+                if (this.value === 'credito_libre_inversion') {
+
+                    tasaProducto.textContent =
+                        'La tasa depende de la antigüedad de afiliación. Para asociados con más de 15 años se informó una tasa de referencia del 1,35 %. Los demás rangos están pendientes de confirmación.';
+
+                } else if (tasa) {
 
                     const tasaFormateada = parseFloat(tasa).toString();
 
@@ -371,11 +380,22 @@
                     labelEspecifico.textContent =
                         configuracion.labelEspecifico;
 
+                    datoEspecifico.type =
+                        configuracion.tipoEspecifico || 'text';
+
                     datoEspecifico.placeholder =
-                        'Dato requerido para la línea';
+                        configuracion.placeholderEspecifico || 'Dato requerido para la línea';
 
                     ayudaEspecifica.textContent =
                         configuracion.ayudaEspecifica;
+
+                    if (configuracion.tipoEspecifico === 'number') {
+                        datoEspecifico.min = '0';
+                        datoEspecifico.step = '1';
+                    } else {
+                        datoEspecifico.removeAttribute('min');
+                        datoEspecifico.removeAttribute('step');
+                    }
 
                     if (configuracion.habilitarMonto) {
                         montoSolicitado.disabled = false;
@@ -421,6 +441,10 @@
                 labelMonto.textContent = 'Monto solicitado';
                 labelPlazo.textContent = 'Plazo';
                 labelEspecifico.textContent = 'Información adicional';
+
+                datoEspecifico.type = 'text';
+                datoEspecifico.removeAttribute('min');
+                datoEspecifico.removeAttribute('step');
 
                 montoSolicitado.placeholder =
                     'Selecciona una línea de crédito';
@@ -497,6 +521,5 @@
                 'dark:text-slate-400'
             );
         }
-
     </script>
 @endsection
