@@ -4,11 +4,12 @@ namespace App\Models;
 
 use App\Models\Concerns\TieneCodigo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pqrs extends Model
 {
-    use TieneCodigo;
+    use SoftDeletes, TieneCodigo;
 
     protected $table = 'pqrs';
 

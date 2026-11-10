@@ -16,12 +16,7 @@
 
         <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm p-8 space-y-6">
             <div class="text-center">
-                <span class="inline-block rounded-full px-5 py-2 text-lg font-bold
-                    @class([
-                        'bg-slate-100 text-slate-700' => $pqrs->estado === 'recibida',
-                        'bg-amber-100 text-amber-700' => $pqrs->estado === 'en_tramite',
-                        'bg-emerald-100 text-emerald-700' => $pqrs->estado === 'respondida',
-                    ])">{{ $pqrs->estadoLabel() }}</span>
+                <x-estado-badge :estado="$pqrs->estado" :etiqueta="$pqrs->estadoLabel()" grande />
                 <p class="mt-2 text-xs text-slate-400">Radicada el {{ $pqrs->created_at->format('d/m/Y H:i') }}</p>
             </div>
 

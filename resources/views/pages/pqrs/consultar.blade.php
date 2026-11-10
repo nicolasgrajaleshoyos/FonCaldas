@@ -17,20 +17,21 @@
 
         <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm p-8">
             @if($errors->any())
-                <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <div class="mb-4 rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-4 py-3 text-sm text-red-700 dark:text-red-300">
                     @foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('pqrs.buscar') }}" class="space-y-4">
+            <form method="POST" action="{{ route('pqrs.buscar') }}" data-cargando="Consultando tu PQRS…" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Código</label>
-                    <input type="text" name="codigo" value="{{ old('codigo') }}" required placeholder="PQ-26-XXXXXX" class="{{ $input }}">
+                    <label for="f-codigo" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Código</label>
+                    <input type="text" id="f-codigo" name="codigo" value="{{ old('codigo') }}" required placeholder="PQ-26-XXXXXX" class="{{ $input }}">
+                <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Lo recibiste en el mensaje de confirmación y por correo al radicar.</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de documento</label>
-                    <input type="text" name="documento" value="{{ old('documento') }}" required class="{{ $input }}">
+                    <label for="f-documento" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de documento</label>
+                    <input type="text" id="f-documento" name="documento" value="{{ old('documento') }}" required class="{{ $input }}">
                 </div>
                 <button type="submit" class="w-full rounded-lg bg-[#0B4870] px-4 py-3 text-white font-semibold hover:bg-[#0a3d60] transition">Consultar</button>
             </form>

@@ -7,6 +7,7 @@ use App\Models\Pqrs;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 
 class NotificadorPqrs
 {
@@ -20,13 +21,21 @@ class NotificadorPqrs
     {
         $mensaje = "Nueva {$pqrs->tipoLabel()} radicada: {$pqrs->asunto}. Revísala en el panel de administración.";
 
-        User::where('is_active', true)->pluck('email')->each(
+        User::where('is_active', true)->where('is_super_admin', true)->pluck('email')->each(
             fn (string $email) => $this->enviar($pqrs, $email, "Nueva {$pqrs->tipoLabel()} {$pqrs->codigo}", $mensaje, 'admin')
         );
     }
 
     private function enviar(Pqrs $pqrs, string $email, string $asunto, string $mensaje, string $destino): void
     {
+        // Mismo límite que en las solicitudes: el correo del asociado lo escribe quien radica, así que se limita
+        // por destinatario para que el formulario público no sirva para enviar ráfagas de correos a un tercero.
+        if ($destino === 'asociado' && ! RateLimiter::attempt('correo:'.strtolower($email), 10, fn () => true, 3600)) {
+            Log::warning("Correo de la PQRS {$pqrs->codigo} al asociado omitido por exceso de envíos a la misma dirección.");
+
+            return;
+        }
+
         try {
             Mail::to($email)->send(new PqrsNotificacion($pqrs, $asunto, $mensaje));
         } catch (\Throwable $e) {

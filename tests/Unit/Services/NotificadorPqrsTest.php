@@ -19,16 +19,29 @@ function pqrsParaNotificar(): Pqrs
     ]);
 }
 
-test('aAdmins() notifica a todos los usuarios activos, sin importar el tipo de trámite', function () {
+test('aAdmins() notifica solo a los administradores principales activos', function () {
     Mail::fake();
     $pqrs = pqrsParaNotificar();
-    $activo = User::factory()->create(['is_active' => true]);
-    $inactivo = User::factory()->create(['is_active' => false]);
+    $principal = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
+    $principalInactivo = User::factory()->create(['is_super_admin' => true, 'is_active' => false]);
+    $funcionario = User::factory()->create(['is_super_admin' => false, 'is_active' => true]);
 
     app(NotificadorPqrs::class)->aAdmins($pqrs);
 
-    Mail::assertSent(PqrsNotificacion::class, fn ($m) => $m->hasTo($activo->email));
-    Mail::assertNotSent(PqrsNotificacion::class, fn ($m) => $m->hasTo($inactivo->email));
+    Mail::assertSent(PqrsNotificacion::class, fn ($m) => $m->hasTo($principal->email));
+    Mail::assertNotSent(PqrsNotificacion::class, fn ($m) => $m->hasTo($principalInactivo->email));
+    Mail::assertNotSent(PqrsNotificacion::class, fn ($m) => $m->hasTo($funcionario->email));
+});
+
+test('limita los correos al asociado por destinatario (10 por hora)', function () {
+    Mail::fake();
+    $pqrs = pqrsParaNotificar();
+
+    foreach (range(1, 12) as $_) {
+        app(NotificadorPqrs::class)->alAsociado($pqrs, 'asunto', 'mensaje');
+    }
+
+    Mail::assertSent(PqrsNotificacion::class, 10);
 });
 
 test('un fallo de correo al asociado se registra en el log y no interrumpe el flujo', function () {

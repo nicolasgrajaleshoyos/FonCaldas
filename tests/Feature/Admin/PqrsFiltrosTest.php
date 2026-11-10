@@ -14,6 +14,17 @@ function crearPqrsAdmin(array $extra = []): Pqrs
     ]);
 }
 
+test('un funcionario no puede ver ni gestionar PQRS', function () {
+    $funcionario = User::factory()->create(['is_super_admin' => false, 'is_active' => true]);
+    $p = crearPqrsAdmin();
+
+    $this->actingAs($funcionario)->get('/admin/pqrs')->assertForbidden();
+    $this->actingAs($funcionario)->get("/admin/pqrs/{$p->id}")->assertForbidden();
+    $this->actingAs($funcionario)->post("/admin/pqrs/{$p->id}/tramitar")->assertForbidden();
+    $this->actingAs($funcionario)->post("/admin/pqrs/{$p->id}/responder", ['respuesta' => 'x'])->assertForbidden();
+    expect($p->fresh()->estado)->toBe(Pqrs::ESTADO_RECIBIDA);
+});
+
 test('el listado admin filtra por tipo', function () {
     $super = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
     crearPqrsAdmin(['tipo' => 'queja']);
