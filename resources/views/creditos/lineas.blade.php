@@ -6,6 +6,8 @@
 
     <div class="max-w-6xl mx-auto px-6">
 
+        <x-back-link :route="route('servicios.creditos')" label="Volver a créditos" />
+
         <x-page-header
             icon="bank"
             title="Líneas de Crédito"
@@ -131,8 +133,6 @@
             </div>
 
         </div>
-
-        <x-back-link :route="route('servicios.creditos')" label="← Volver a créditos" />
 
     </div>
 

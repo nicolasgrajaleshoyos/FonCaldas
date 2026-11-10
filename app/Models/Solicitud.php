@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class Solicitud extends Model
 {
@@ -111,7 +113,7 @@ class Solicitud extends Model
         $path = $archivo->store("solicitudes/{$this->id}", SolicitudDocumento::DISCO);
 
         // Si la transacción que envuelve la subida se revierte, el archivo no debe quedar huérfano en disco.
-        \Illuminate\Support\Facades\DB::afterRollBack(fn () => \Illuminate\Support\Facades\Storage::disk(SolicitudDocumento::DISCO)->delete($path));
+        DB::afterRollBack(fn () => Storage::disk(SolicitudDocumento::DISCO)->delete($path));
 
         return $this->documentos()->create([
             'origen' => $origen,

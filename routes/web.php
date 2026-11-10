@@ -5,19 +5,19 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentoController;
 use App\Http\Controllers\Admin\EventoController as AdminEventoController;
+use App\Http\Controllers\Admin\ParametroFinancieroController;
 use App\Http\Controllers\Admin\PqrsController as AdminPqrsController;
 use App\Http\Controllers\Admin\SolicitudController as AdminSolicitudController;
 use App\Http\Controllers\Admin\TramiteTipoController;
 use App\Http\Controllers\Admin\UsuarioController;
-use App\Http\Controllers\Admin\ParametroFinancieroController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PqrsController;
+use App\Http\Controllers\SimuladorAhorroController;
+use App\Http\Controllers\SimuladorCreditoController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\TransparenciaController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SimuladorCreditoController;
-use App\Http\Controllers\SimuladorAhorroController;
 
 Route::get('/', HomeController::class)->name('home');
 

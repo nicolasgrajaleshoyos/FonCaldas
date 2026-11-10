@@ -21,6 +21,8 @@
 
     <div class="max-w-7xl mx-auto px-6">
 
+        <x-back-link :route="route('servicios.creditos')" label="Volver a créditos" />
+
         <x-page-header
             icon="bolt"
             title="Créditos Express"
@@ -85,8 +87,6 @@
                 ]"
                 :pago="$pagoPorCaja"
                 :garantia="['Firma personal', 'Codeudor solidario si se requiere']" />
-
-            <x-back-link :route="route('servicios.creditos')" label="← Volver a créditos" />
 
         </div>
 
