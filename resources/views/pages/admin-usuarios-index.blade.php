@@ -40,12 +40,15 @@
                             </td>
                             <td class="px-4 py-4">
                                 <div class="flex flex-wrap gap-2">
+                                    @if (auth()->user()->puedeEditar($usuario))
                                     <a href="{{ route('admin.usuarios.edit', $usuario) }}" class="rounded-full border border-slate-200 dark:border-slate-600 px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Editar</a>
+                                    @endif
                                     @unless ($usuario->is_super_admin)
-                                    <form method="POST" action="{{ route('admin.usuarios.toggle', $usuario) }}" onsubmit="return confirm('{{ $usuario->is_active ? '¿Desactivar a este funcionario? No podrá iniciar sesión.' : '¿Activar a este funcionario?' }}')">
+                                    <form method="POST" action="{{ route('admin.usuarios.toggle', $usuario) }}" data-confirm="{{ $usuario->is_active ? '¿Desactivar a este funcionario? No podrá iniciar sesión.' : '¿Activar a este funcionario?' }}">
                                         @csrf
                                         <button type="submit" class="rounded-full border border-slate-200 dark:border-slate-600 px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">{{ $usuario->is_active ? 'Desactivar' : 'Activar' }}</button>
                                     </form>
+                                    <x-admin-delete :action="route('admin.usuarios.delete', $usuario)" message="¿Eliminar a este funcionario? Esta acción no se puede deshacer." class="rounded-full border border-rose-200 dark:border-rose-500/40 px-4 py-2.5 text-sm font-medium text-rose-600 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition" />
                                     @endunless
                                 </div>
                             </td>

@@ -15,19 +15,12 @@ function solicitudDeTipo(TramiteTipo $tipo): Solicitud
     ]);
 }
 
-test('solo se listan eventos de los tipos de trámite visibles para el usuario', function () {
+test('la auditoría es solo del administrador principal: un funcionario recibe 403', function () {
     $propio = TramiteTipo::create(['nombre' => 'Propio', 'slug' => 'propio', 'activo' => true, 'es_certificacion' => false]);
-    $ajeno = TramiteTipo::create(['nombre' => 'Ajeno', 'slug' => 'ajeno', 'activo' => true, 'es_certificacion' => false]);
     $user = User::factory()->create(['is_super_admin' => false, 'is_active' => true]);
     $user->tramiteTipos()->sync([$propio->id]);
 
-    $solicitudPropia = solicitudDeTipo($propio);
-    $solicitudPropia->registrarEvento('solicitud_creada');
-    $solicitudAjena = solicitudDeTipo($ajeno);
-    $solicitudAjena->registrarEvento('solicitud_creada');
-
-    $this->actingAs($user)->get('/admin/auditoria')->assertOk()
-        ->assertViewHas('eventos', fn ($p) => $p->total() === 1 && $p->first()->solicitud_id === $solicitudPropia->id);
+    $this->actingAs($user)->get('/admin/auditoria')->assertForbidden();
 });
 
 test('el filtro por código busca coincidencias parciales en la solicitud', function () {

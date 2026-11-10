@@ -48,11 +48,13 @@
                         @error('email')<p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                     </div>
 
+                    @if (! $usuario->exists || auth()->user()->puedeCambiarClaveDe($usuario))
                     <div>
                         <label class="{{ $label }}" for="password">Contraseña {{ $usuario->exists ? '(dejar en blanco para no cambiarla)' : '' }}</label>
                         <input id="password" type="password" name="password" class="{{ $input }}" {{ $usuario->exists ? '' : 'required' }}>
                         @error('password')<p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                     </div>
+                    @endif
                 </div>
 
                 <label class="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-4 text-sm text-slate-700 dark:text-slate-300">

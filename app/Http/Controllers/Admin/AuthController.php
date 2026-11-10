@@ -11,10 +11,8 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        if (Auth::check()) {
-            return redirect()->route('admin.dashboard');
-        }
-
+        // Se muestra siempre el formulario: si ya hay una sesión abierta (p. ej. la del administrador) y se
+        // redirigiera al panel, no habría forma de entrar con otra cuenta sin cerrar sesión antes.
         return view('pages.admin-login');
     }
 

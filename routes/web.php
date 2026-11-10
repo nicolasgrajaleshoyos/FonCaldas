@@ -58,18 +58,6 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    Route::get('/documentos', [DocumentoController::class, 'index'])->name('documents');
-    Route::post('/documentos', [DocumentoController::class, 'store'])->name('documents.store');
-    Route::get('/documentos/{document}/editar', [DocumentoController::class, 'edit'])->name('documents.edit');
-    Route::put('/documentos/{document}', [DocumentoController::class, 'update'])->name('documents.update');
-    Route::post('/documentos/{document}/delete', [DocumentoController::class, 'destroy'])->name('documents.delete');
-
-    Route::get('/eventos', [AdminEventoController::class, 'index'])->name('events');
-    Route::post('/eventos', [AdminEventoController::class, 'store'])->name('events.store');
-    Route::get('/eventos/{event}/editar', [AdminEventoController::class, 'edit'])->name('events.edit');
-    Route::put('/eventos/{event}', [AdminEventoController::class, 'update'])->name('events.update');
-    Route::post('/eventos/{event}/delete', [AdminEventoController::class, 'destroy'])->name('events.delete');
-
     Route::get('/solicitudes', [AdminSolicitudController::class, 'index'])->name('solicitudes.index');
     Route::get('/solicitudes/{solicitud}', [AdminSolicitudController::class, 'show'])->name('solicitudes.show');
     Route::get('/solicitudes/{solicitud}/documentos/{documento}', [AdminSolicitudController::class, 'descargarDocumento'])->name('solicitudes.documentos.descargar');
@@ -80,14 +68,29 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/solicitudes/{solicitud}/finalizar', [AdminSolicitudController::class, 'finalizar'])->name('solicitudes.finalizar');
     Route::post('/solicitudes/{solicitud}/documentos', [AdminSolicitudController::class, 'subirDocumento'])->name('solicitudes.documentos.store');
 
-    Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria');
-
+    // El funcionario solo tiene Panel y Solicitudes (de sus trámites); todo lo demás es del administrador principal.
     Route::middleware('super_admin')->group(function () {
+        Route::get('/documentos', [DocumentoController::class, 'index'])->name('documents');
+        Route::post('/documentos', [DocumentoController::class, 'store'])->name('documents.store');
+        Route::get('/documentos/{document}/editar', [DocumentoController::class, 'edit'])->name('documents.edit');
+        Route::put('/documentos/{document}', [DocumentoController::class, 'update'])->name('documents.update');
+
+        Route::get('/eventos', [AdminEventoController::class, 'index'])->name('events');
+        Route::post('/eventos', [AdminEventoController::class, 'store'])->name('events.store');
+        Route::get('/eventos/{event}/editar', [AdminEventoController::class, 'edit'])->name('events.edit');
+        Route::put('/eventos/{event}', [AdminEventoController::class, 'update'])->name('events.update');
+
+        Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria');
+
         // PQRS: las gestiona únicamente el administrador principal.
         Route::get('/pqrs', [AdminPqrsController::class, 'index'])->name('pqrs.index');
         Route::get('/pqrs/{pqrs}', [AdminPqrsController::class, 'show'])->name('pqrs.show');
         Route::post('/pqrs/{pqrs}/tramitar', [AdminPqrsController::class, 'tramitar'])->name('pqrs.tramitar');
         Route::post('/pqrs/{pqrs}/responder', [AdminPqrsController::class, 'responder'])->name('pqrs.responder');
+
+        // Eliminar documentos y eventos: solo el administrador principal (la vista ya oculta el botón al funcionario).
+        Route::post('/documentos/{document}/delete', [DocumentoController::class, 'destroy'])->name('documents.delete');
+        Route::post('/eventos/{event}/delete', [AdminEventoController::class, 'destroy'])->name('events.delete');
 
         Route::post('/auditoria/eliminar', [AuditoriaController::class, 'destroy'])->name('auditoria.destroy');
         Route::post('/auditoria/vaciar', [AuditoriaController::class, 'vaciar'])->name('auditoria.vaciar');
@@ -100,6 +103,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/usuarios/{usuario}/editar', [UsuarioController::class, 'edit'])->name('usuarios.edit');
         Route::put('/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('usuarios.update');
         Route::post('/usuarios/{usuario}/toggle', [UsuarioController::class, 'toggleActive'])->name('usuarios.toggle');
+        Route::post('/usuarios/{usuario}/delete', [UsuarioController::class, 'destroy'])->name('usuarios.delete');
 
         Route::get('/parametros-financieros', [ParametroFinancieroController::class, 'index'])->name('parametros-financieros.index');
         Route::post('/parametros-financieros/tasas', [ParametroFinancieroController::class, 'guardar'])->name('parametros-financieros.tasas.guardar');

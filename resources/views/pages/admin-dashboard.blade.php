@@ -19,9 +19,9 @@
 
     $modulos = [
         ['grupo' => 'Gestión', 'route' => 'admin.solicitudes.index', 'icon' => 'clipboard', 'titulo' => 'Solicitudes y certificaciones', 'texto' => 'Revisa, aprueba o rechaza los trámites radicados.', 'super' => false],
-        ['grupo' => 'Gestión', 'route' => 'admin.documents', 'icon' => 'document', 'titulo' => 'Documentos', 'texto' => 'Sube y gestiona los PDFs de transparencia.', 'super' => false],
-        ['grupo' => 'Gestión', 'route' => 'admin.events', 'icon' => 'ticket', 'titulo' => 'Eventos', 'texto' => 'Crea y elimina los eventos del fondo.', 'super' => false],
-        ['grupo' => 'Control', 'route' => 'admin.auditoria', 'icon' => 'eye', 'titulo' => 'Auditoría', 'texto' => 'Trazabilidad de acciones sobre las solicitudes.', 'super' => false],
+        ['grupo' => 'Gestión', 'route' => 'admin.documents', 'icon' => 'document', 'titulo' => 'Documentos', 'texto' => 'Sube y gestiona los PDFs de transparencia.', 'super' => true],
+        ['grupo' => 'Gestión', 'route' => 'admin.events', 'icon' => 'ticket', 'titulo' => 'Eventos', 'texto' => 'Crea y elimina los eventos del fondo.', 'super' => true],
+        ['grupo' => 'Control', 'route' => 'admin.auditoria', 'icon' => 'eye', 'titulo' => 'Auditoría', 'texto' => 'Trazabilidad de acciones sobre las solicitudes.', 'super' => true],
         ['grupo' => 'Configuración', 'route' => 'admin.usuarios.index', 'icon' => 'users', 'titulo' => 'Usuarios y permisos', 'texto' => 'Crea funcionarios y controla su acceso a trámites.', 'super' => true],
         ['grupo' => 'Configuración', 'route' => 'admin.tramite-tipos.index', 'icon' => 'briefcase', 'titulo' => 'Tipos de trámite', 'texto' => 'Agrega categorías sin afectar la operación.', 'super' => true],
     ];

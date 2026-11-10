@@ -6,13 +6,15 @@ $user = auth()->user();
 $tabs = [
     ['key' => 'dashboard', 'route' => 'admin.dashboard', 'label' => 'Panel', 'icon' => 'layers'],
     ['key' => 'solicitudes', 'route' => 'admin.solicitudes.index', 'label' => 'Solicitudes', 'icon' => 'clipboard'],
-    ['key' => 'documents', 'route' => 'admin.documents', 'label' => 'Documentos', 'icon' => 'document'],
-    ['key' => 'events', 'route' => 'admin.events', 'label' => 'Eventos', 'icon' => 'calendar'],
-    ['key' => 'auditoria', 'route' => 'admin.auditoria', 'label' => 'Auditoría', 'icon' => 'eye'],
 ];
 
 if ($user?->is_super_admin) {
-    array_splice($tabs, 2, 0, [['key' => 'pqrs', 'route' => 'admin.pqrs.index', 'label' => 'PQRS', 'icon' => 'ticket']]);
+    array_push($tabs,
+        ['key' => 'pqrs', 'route' => 'admin.pqrs.index', 'label' => 'PQRS', 'icon' => 'ticket'],
+        ['key' => 'documents', 'route' => 'admin.documents', 'label' => 'Documentos', 'icon' => 'document'],
+        ['key' => 'events', 'route' => 'admin.events', 'label' => 'Eventos', 'icon' => 'calendar'],
+        ['key' => 'auditoria', 'route' => 'admin.auditoria', 'label' => 'Auditoría', 'icon' => 'eye'],
+    );
     $tabs[] = ['key' => 'usuarios', 'route' => 'admin.usuarios.index', 'label' => 'Usuarios', 'icon' => 'users'];
     $tabs[] = ['key' => 'tramite-tipos', 'route' => 'admin.tramite-tipos.index', 'label' => 'Tipos de trámite', 'icon' => 'briefcase'];
     $tabs[] = [

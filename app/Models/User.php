@@ -49,6 +49,25 @@ class User extends Authenticatable
         return $this->tramiteTipos->contains('id', $tramiteTipo->id);
     }
 
+    /** El administrador principal original: el primero que se creó. Es el único que edita cuentas de otros administradores y contraseñas ajenas. */
+    // ponytail: se deduce del id más bajo entre administradores; usar una columna explícita si hiciera falta traspasar el rol.
+    public function esPropietario(): bool
+    {
+        return $this->is_super_admin && $this->id === static::where('is_super_admin', true)->min('id');
+    }
+
+    /** Editar la cuenta de otro: el propietario edita a cualquiera; los demás administradores, solo funcionarios y a sí mismos. */
+    public function puedeEditar(self $otro): bool
+    {
+        return $this->is($otro) || $this->esPropietario() || ! $otro->is_super_admin;
+    }
+
+    /** Cambiar la contraseña de otro lo puede hacer solo el propietario. */
+    public function puedeCambiarClaveDe(self $otro): bool
+    {
+        return $this->is($otro) || $this->esPropietario();
+    }
+
     /** Tipos de trámite que este usuario puede gestionar (todos si es super admin). */
     public function tramiteTiposVisibles(): Builder
     {

@@ -30,13 +30,22 @@ class UsuarioController extends Controller
         return redirect()->route('admin.usuarios.index')->with('success', 'Funcionario creado correctamente.');
     }
 
-    public function edit(User $usuario)
+    private function autorizarEdicion(Request $request, User $usuario): void
     {
+        abort_unless($request->user()->puedeEditar($usuario), 403, 'Solo el administrador principal original puede editar a otros administradores.');
+    }
+
+    public function edit(Request $request, User $usuario)
+    {
+        $this->autorizarEdicion($request, $usuario);
+
         return $this->formulario($usuario);
     }
 
     public function update(GuardarUsuarioRequest $request, User $usuario)
     {
+        $this->autorizarEdicion($request, $usuario);
+
         $quedaSinPrincipal = $usuario->is_super_admin && ! $request->boolean('is_super_admin')
             && User::where('is_super_admin', true)->where('is_active', true)->whereKeyNot($usuario->id)->doesntExist();
 
@@ -44,7 +53,12 @@ class UsuarioController extends Controller
             return back()->withInput()->withErrors(['is_super_admin' => 'Debe existir al menos un administrador principal activo; no puedes quitar este rol al último.']);
         }
 
-        $usuario->update($this->atributos($request));
+        $atributos = $this->atributos($request);
+        if (! $request->user()->puedeCambiarClaveDe($usuario)) {
+            unset($atributos['password']);
+        }
+
+        $usuario->update($atributos);
         $usuario->tramiteTipos()->sync($request->input('tramite_tipos', []));
 
         return redirect()->route('admin.usuarios.index')->with('success', 'Funcionario actualizado correctamente.');
@@ -63,6 +77,17 @@ class UsuarioController extends Controller
         $usuario->update(['is_active' => ! $usuario->is_active]);
 
         return back()->with('success', $usuario->is_active ? 'Funcionario activado.' : 'Funcionario desactivado.');
+    }
+
+    public function destroy(Request $request, User $usuario)
+    {
+        if ($usuario->is($request->user()) || $usuario->is_super_admin) {
+            return back()->withErrors(['usuario' => 'No se puede eliminar a un administrador principal ni a tu propia cuenta.']);
+        }
+
+        $usuario->delete(); // las solicitudes/PQRS que tenía asociadas quedan sin responsable (nullOnDelete)
+
+        return back()->with('success', 'Funcionario eliminado.');
     }
 
     private function formulario(User $usuario)

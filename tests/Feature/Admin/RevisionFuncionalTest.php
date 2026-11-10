@@ -154,13 +154,15 @@ test('editar evento conserva el archivo sin subida nueva y lo reemplaza con una 
     Storage::disk('public')->put('uploads/eventos/old.png', 'x');
     $datos = ['title' => 'Nuevo', 'description' => 'd2', 'location' => 'L2', 'event_date' => '2026-12-02', 'event_time' => '11:30'];
 
-    $this->actingAs($this->normal)->put("/admin/eventos/{$e->id}", $datos)->assertRedirect('/admin/eventos');
+    $this->actingAs($this->normal)->put("/admin/eventos/{$e->id}", $datos)->assertForbidden();
+
+    $this->actingAs($this->super)->put("/admin/eventos/{$e->id}", $datos)->assertRedirect('/admin/eventos');
     expect($e->fresh()->title)->toBe('Nuevo')->and($e->fresh()->media_path)->toBe('storage/uploads/eventos/old.png');
 
-    $this->actingAs($this->normal)->put("/admin/eventos/{$e->id}", $datos + ['media' => UploadedFile::fake()->image('n.png')]);
+    $this->actingAs($this->super)->put("/admin/eventos/{$e->id}", $datos + ['media' => UploadedFile::fake()->image('n.png')]);
     expect($e->fresh()->media_path)->not->toBe('storage/uploads/eventos/old.png');
     Storage::disk('public')->assertMissing('uploads/eventos/old.png');
-    $this->actingAs($this->normal)->get("/admin/eventos/{$e->id}/editar")->assertOk();
+    $this->actingAs($this->super)->get("/admin/eventos/{$e->id}/editar")->assertOk();
 });
 
 test('editar documento: sin PDF nuevo conserva el actual; con PDF lo reemplaza', function () {
@@ -168,13 +170,15 @@ test('editar documento: sin PDF nuevo conserva el actual; con PDF lo reemplaza',
     Storage::disk('public')->put('uploads/transparencia/old.pdf', 'x');
     $datos = ['title' => 'D2', 'description' => 'd2', 'category' => 'normativa'];
 
-    $this->actingAs($this->normal)->put("/admin/documentos/{$d->id}", $datos)->assertSessionHasNoErrors();
+    $this->actingAs($this->normal)->put("/admin/documentos/{$d->id}", $datos)->assertForbidden();
+
+    $this->actingAs($this->super)->put("/admin/documentos/{$d->id}", $datos)->assertSessionHasNoErrors();
     expect($d->fresh()->category)->toBe('Normativa y Reglamentos')->and($d->fresh()->file_path)->toBe('storage/uploads/transparencia/old.pdf');
 
-    $this->actingAs($this->normal)->put("/admin/documentos/{$d->id}", $datos + ['document' => UploadedFile::fake()->create('n.pdf', 5, 'application/pdf')]);
+    $this->actingAs($this->super)->put("/admin/documentos/{$d->id}", $datos + ['document' => UploadedFile::fake()->create('n.pdf', 5, 'application/pdf')]);
     expect($d->fresh()->file_path)->not->toBe('storage/uploads/transparencia/old.pdf');
     Storage::disk('public')->assertMissing('uploads/transparencia/old.pdf');
-    $this->actingAs($this->normal)->get("/admin/documentos/{$d->id}/editar")->assertOk();
+    $this->actingAs($this->super)->get("/admin/documentos/{$d->id}/editar")->assertOk();
 });
 
 test('editar tipo de trámite conserva el slug y solo lo hace el administrador principal', function () {

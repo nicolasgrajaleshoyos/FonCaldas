@@ -8,6 +8,14 @@ use Illuminate\Validation\Rule;
 
 class GuardarUsuarioRequest extends FormRequest
 {
+    /** Se decide antes de validar: quien no puede editar esta cuenta recibe 403, no errores de formulario. */
+    public function authorize(): bool
+    {
+        $usuario = $this->route('usuario');
+
+        return ! $usuario || $this->user()->puedeEditar($usuario);
+    }
+
     public function rules(): array
     {
         /** @var User|null $usuario */

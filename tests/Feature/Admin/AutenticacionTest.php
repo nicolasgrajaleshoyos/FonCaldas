@@ -35,8 +35,8 @@ test('un usuario inactivo no puede iniciar sesión aunque la contraseña sea cor
     $this->assertGuest();
 });
 
-test('un funcionario ya autenticado que visita el login es redirigido al dashboard', function () {
-    $this->actingAs(funcionario())->get('/admin')->assertRedirect(route('admin.dashboard'));
+test('un usuario ya autenticado que visita el login ve el formulario, para poder entrar con otra cuenta', function () {
+    $this->actingAs(funcionario())->get('/admin')->assertOk();
 });
 
 test('un invitado que intenta entrar al panel es redirigido al login', function () {
