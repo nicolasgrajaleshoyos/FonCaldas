@@ -84,16 +84,16 @@ Desarrollado en el marco de la práctica profesional en el área de Tecnologías
 | **Panel (dashboard)** | Solicitudes pendientes, totales, últimos 30 días, tiempo promedio de resolución y distribución por estado y por tipo de trámite |
 | **Solicitudes** | Listado con filtros por estado, tipo de trámite y fechas (con paginación); detalle con datos del asociado, documentos e historial; verificar identidad, aprobar, rechazar con justificación (también sin verificar, cuando los datos no coinciden), finalizar, reasignar responsable y publicar documentos o certificados con versionado. El administrador principal puede eliminar solicitudes del panel (borrado lógico: el historial y los archivos se conservan) |
 | **PQRS** *(administrador principal)* | Listado con filtros, detalle, marcar en trámite, responder al asociado por correo y eliminar del panel (borrado lógico) |
-| **Documentos** | Subir, editar, reemplazar y eliminar los PDF de transparencia |
-| **Eventos** | Crear, editar y eliminar eventos con imagen o video |
-| **Auditoría** | Registro de todas las acciones sobre las **solicitudes**, con filtros por código y por usuario; los registros se archivan, no se borran, y se conservan aunque la solicitud se elimine del panel. Las PQRS no tienen historial de acciones: guardan quién respondió y cuándo |
-| **Usuarios** *(administrador principal)* | Crear, editar, activar y desactivar funcionarios y asignarles los tipos de trámite que gestionan |
+| **Documentos** *(administrador principal)* | Subir, editar, reemplazar y eliminar los PDF de transparencia |
+| **Eventos** *(administrador principal)* | Crear, editar y eliminar eventos con imagen o video |
+| **Auditoría** *(administrador principal)* | Registro de todas las acciones sobre las **solicitudes**, con filtros por código y por usuario; los registros se archivan, no se borran, y se conservan aunque la solicitud se elimine del panel. Las PQRS no tienen historial de acciones: guardan quién respondió y cuándo |
+| **Usuarios** *(administrador principal)* | Crear, editar, activar, desactivar y eliminar funcionarios y asignarles los tipos de trámite que gestionan |
 | **Tipos de trámite** *(administrador principal)* | Crear, editar, activar, desactivar y eliminar los tipos disponibles en el formulario público |
 
 ## Roles y permisos
 
-- **Administrador principal:** acceso total a todos los módulos y trámites. Recibe todas las notificaciones y no se puede desactivar. Siempre debe existir al menos uno activo.
-- **Funcionario:** ve y gestiona únicamente los tipos de trámite que tiene asignados. Recibe por correo solo los avisos de esos tipos. No tiene acceso a las PQRS.
+- **Administrador principal:** acceso total a todos los módulos y trámites. Recibe todas las notificaciones y no se puede desactivar. Siempre debe existir al menos uno activo. El **primero que se creó** (el del `.env`) es el administrador principal original: es el único que edita a otros administradores y cambia contraseñas ajenas; los demás administradores solo editan funcionarios (sin cambiarles la contraseña) y su propia cuenta.
+- **Funcionario:** solo ve el Panel y las Solicitudes de los tipos de trámite que tiene asignados. Recibe por correo solo los avisos de esos tipos. No tiene acceso a PQRS, Documentos, Eventos, Auditoría ni Usuarios.
 - **PQRS:** las ve, tramita y responde únicamente el administrador principal, que es también quien recibe el aviso de cada PQRS nueva.
 
 Los permisos por tipo de trámite se aplican con políticas de autorización en cada acción, no solo ocultando botones.
@@ -176,6 +176,24 @@ php artisan serve
 El sitio queda disponible en `http://127.0.0.1:8000`. En Windows con Laravel Herd basta con tener el proyecto en la carpeta de sitios y abrir el dominio `.test` correspondiente.
 
 **Datos iniciales:** el *seeder* crea los tipos de trámite y, si en el `.env` se definen `ADMIN_USERNAME` y `ADMIN_PASSWORD_HASH`, el usuario administrador principal. Define también `ADMIN_EMAIL` con un correo real: el administrador principal recibe todos los avisos y, sin esa variable, queda con un correo `@foncaldas.local` que no recibe nada.
+
+**Crear el administrador principal:** la contraseña no vive en el repositorio; cada instalación define la suya antes de `php artisan migrate --seed`.
+
+1. Genera el hash de la contraseña (funciona en PowerShell y en bash):
+
+   ```bash
+   php -r "echo password_hash('LaClaveQueQuieras', PASSWORD_BCRYPT);"
+   ```
+
+2. Ponlo en el `.env` **entre comillas simples** (el hash lleva `$` y, sin comillas, se corrompe):
+
+   ```env
+   ADMIN_USERNAME=adminfoncaldas2026
+   ADMIN_PASSWORD_HASH='$2y$12$...'
+   ADMIN_EMAIL=correo@real.co
+   ```
+
+3. Ejecuta `php artisan migrate --seed`. Con ese usuario se entra a `/admin` y desde ahí se crean los demás. El primer administrador creado es el *administrador principal original*: el único que puede editar a otros administradores y cambiar contraseñas ajenas.
 
 **Idioma:** la aplicación usa `APP_LOCALE=es`; los mensajes de validación están en `lang/es/`.
 
