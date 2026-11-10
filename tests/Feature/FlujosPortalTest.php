@@ -125,13 +125,12 @@ test('publicar documento versiona y reasignar deja rastro', function () {
     Mail::assertSent(NuevaSolicitudAdmin::class, fn ($m) => $m->reasignada && $m->hasTo($actor->email));
 });
 
-test('no se puede aprobar ni rechazar sin verificar la identidad; rechazar cierra la solicitud', function () {
+test('no se puede aprobar ni finalizar sin verificar la identidad; rechazar cierra la solicitud', function () {
     Mail::fake();
     $actor = admin();
     $solicitud = solicitud(tipo());
 
     $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/aprobar")->assertSessionHasErrors('estado');
-    $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/rechazar", ['justificacion' => 'x'])->assertSessionHasErrors('estado');
     $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/finalizar")->assertSessionHasErrors('estado');
     expect($solicitud->fresh()->estado)->toBe(Solicitud::ESTADO_RECIBIDA);
 
@@ -139,6 +138,23 @@ test('no se puede aprobar ni rechazar sin verificar la identidad; rechazar cierr
     $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/rechazar", ['justificacion' => 'incompleto']);
     expect($solicitud->fresh())->estado->toBe(Solicitud::ESTADO_RECHAZADA)->justificacion->toBe('incompleto')
         ->and($solicitud->fresh()->finalizado_at)->not->toBeNull();
+
+    $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/rechazar", ['justificacion' => 'otra vez'])->assertSessionHasErrors('estado');
+});
+
+test('si la identidad no coincide se rechaza sin marcarla como verificada', function () {
+    Mail::fake();
+    $actor = admin();
+    $solicitud = solicitud(tipo());
+
+    $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/rechazar", ['justificacion' => 'El documento no corresponde a un asociado']);
+
+    $fresca = $solicitud->fresh();
+    expect($fresca->estado)->toBe(Solicitud::ESTADO_RECHAZADA)
+        ->and($fresca->verificado_at)->toBeNull()
+        ->and($fresca->verificado_por)->toBeNull()
+        ->and($fresca->eventos()->where('accion', 'identidad_verificada')->exists())->toBeFalse()
+        ->and($fresca->eventos()->where('accion', 'solicitud_rechazada')->value('detalle'))->toContain('sin verificar la identidad');
 });
 
 test('la asignación automática reparte por carga y prefiere funcionarios sobre super admins', function () {

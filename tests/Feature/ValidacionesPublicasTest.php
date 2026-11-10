@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Pqrs;
 use App\Models\Solicitud;
 use App\Models\TramiteTipo;
 use App\Models\User;
@@ -20,6 +19,22 @@ test('radicar una solicitud con un tipo de trámite inexistente falla la validac
         'tramite_tipo_id' => 9999, 'asociado_nombre' => 'Ana', 'asociado_documento' => '123',
         'asociado_email' => 'ana@test.co', 'descripcion' => 'x',
     ])->assertSessionHasErrors('tramite_tipo_id');
+});
+
+test('no se puede radicar en un tipo de trámite desactivado', function () {
+    $tipo = TramiteTipo::create(['nombre' => 'Inactivo', 'slug' => 'inactivo', 'activo' => false]);
+
+    $this->post('/tramites', [
+        'tramite_tipo_id' => $tipo->id, 'asociado_nombre' => 'Ana', 'asociado_documento' => '123',
+        'asociado_email' => 'ana@test.co', 'descripcion' => 'x',
+    ])->assertSessionHasErrors('tramite_tipo_id');
+    expect(Solicitud::count())->toBe(0);
+});
+
+test('los mensajes de validación salen en español', function () {
+    $this->post('/tramites', [])->assertSessionHasErrors([
+        'asociado_documento' => 'El campo número de documento es obligatorio.',
+    ]);
 });
 
 test('consultar una solicitud con datos correctos muestra su estado', function () {

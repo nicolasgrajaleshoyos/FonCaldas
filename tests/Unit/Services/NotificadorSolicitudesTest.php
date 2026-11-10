@@ -1,7 +1,6 @@
 <?php
 
 use App\Mail\NuevaSolicitudAdmin;
-use App\Mail\SolicitudEstadoCambiado;
 use App\Models\Solicitud;
 use App\Models\TramiteTipo;
 use App\Models\User;
