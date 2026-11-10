@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 
 class Solicitud extends Model
 {
-    use TieneCodigo;
+    use SoftDeletes, TieneCodigo;
 
     protected $table = 'solicitudes';
 
@@ -67,11 +68,13 @@ class Solicitud extends Model
         return $this->belongsTo(TramiteTipo::class);
     }
 
+    /** @return HasMany<SolicitudDocumento, $this> */
     public function documentos(): HasMany
     {
         return $this->hasMany(SolicitudDocumento::class);
     }
 
+    /** @return HasMany<SolicitudEvento, $this> */
     public function eventos(): HasMany
     {
         return $this->hasMany(SolicitudEvento::class)->latest('id');
@@ -105,10 +108,15 @@ class Solicitud extends Model
     /** Guarda el archivo en el disco privado; los documentos del funcionario se versionan. */
     public function adjuntar(UploadedFile $archivo, string $origen): SolicitudDocumento
     {
+        $path = $archivo->store("solicitudes/{$this->id}", SolicitudDocumento::DISCO);
+
+        // Si la transacción que envuelve la subida se revierte, el archivo no debe quedar huérfano en disco.
+        \Illuminate\Support\Facades\DB::afterRollBack(fn () => \Illuminate\Support\Facades\Storage::disk(SolicitudDocumento::DISCO)->delete($path));
+
         return $this->documentos()->create([
             'origen' => $origen,
             'nombre_original' => $archivo->getClientOriginalName(),
-            'path' => $archivo->store("solicitudes/{$this->id}", SolicitudDocumento::DISCO),
+            'path' => $path,
             'version' => $origen === 'admin' ? $this->documentos()->where('origen', 'admin')->max('version') + 1 : 1,
         ]);
     }

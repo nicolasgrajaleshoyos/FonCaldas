@@ -20,7 +20,7 @@ trait TieneCodigo
     {
         do {
             $codigo = static::prefijoCodigo().'-'.now()->format('y').'-'.strtoupper(Str::random(6));
-        } while (static::where('codigo', $codigo)->exists());
+        } while (static::query()->withoutGlobalScopes()->where('codigo', $codigo)->exists());
 
         return $codigo;
     }
