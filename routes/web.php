@@ -9,12 +9,15 @@ use App\Http\Controllers\Admin\PqrsController as AdminPqrsController;
 use App\Http\Controllers\Admin\SolicitudController as AdminSolicitudController;
 use App\Http\Controllers\Admin\TramiteTipoController;
 use App\Http\Controllers\Admin\UsuarioController;
+use App\Http\Controllers\Admin\ParametroFinancieroController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PqrsController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\TransparenciaController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SimuladorCreditoController;
+use App\Http\Controllers\SimuladorAhorroController;
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -98,6 +101,18 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::put('/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('usuarios.update');
         Route::post('/usuarios/{usuario}/toggle', [UsuarioController::class, 'toggleActive'])->name('usuarios.toggle');
 
+        Route::get('/parametros-financieros', [ParametroFinancieroController::class, 'index'])->name('parametros-financieros.index');
+        Route::post('/parametros-financieros/tasas', [ParametroFinancieroController::class, 'guardar'])->name('parametros-financieros.tasas.guardar');
+        Route::get('/parametros-financieros/{producto}/historial', [ParametroFinancieroController::class, 'historial'])
+            ->name('parametros-financieros.historial');
+
+        Route::get('/parametros-financieros/tasas/{tasa}/editar', [ParametroFinancieroController::class, 'editar'])
+            ->name('parametros-financieros.tasas.editar');
+        Route::put('/parametros-financieros/tasas/{tasa}', [ParametroFinancieroController::class, 'actualizar'])
+            ->name('parametros-financieros.tasas.actualizar');
+        Route::patch('/parametros-financieros/tasas/{tasa}/desactivar', [ParametroFinancieroController::class, 'desactivar'])
+            ->name('parametros-financieros.tasas.desactivar');
+
         Route::get('/tipos-tramite', [TramiteTipoController::class, 'index'])->name('tramite-tipos.index');
         Route::post('/tipos-tramite', [TramiteTipoController::class, 'store'])->name('tramite-tipos.store');
         Route::get('/tipos-tramite/{tramiteTipo}/editar', [TramiteTipoController::class, 'edit'])->name('tramite-tipos.edit');
@@ -125,3 +140,9 @@ Route::redirect('/inicio/organigrama', '/institucional#organigrama');
 Route::view('/creditos/expres', 'creditos.expres')->name('creditos.expres');
 
 Route::view('/creditos/lineas', 'creditos.lineas')->name('creditos.lineas');
+
+Route::get('/simuladores/credito', [SimuladorCreditoController::class, 'index'])
+    ->name('simuladores.credito');
+
+Route::get('/simuladores/ahorro', [SimuladorAhorroController::class, 'index'])
+    ->name('simuladores.ahorro');

@@ -15,6 +15,12 @@ if ($user?->is_super_admin) {
     array_splice($tabs, 2, 0, [['key' => 'pqrs', 'route' => 'admin.pqrs.index', 'label' => 'PQRS', 'icon' => 'ticket']]);
     $tabs[] = ['key' => 'usuarios', 'route' => 'admin.usuarios.index', 'label' => 'Usuarios', 'icon' => 'users'];
     $tabs[] = ['key' => 'tramite-tipos', 'route' => 'admin.tramite-tipos.index', 'label' => 'Tipos de trámite', 'icon' => 'briefcase'];
+    $tabs[] = [
+    'key' => 'parametros-financieros',
+    'route' => 'admin.parametros-financieros.index',
+    'label' => 'Parámetros financieros',
+    'icon' => 'card',
+];
 }
 @endphp
 
