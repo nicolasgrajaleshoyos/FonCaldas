@@ -49,7 +49,7 @@
 
                 <!-- WHATSAPP -->
                 <a href="https://wa.me/573225947308"
-                   target="_blank"
+                   target="_blank" rel="noopener"
                    class="inline-flex items-center gap-3 px-6 py-4 rounded-lg bg-[#25D366] text-white font-medium shadow-md hover:scale-[1.02] transition">
 
                     <x-icon name="whatsapp" class="w-5 h-5" />
@@ -68,7 +68,6 @@
                 <a href="{{ route('servicios') }}"
                    class="inline-flex items-center gap-3 px-6 py-4 rounded-lg border border-slate-300 text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700/40 transition">
 
-                    <x-icon name="arrow-right" class="w-4 h-4 rotate-180" />
                     Volver a servicios
                 </a>
 

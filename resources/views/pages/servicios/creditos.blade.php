@@ -20,7 +20,7 @@
 
         <!-- IMAGEN (más alta) -->
         <div class="h-[320px] overflow-hidden">
-            <img src="{{ asset('images/credexpress.png') }}"
+            <img src="{{ asset('images/creditos/credexpress.webp') }}"
                  loading="lazy"
                  class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
                  alt="Crédito Expres">
@@ -45,7 +45,7 @@
        class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
         <div class="h-[320px] overflow-hidden">
-            <img src="{{ asset('images/lineascred.png') }}"
+            <img src="{{ asset('images/creditos/lineascred.webp') }}"
                  loading="lazy"
                  class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
                  alt="Líneas de crédito">
@@ -69,7 +69,7 @@
        class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
         <div class="h-[320px] overflow-hidden">
-            <img src="{{ asset('images/reglcred.png') }}"
+            <img src="{{ asset('images/creditos/reglcred.webp') }}"
                  loading="lazy"
                  class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
                  alt="Reglamento de crédito">

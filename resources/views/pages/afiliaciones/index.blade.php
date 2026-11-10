@@ -2,6 +2,41 @@
 
 @section('content')
 
+@php
+    $requisitos = [
+        'Anexar fotocopia de la cédula',
+        'Diligenciar formulario de vinculación SARLAFT',
+        'Cuota de admisión (10% SMMLV)',
+        'Aporte mensual del 3% al 10% del salario',
+    ];
+
+    // Pasos 1 a 4; el paso 5 (bienvenida) tiene un diseño propio y se escribe aparte.
+    $pasos = [
+        ['Contacta a la asesora', 'Escríbele por WhatsApp para confirmar que cumples el vínculo laboral requerido y resolver tus dudas.'],
+        ['Diligencia los formularios', 'Completa el formulario de vinculación y el formulario SARLAFT con tus datos personales.'],
+        ['Presenta tu cédula', 'Anexa una fotocopia de tu cédula de ciudadanía a la solicitud.'],
+        ['Realiza tus aportes', 'Paga la cuota de admisión (10% del SMMLV) e inicia tu aporte mensual, entre el 3% y el 10% de tu salario.'],
+    ];
+
+    // [icono, título, descripción]
+    $beneficios = [
+        ['money', 'Tasas Preferenciales', 'Acceso a tasas de interés especiales en créditos y productos de ahorro diseñados para socios.'],
+        ['sparkle', 'Productos Exclusivos', 'Acceso a productos y servicios financieros diseñados exclusivamente para nuestros socios.'],
+        ['briefcase', 'Convenios y Descuentos', 'Descuentos especiales en comercios aliados y servicios empresariales en toda la región.'],
+        ['shield', 'Protección y Seguros', 'Coberturas de seguros especializados para proteger tu dinero y tus préstamos.'],
+        ['graduation', 'Capacitación y Educación', 'Acceso a talleres y programas de educación financiera para mejorar tu gestión económica.'],
+        ['ballot', 'Participación Democrática', 'Voz y voto en las asambleas generales y decisiones de la cooperativa.'],
+        ['gift', 'Programas Especiales', 'Acceso a promociones especiales, sorteos y premios exclusivos para miembros.'],
+    ];
+
+    $porQueElegirnos = [
+        ['heart', 'Organización solidaria', 'Fundada en principios de cooperación y ayuda mutua'],
+        ['users', 'Atención personalizada', 'Servicio cercano y profesional para cada socio'],
+        ['trending-up', 'Mejores tasas del mercado', 'Las mejores tasas de interés del mercado'],
+        ['lock', 'Seguridad garantizada', 'Regulación y supervisión financiera completa'],
+    ];
+@endphp
+
 <div class="min-h-screen page-bg py-14">
 
     <div class="max-w-4xl mx-auto px-6">
@@ -15,12 +50,11 @@
                 center />
         </div>
 
-        <!-- NAV DE SECCIONES -->
-        <div class="flex flex-wrap justify-center gap-3 mb-14">
-            <a href="#quien-puede-ser-socio" class="px-5 py-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:border-[#0C67A3]/40 hover:text-[#0C67A3] transition">Quién puede ser socio</a>
-            <a href="#como-asociarse" class="px-5 py-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:border-[#0C67A3]/40 hover:text-[#0C67A3] transition">Cómo asociarse</a>
-            <a href="#beneficios" class="px-5 py-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:border-[#0C67A3]/40 hover:text-[#0C67A3] transition">Beneficios</a>
-        </div>
+        <x-nav-secciones :secciones="[
+            ['quien-puede-ser-socio', 'Quién puede ser socio'],
+            ['como-asociarse', 'Cómo asociarse'],
+            ['beneficios', 'Beneficios'],
+        ]" />
 
         <!-- ================= QUIÉN PUEDE SER SOCIO ================= -->
         <section id="quien-puede-ser-socio" class="scroll-mt-24 mb-16">
@@ -41,10 +75,9 @@
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-8">
                 <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-5">Requisitos de vinculación</h3>
                 <ul class="space-y-3 text-slate-600 dark:text-slate-400 text-[15px]">
-                    <li class="flex items-start gap-2"><x-icon name="check" class="w-4 h-4 mt-1 text-[#0C67A3] shrink-0" /> Anexar fotocopia de la cédula</li>
-                    <li class="flex items-start gap-2"><x-icon name="check" class="w-4 h-4 mt-1 text-[#0C67A3] shrink-0" /> Diligenciar formulario de vinculación SARLAFT</li>
-                    <li class="flex items-start gap-2"><x-icon name="check" class="w-4 h-4 mt-1 text-[#0C67A3] shrink-0" /> Cuota de admisión (10% SMMLV)</li>
-                    <li class="flex items-start gap-2"><x-icon name="check" class="w-4 h-4 mt-1 text-[#0C67A3] shrink-0" /> Aporte mensual del 3% al 10% del salario</li>
+                    @foreach ($requisitos as $requisito)
+                        <li class="flex items-start gap-2"><x-icon name="check" class="w-4 h-4 mt-1 text-[#0C67A3] shrink-0" /> {{ $requisito }}</li>
+                    @endforeach
                 </ul>
             </div>
 
@@ -66,7 +99,7 @@
                         Liliana Quintero Zuluaga te acompaña durante todo el proceso de afiliación.
                     </p>
                 </div>
-                <a href="https://wa.me/573245048815" target="_blank"
+                <a href="https://wa.me/573245048815" target="_blank" rel="noopener"
                    class="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition">
                     <x-icon name="whatsapp" class="w-4 h-4" />
                     314 504 8815
@@ -76,45 +109,17 @@
             <!-- STEPS -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="w-10 h-10 rounded-full bg-[#0C67A3] text-white flex items-center justify-center font-bold shrink-0">1</span>
-                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Contacta a la asesora</h3>
+                @foreach ($pasos as $indice => [$titulo, $detalle])
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="w-10 h-10 rounded-full bg-[#0C67A3] text-white flex items-center justify-center font-bold shrink-0">{{ $indice + 1 }}</span>
+                            <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">{{ $titulo }}</h3>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 text-[14px] leading-relaxed">
+                            {{ $detalle }}
+                        </p>
                     </div>
-                    <p class="text-slate-500 dark:text-slate-400 text-[14px] leading-relaxed">
-                        Escríbele por WhatsApp para confirmar que cumples el vínculo laboral requerido y resolver tus dudas.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="w-10 h-10 rounded-full bg-[#0C67A3] text-white flex items-center justify-center font-bold shrink-0">2</span>
-                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Diligencia los formularios</h3>
-                    </div>
-                    <p class="text-slate-500 dark:text-slate-400 text-[14px] leading-relaxed">
-                        Completa el formulario de vinculación y el formulario SARLAFT con tus datos personales.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="w-10 h-10 rounded-full bg-[#0C67A3] text-white flex items-center justify-center font-bold shrink-0">3</span>
-                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Presenta tu cédula</h3>
-                    </div>
-                    <p class="text-slate-500 dark:text-slate-400 text-[14px] leading-relaxed">
-                        Anexa una fotocopia de tu cédula de ciudadanía a la solicitud.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="w-10 h-10 rounded-full bg-[#0C67A3] text-white flex items-center justify-center font-bold shrink-0">4</span>
-                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Realiza tus aportes</h3>
-                    </div>
-                    <p class="text-slate-500 dark:text-slate-400 text-[14px] leading-relaxed">
-                        Paga la cuota de admisión (10% del SMMLV) e inicia tu aporte mensual, entre el 3% y el 10% de tu salario.
-                    </p>
-                </div>
+                @endforeach
 
                 <div class="md:col-span-2 bg-[#0B4870] rounded-3xl p-8 text-white shadow-lg">
                     <div class="flex items-center gap-3 mb-3">
@@ -141,7 +146,7 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-3 shrink-0">
-                    <a href="{{ asset('pdf/Formulariovinculacion.pdf') }}" target="_blank"
+                    <a href="{{ asset('pdf/Formulariovinculacion.pdf') }}" target="_blank" rel="noopener"
                        class="px-6 py-3 bg-[#0B4870] text-white font-semibold rounded-lg hover:bg-[#0a3d60] transition">
                         Ver PDF
                     </a>
@@ -164,75 +169,18 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="inline-flex items-center gap-3 mb-4">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="money" class="w-5 h-5" /></span>
-                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Tasas Preferenciales</h3>
+                @foreach ($beneficios as [$icono, $titulo, $detalle])
+                    {{-- Con un número impar de tarjetas, la última ocupa todo el ancho. --}}
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700{{ $loop->last ? ' md:col-span-2' : '' }}">
+                        <div class="inline-flex items-center gap-3 mb-4">
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon :name="$icono" class="w-5 h-5" /></span>
+                            <h3 class="text-xl font-semibold text-slate-900 dark:text-white">{{ $titulo }}</h3>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-400">
+                            {{ $detalle }}
+                        </p>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400">
-                        Acceso a tasas de interés especiales en créditos y productos de ahorro diseñados para socios.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="inline-flex items-center gap-3 mb-4">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="sparkle" class="w-5 h-5" /></span>
-                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Productos Exclusivos</h3>
-                    </div>
-                    <p class="text-slate-600 dark:text-slate-400">
-                        Acceso a productos y servicios financieros diseñados exclusivamente para nuestros socios.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="inline-flex items-center gap-3 mb-4">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="briefcase" class="w-5 h-5" /></span>
-                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Convenios y Descuentos</h3>
-                    </div>
-                    <p class="text-slate-600 dark:text-slate-400">
-                        Descuentos especiales en comercios aliados y servicios empresariales en toda la región.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="inline-flex items-center gap-3 mb-4">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="shield" class="w-5 h-5" /></span>
-                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Protección y Seguros</h3>
-                    </div>
-                    <p class="text-slate-600 dark:text-slate-400">
-                        Coberturas de seguros especializados para proteger tu dinero y tus préstamos.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="inline-flex items-center gap-3 mb-4">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="graduation" class="w-5 h-5" /></span>
-                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Capacitación y Educación</h3>
-                    </div>
-                    <p class="text-slate-600 dark:text-slate-400">
-                        Acceso a talleres y programas de educación financiera para mejorar tu gestión económica.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="inline-flex items-center gap-3 mb-4">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="ballot" class="w-5 h-5" /></span>
-                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Participación Democrática</h3>
-                    </div>
-                    <p class="text-slate-600 dark:text-slate-400">
-                        Voz y voto en las asambleas generales y decisiones de la cooperativa.
-                    </p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 md:col-span-2">
-                    <div class="inline-flex items-center gap-3 mb-4">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="gift" class="w-5 h-5" /></span>
-                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Programas Especiales</h3>
-                    </div>
-                    <p class="text-slate-600 dark:text-slate-400">
-                        Acceso a promociones especiales, sorteos y premios exclusivos para miembros.
-                    </p>
-                </div>
+                @endforeach
 
             </div>
 
@@ -243,37 +191,15 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700 dark:text-slate-300">
 
-                    <div class="flex items-start gap-3">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="heart" class="w-5 h-5" /></span>
-                        <div>
-                            <p class="font-semibold">Organización solidaria</p>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm">Fundada en principios de cooperación y ayuda mutua</p>
+                    @foreach ($porQueElegirnos as [$icono, $titulo, $detalle])
+                        <div class="flex items-start gap-3">
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon :name="$icono" class="w-5 h-5" /></span>
+                            <div>
+                                <p class="font-semibold">{{ $titulo }}</p>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm">{{ $detalle }}</p>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="flex items-start gap-3">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="users" class="w-5 h-5" /></span>
-                        <div>
-                            <p class="font-semibold">Atención personalizada</p>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm">Servicio cercano y profesional para cada socio</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-3">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="trending-up" class="w-5 h-5" /></span>
-                        <div>
-                            <p class="font-semibold">Mejores tasas del mercado</p>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm">Las mejores tasas de interés del mercado</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-3">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="lock" class="w-5 h-5" /></span>
-                        <div>
-                            <p class="font-semibold">Seguridad garantizada</p>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm">Regulación y supervisión financiera completa</p>
-                        </div>
-                    </div>
+                    @endforeach
 
                 </div>
 

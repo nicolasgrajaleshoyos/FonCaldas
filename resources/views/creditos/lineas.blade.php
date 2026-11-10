@@ -17,7 +17,7 @@
             <!-- 1 VEHÍCULO -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden grid md:grid-cols-2">
 
-                <img src="{{ asset('images/credito-carro.png') }}"
+                <img src="{{ asset('images/creditos/credito-carro.webp') }}"
                      alt="Crédito de vehículo"
                      loading="lazy"
                      class="w-full h-full object-contain min-h-[260px] bg-white dark:bg-slate-800 mx-auto">
@@ -39,7 +39,7 @@
             <!-- 2 LIBRE INVERSIÓN -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden grid md:grid-cols-2">
 
-                <img src="{{ asset('images/credito-libre.png') }}"
+                <img src="{{ asset('images/creditos/credito-libre.webp') }}"
                      alt="Crédito de libre inversión"
                      loading="lazy"
                      class="w-full h-full object-contain min-h-[260px] bg-white dark:bg-slate-800 mx-auto">
@@ -63,7 +63,7 @@
             <!-- 3 COMPRA DE DEUDAS -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden grid md:grid-cols-2">
 
-                <img src="{{ asset('images/credito-deudas.png') }}"
+                <img src="{{ asset('images/creditos/credito-deudas.webp') }}"
                      alt="Compra de cartera"
                      loading="lazy"
                      class="w-full h-full object-contain min-h-[260px] bg-white dark:bg-slate-800 mx-auto">
@@ -85,7 +85,7 @@
             <!-- 4 MOTO -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden grid md:grid-cols-2">
 
-                <img src="{{ asset('images/credito-moto.png') }}"
+                <img src="{{ asset('images/creditos/credito-moto.webp') }}"
                      alt="Crédito de motocicleta"
                      loading="lazy"
                      class="w-full h-full object-contain min-h-[260px] bg-white dark:bg-slate-800 mx-auto">
@@ -109,7 +109,7 @@
             <!-- 5 TECNOLOGÍA -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden grid md:grid-cols-2">
 
-                <img src="{{ asset('images/credito-celular.png') }}"
+                <img src="{{ asset('images/creditos/credito-celular.webp') }}"
                      alt="Crédito de tecnología"
                      loading="lazy"
                      class="w-full h-full object-contain min-h-[260px] bg-white dark:bg-slate-800 mx-auto">

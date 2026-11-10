@@ -15,7 +15,7 @@
 
         <!-- ACCIONES -->
         <div class="flex flex-wrap items-center gap-3 mb-8">
-            <a href="{{ asset('pdf/CONVENIOS.pdf') }}" target="_blank"
+            <a href="{{ asset('pdf/CONVENIOS.pdf') }}" target="_blank" rel="noopener"
                class="inline-flex items-center gap-2 rounded-lg bg-[#0B4870] px-5 py-3 text-white font-semibold hover:bg-[#0a3d60] transition">
                 <x-icon name="document" class="w-4 h-4" />
                 Descargar PDF
@@ -31,7 +31,7 @@
         <div class="space-y-6">
             @foreach (range(1, 5) as $page)
                 <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
-                    <img src="{{ asset('images/convenios/pagina-' . $page . '.png') }}"
+                    <img src="{{ asset('images/convenios/pagina-' . $page . '.webp') }}"
                          alt="Convenios Foncaldas — página {{ $page }}"
                          loading="{{ $page === 1 ? 'eager' : 'lazy' }}"
                          class="w-full h-auto">

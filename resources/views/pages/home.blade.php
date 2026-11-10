@@ -11,12 +11,12 @@
 
         <div class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white dark:to-slate-900"></div>
 
-        <div class="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-4 sm:px-6 lg:px-8 py-14 lg:py-24">
+        <div class="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-4 sm:px-6 lg:px-8 py-14 lg:py-14 2xl:py-24">
 
             <!-- TEXTO -->
             <div class="min-w-0">
 
-                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold leading-[1.05] tracking-tight text-[#0F172A] dark:text-white">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[clamp(2.25rem,4vw,3.75rem)] font-bold leading-[1.05] tracking-tight text-[#0F172A] dark:text-white">
                     Tu aliado
                     <span class="relative inline-block text-[#0C67A3]">
                         financiero
@@ -28,7 +28,7 @@
                     en Manizales
                 </h1>
 
-                <p class="mt-6 text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed max-w-xl">
+                <p class="mt-6 text-slate-600 dark:text-slate-400 text-base md:text-lg lg:text-[clamp(1rem,1.5vw,1.25rem)] leading-relaxed max-w-xl">
                     Ahorro, créditos, afiliaciones y convenios pensados para el bienestar de tu familia y tu empresa.
                 </p>
 
@@ -36,7 +36,6 @@
                     <a href="{{ route('servicios') }}"
                        class="group inline-flex items-center gap-2 bg-[#0B4870] text-white px-7 py-3.5 rounded-lg font-semibold shadow-lg shadow-[#0B4870]/25 hover:shadow-xl hover:shadow-[#0B4870]/30 hover:-translate-y-0.5 transition">
                         Ver servicios
-                        <x-icon name="arrow-right" class="w-4 h-4 transition group-hover:translate-x-1" />
                     </a>
                     <a href="{{ route('afiliaciones') }}#como-asociarse"
                        class="border-2 border-[#0B4870] bg-white text-[#0B4870] shadow-md dark:border-sky-400 dark:bg-transparent dark:text-sky-200 dark:shadow-none px-7 py-3.5 rounded-lg font-semibold hover:bg-[#0B4870] hover:text-white dark:hover:bg-sky-400/15 dark:hover:text-white hover:-translate-y-0.5 transition">
@@ -49,7 +48,7 @@
             <!-- PANEL DE SERVICIOS -->
             <div class="min-w-0 relative pt-10">
 
-                <x-mascot pose="hola" class="absolute -top-2 right-6 z-10 w-28 h-28 md:w-36 md:h-36" />
+                <x-mascot pose="hola" loading="eager" class="absolute -top-2 right-6 z-10 w-28 h-28 md:w-36 md:h-36" />
 
                 <div class="relative rounded-3xl bg-[#0B4870] p-8 shadow-xl overflow-hidden">
 
@@ -67,37 +66,20 @@
 
                     <div class="relative grid grid-cols-2 gap-4">
 
-                        <a href="{{ route('servicios.ahorro') }}" class="group rounded-2xl bg-white/10 hover:bg-white/15 transition p-5">
-                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white">
-                                <x-icon name="coins" class="w-5 h-5" />
-                            </span>
-                            <p class="mt-4 text-white font-semibold">Ahorro</p>
-                            <p class="text-white/60 text-[13px] mt-1">Cuentas flexibles y seguras</p>
-                        </a>
-
-                        <a href="{{ route('servicios.creditos') }}" class="group rounded-2xl bg-white/10 hover:bg-white/15 transition p-5">
-                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white">
-                                <x-icon name="card" class="w-5 h-5" />
-                            </span>
-                            <p class="mt-4 text-white font-semibold">Créditos</p>
-                            <p class="text-white/60 text-[13px] mt-1">Líneas accesibles para ti</p>
-                        </a>
-
-                        <a href="{{ route('afiliaciones') }}" class="group rounded-2xl bg-white/10 hover:bg-white/15 transition p-5">
-                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white">
-                                <x-icon name="users" class="w-5 h-5" />
-                            </span>
-                            <p class="mt-4 text-white font-semibold">Afiliaciones</p>
-                            <p class="text-white/60 text-[13px] mt-1">Sé parte de Foncaldas</p>
-                        </a>
-
-                        <a href="{{ route('servicios.bienestar') }}" class="group rounded-2xl bg-white/10 hover:bg-white/15 transition p-5">
-                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white">
-                                <x-icon name="heart" class="w-5 h-5" />
-                            </span>
-                            <p class="mt-4 text-white font-semibold">Bienestar</p>
-                            <p class="text-white/60 text-[13px] mt-1">Beneficios para tu familia</p>
-                        </a>
+                        @foreach ([
+                            ['servicios.ahorro', 'coins', 'Ahorro', 'Cuentas flexibles y seguras'],
+                            ['servicios.creditos', 'card', 'Créditos', 'Líneas accesibles para ti'],
+                            ['afiliaciones', 'users', 'Afiliaciones', 'Sé parte de Foncaldas'],
+                            ['servicios.bienestar', 'heart', 'Bienestar', 'Beneficios para tu familia'],
+                        ] as [$ruta, $icono, $titulo, $detalle])
+                            <a href="{{ route($ruta) }}" class="group rounded-2xl bg-white/10 hover:bg-white/15 transition p-5">
+                                <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white">
+                                    <x-icon :name="$icono" class="w-5 h-5" />
+                                </span>
+                                <p class="mt-4 text-white font-semibold">{{ $titulo }}</p>
+                                <p class="text-white/60 text-[13px] mt-1">{{ $detalle }}</p>
+                            </a>
+                        @endforeach
 
                     </div>
 
@@ -178,7 +160,7 @@
                             <span class="text-[10px] uppercase tracking-wide text-white/70 mt-1">{{ $mesesAbrev[$event->event_date->month - 1] }}</span>
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white truncate">{{ $event->title }}</h3>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white line-clamp-2">{{ $event->title }}</h3>
                             <p class="text-slate-500 dark:text-slate-400 text-sm mt-1 flex items-center gap-1.5">
                                 <x-icon name="map-pin" class="w-3.5 h-3.5 shrink-0" />
                                 {{ $event->location }}
@@ -190,7 +172,7 @@
 
             <div class="text-center mt-8">
                 <a href="{{ route('eventos') }}" class="inline-flex items-center gap-2 text-[#0B4870] font-semibold hover:underline">
-                    Ver todos los eventos <x-icon name="arrow-right" class="w-4 h-4" />
+                    Ver todos los eventos
                 </a>
             </div>
 
