@@ -1,5 +1,41 @@
 @import "tailwindcss";
 
+/* TIPOGRAFÍAS PROPIAS: Inter (texto) y Sora (títulos) se sirven desde el propio sitio, no desde Google Fonts:
+   se evita una conexión externa en la primera visita. Solo se incluyen los subconjuntos latin (español) y
+   latin-ext; el navegador descarga cada uno únicamente si la página usa sus caracteres. */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Sora';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 800;
+    src: url('../../node_modules/@fontsource-variable/sora/files/sora-latin-ext-wght-normal.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'Sora';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 800;
+    src: url('../../node_modules/@fontsource-variable/sora/files/sora-latin-wght-normal.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* MODO OSCURO: activado a mano con la clase .dark en <html> (no solo por
    preferencia del sistema), para que el interruptor sol/luna funcione. */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -171,6 +207,7 @@ body {
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
+select:focus-visible,
 textarea:focus-visible {
     outline: 2px solid #0C67A3;
     outline-offset: 2px;
@@ -269,11 +306,11 @@ img.img-loading {
 
     color: rgba(255,255,255,.92);
 
-    font-size: 15px;
+    font-size: 13.5px;
 
     font-weight: 500;
 
-    padding: 8px 12px;
+    padding: 8px 7px;
 
     border-radius: 10px;
 
@@ -404,4 +441,11 @@ img.img-loading {
 
     border-radius: 24px;
 
+}
+/* Pantallas anchas: la barra recupera su tamaño holgado */
+@media (min-width: 1536px) {
+    .nav-link {
+        font-size: 15px;
+        padding: 8px 12px;
+    }
 }
