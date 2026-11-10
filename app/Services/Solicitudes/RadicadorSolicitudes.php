@@ -5,6 +5,7 @@ namespace App\Services\Solicitudes;
 use App\Models\Solicitud;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 
 class RadicadorSolicitudes
 {
@@ -14,11 +15,16 @@ class RadicadorSolicitudes
     public function radicar(array $datos, array $documentos = []): Solicitud
     {
         // El estado se fija aquí: el default de la BD no se refleja en el modelo recién creado.
-        $solicitud = Solicitud::create($datos + ['estado' => Solicitud::ESTADO_RECIBIDA]);
-        $solicitud->registrarEvento('solicitud_creada', 'Solicitud radicada por el asociado.', null, $solicitud->estado);
+        // Todo o nada: no queda una solicitud a medias (sin evento, adjuntos o responsable) si algo falla.
+        $solicitud = DB::transaction(function () use ($datos, $documentos) {
+            $solicitud = Solicitud::create($datos + ['estado' => Solicitud::ESTADO_RECIBIDA]);
+            $solicitud->registrarEvento('solicitud_creada', 'Solicitud radicada por el asociado.', null, $solicitud->estado);
 
-        $this->adjuntar($solicitud, $documentos);
-        $this->asignarResponsable($solicitud);
+            $this->adjuntar($solicitud, $documentos);
+            $this->asignarResponsable($solicitud);
+
+            return $solicitud;
+        });
 
         $this->notificador->alAsociado($solicitud);
         $this->notificador->aAdmins($solicitud);
@@ -29,11 +35,13 @@ class RadicadorSolicitudes
     /** Documentos que el asociado agrega a una solicitud que sigue en trámite. */
     public function agregarDocumentos(Solicitud $solicitud, array $documentos): void
     {
-        $nombres = $this->adjuntar($solicitud, $documentos);
+        DB::transaction(function () use ($solicitud, $documentos) {
+            $nombres = $this->adjuntar($solicitud, $documentos);
 
-        if ($nombres) {
-            $solicitud->registrarEvento('documento_adjuntado', 'El asociado adjuntó: '.implode(', ', $nombres));
-        }
+            if ($nombres) {
+                $solicitud->registrarEvento('documento_adjuntado', 'El asociado adjuntó: '.implode(', ', $nombres));
+            }
+        });
     }
 
     /** @return list<string> nombres de los archivos guardados */
