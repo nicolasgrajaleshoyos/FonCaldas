@@ -25,3 +25,11 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+
+# Herramientas de asistente de IA: no se versionan
+/.claude/
+/CLAUDE.md
+
+# Archivos subidos desde el panel (se respaldan aparte, no van en Git)
+/public/uploads/

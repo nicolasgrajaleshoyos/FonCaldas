@@ -5,6 +5,8 @@
 
         <div class="max-w-6xl mx-auto px-6">
 
+            <x-back-link :route="route('servicios')" label="Volver a servicios" />
+
             <x-page-header icon="card" title="Opciones de financiamiento"
                 subtitle="Explora nuestras líneas de crédito y elige la opción que mejor se adapte a ti." />
 
@@ -15,10 +17,10 @@
                 <a href="{{ route('creditos.expres') }}"
                     class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
-                    <!-- IMAGEN (más alta) -->
-                    <div class="h-[320px] overflow-hidden">
-                        <img src="{{ asset('images/credexpress.png') }}" loading="lazy"
-                            class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
+                    <!-- IMAGEN (cuadrada, ocupa todo el ancho de la tarjeta) -->
+                    <div class="aspect-square overflow-hidden">
+                        <img src="{{ asset('images/creditos/credexpress.webp') }}" loading="lazy"
+                            class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                             alt="Crédito Expres">
                     </div>
 
@@ -42,9 +44,9 @@
                 <a href="{{ route('creditos.lineas') }}"
                     class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
-                    <div class="h-[320px] overflow-hidden">
-                        <img src="{{ asset('images/lineascred.png') }}" loading="lazy"
-                            class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
+                    <div class="aspect-square overflow-hidden">
+                        <img src="{{ asset('images/creditos/lineascred.webp') }}" loading="lazy"
+                            class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                             alt="Líneas de crédito">
                     </div>
 
@@ -67,9 +69,9 @@
                 <a href="{{ asset('pdf/ReglamentoDeCredito.pdf') }}" target="_blank" rel="noopener"
                     class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
 
-                    <div class="h-[320px] overflow-hidden">
-                        <img src="{{ asset('images/reglcred.png') }}" loading="lazy"
-                            class="w-full h-full object-contain bg-white dark:bg-slate-800 group-hover:scale-105 transition duration-500"
+                    <div class="aspect-square overflow-hidden">
+                        <img src="{{ asset('images/creditos/reglcred.webp') }}" loading="lazy"
+                            class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                             alt="Reglamento de crédito">
                     </div>
 
@@ -89,23 +91,12 @@
                 </a>
 
             </div>
-            <!-- Botón Simulador -->
-            <div
-                class="mt-8 rounded-2xl border border-slate-200 bg-white px-6 py-6 shadow-sm
-            dark:border-slate-700 dark:bg-slate-800/60">
-
-                <div class="flex justify-center">
-                    <a href="{{ route('simuladores.credito') }}"
-                        class="inline-flex items-center justify-center px-6 py-3 rounded-xl
-                   bg-[#0C67A3] text-white font-semibold
-                   hover:bg-[#09598d] transition">
-                        Simular crédito
-                    </a>
-                </div>
-
-            </div>
-
-            <x-back-link :route="route('servicios')" label="← Volver a servicios" />
+            <!-- Simulador -->
+            <x-cta-simulador :route="route('simuladores.credito')" pose="celular"
+                titulo="Conoce las condiciones de cada crédito"
+                texto="Consulta los plazos, los límites y las tasas de referencia de cada línea de crédito de Foncaldas, sin ningún compromiso."
+                boton="Ir al simulador"
+                :puntos="['Tasas actualizadas', 'Plazos y límites', 'Sin compromiso']" />
 
         </div>
 

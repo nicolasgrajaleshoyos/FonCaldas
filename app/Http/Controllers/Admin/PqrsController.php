@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pqrs;
 use App\Services\Pqrs\FlujoPqrs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PqrsController extends Controller
 {
@@ -17,6 +18,7 @@ class PqrsController extends Controller
             ->when($request->input('tipo'), fn ($q, $tipo) => $q->where('tipo', $tipo))
             ->when($request->input('estado'), fn ($q, $estado) => $q->where('estado', $estado))
             ->latest()
+            ->latest('id')
             ->paginate(20)
             ->withQueryString();
 
@@ -32,6 +34,15 @@ class PqrsController extends Controller
         return view('pages.admin-pqrs-show', ['pqrs' => $pqrs->load('respondidoPor')]);
     }
 
+    public function destroy(Request $request, Pqrs $pqrs)
+    {
+        // Borrado lógico: la PQRS sale del panel pero el registro se conserva.
+        $pqrs->delete();
+        Log::notice("PQRS {$pqrs->codigo} eliminada (borrado lógico) por {$request->user()->username}.");
+
+        return redirect()->route('admin.pqrs.index')->with('success', 'PQRS eliminada.');
+    }
+
     public function tramitar(Pqrs $pqrs)
     {
         $this->flujo->tramitar($pqrs);
@@ -41,7 +52,7 @@ class PqrsController extends Controller
 
     public function responder(Request $request, Pqrs $pqrs)
     {
-        $data = $request->validate(['respuesta' => 'required|string|max:5000']);
+        $data = $request->validate(['respuesta' => 'required|string|min:3|max:5000']);
         $this->flujo->responder($pqrs, $request->user(), $data['respuesta']);
 
         return back()->with('success', 'Respuesta enviada al asociado.');

@@ -21,11 +21,13 @@ class TramiteTipo extends Model
         'activo' => 'boolean',
     ];
 
+    /** @return HasMany<Solicitud, $this> */
     public function solicitudes(): HasMany
     {
         return $this->hasMany(Solicitud::class);
     }
 
+    /** @return BelongsToMany<User, $this> */
     public function usuarios(): BelongsToMany
     {
         return $this->belongsToMany(User::class);

@@ -13,8 +13,8 @@ class GuardarEventoRequest extends FormRequest
             'description' => 'required|string',
             'location' => 'required|string|max:255',
             'event_date' => 'required|date',
-            'event_time' => 'required',
-            'media' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp,svg,mp4,mov,avi,webm,mkv|max:51200',
+            'event_time' => 'required|date_format:H:i,H:i:s',
+            'media' => 'nullable|file|mimes:jpeg,jpg,png,gif,webp,mp4,mov,avi,webm,mkv|max:51200',
         ];
     }
 

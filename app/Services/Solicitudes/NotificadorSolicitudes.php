@@ -8,6 +8,7 @@ use App\Models\Solicitud;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 
 class NotificadorSolicitudes
 {
@@ -32,6 +33,14 @@ class NotificadorSolicitudes
 
     private function enviar(string $email, object $mailable, string $destino): void
     {
+        // El correo del asociado lo escribe quien radica: se limita por destinatario para que no sirva para
+        // enviar ráfagas de correos a un tercero. Los funcionarios no tienen este límite.
+        if ($destino === 'asociado' && ! RateLimiter::attempt('correo:'.strtolower($email), 10, fn () => true, 3600)) {
+            Log::warning('Correo al asociado omitido por exceso de envíos a la misma dirección.');
+
+            return;
+        }
+
         try {
             Mail::to($email)->send($mailable);
         } catch (\Throwable $e) {

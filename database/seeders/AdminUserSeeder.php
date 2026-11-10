@@ -18,21 +18,24 @@ class AdminUserSeeder extends Seeder
         $username = config('admin.username');
         $hash = config('admin.password_hash');
 
-        if (!$username || !$hash) {
+        if (! $username || ! $hash) {
             return;
         }
+
+        // created_at solo se fija al crear: una nueva ejecución del seeder no debe reescribir la fecha de alta.
+        $existe = DB::table('users')->where('username', $username)->exists();
 
         DB::table('users')->updateOrInsert(
             ['username' => $username],
             [
                 'name' => 'Administrador FONCALDAS',
-                'email' => $username . '@foncaldas.local',
+                // Correo real para recibir los avisos; el dominio .local queda solo como respaldo si no se define.
+                'email' => config('admin.email') ?: $username.'@foncaldas.local',
                 'password' => $hash,
                 'is_super_admin' => true,
                 'is_active' => true,
                 'updated_at' => now(),
-                'created_at' => now(),
-            ]
+            ] + ($existe ? [] : ['created_at' => now()])
         );
     }
 }

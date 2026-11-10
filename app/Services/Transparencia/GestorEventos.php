@@ -8,8 +8,6 @@ use Illuminate\Http\UploadedFile;
 
 class GestorEventos
 {
-    private const EXTENSIONES_VIDEO = ['mp4', 'mov', 'avi', 'webm', 'mkv'];
-
     public function __construct(private AlmacenArchivos $archivos) {}
 
     public function crear(array $datos, ?UploadedFile $media): Event
@@ -25,14 +23,35 @@ class GestorEventos
         ]);
     }
 
+    /** Sin archivo nuevo se conserva el actual; con archivo nuevo se reemplaza y se borra el anterior. */
+    public function actualizar(Event $evento, array $datos, ?UploadedFile $media): Event
+    {
+        $evento->fill(collect($datos)->only(['title', 'description', 'location', 'event_date', 'event_time'])->all());
+
+        if ($media) {
+            $anterior = $evento->media_path;
+            $evento->media_type = $this->tipoMedia($media);
+            $evento->media_path = $this->archivos->guardar($media, 'uploads/eventos');
+        }
+
+        $evento->save();
+
+        // El archivo viejo se borra solo después de guardar el registro.
+        if (isset($anterior)) {
+            $this->archivos->eliminar($anterior);
+        }
+
+        return $evento;
+    }
+
     public function eliminar(Event $evento): void
     {
-        $this->archivos->eliminar($evento->media_path);
         $evento->delete();
+        $this->archivos->eliminar($evento->media_path);
     }
 
     private function tipoMedia(UploadedFile $media): string
     {
-        return in_array(strtolower($media->getClientOriginalExtension()), self::EXTENSIONES_VIDEO, true) ? 'video' : 'image';
+        return str_starts_with((string) $media->getMimeType(), 'video/') ? 'video' : 'image';
     }
 }

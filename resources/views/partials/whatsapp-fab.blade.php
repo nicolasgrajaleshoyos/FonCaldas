@@ -18,7 +18,7 @@ $waChannels = [
         @foreach($waChannels as $ch)
             <a href="https://wa.me/{{ $ch['phone'] }}" target="_blank" rel="noopener"
                class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition border-b border-slate-100 dark:border-slate-700 last:border-b-0">
-                <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-50 text-green-600">
+                <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400">
                     <x-icon name="{{ $ch['icon'] }}" class="w-4 h-4" />
                 </span>
                 <span>

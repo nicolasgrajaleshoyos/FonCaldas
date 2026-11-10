@@ -37,6 +37,13 @@ class UsuarioController extends Controller
 
     public function update(GuardarUsuarioRequest $request, User $usuario)
     {
+        $quedaSinPrincipal = $usuario->is_super_admin && ! $request->boolean('is_super_admin')
+            && User::where('is_super_admin', true)->where('is_active', true)->whereKeyNot($usuario->id)->doesntExist();
+
+        if ($quedaSinPrincipal) {
+            return back()->withInput()->withErrors(['is_super_admin' => 'Debe existir al menos un administrador principal activo; no puedes quitar este rol al último.']);
+        }
+
         $usuario->update($this->atributos($request));
         $usuario->tramiteTipos()->sync($request->input('tramite_tipos', []));
 
@@ -47,6 +54,10 @@ class UsuarioController extends Controller
     {
         if ($usuario->is($request->user())) {
             return back()->withErrors(['usuario' => 'No puedes desactivar tu propia cuenta.']);
+        }
+
+        if ($usuario->is_super_admin) {
+            return back()->withErrors(['usuario' => 'El administrador principal no se puede desactivar.']);
         }
 
         $usuario->update(['is_active' => ! $usuario->is_active]);

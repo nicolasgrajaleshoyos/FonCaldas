@@ -14,12 +14,16 @@ class GuardarDocumentoRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'category' => ['required', Rule::in($categorias->slugs())],
-            'document' => 'required|mimes:pdf',
+            // Al editar (PUT) el PDF es opcional: sin archivo nuevo se conserva el actual.
+            'document' => [$this->isMethod('PUT') ? 'nullable' : 'required', 'file', 'mimes:pdf', 'max:20480'],
         ];
     }
 
     public function messages(): array
     {
-        return ['document.mimes' => 'Solo se permiten archivos PDF.'];
+        return [
+            'document.mimes' => 'Solo se permiten archivos PDF.',
+            'document.max' => 'El PDF es demasiado grande. Máximo 20MB.',
+        ];
     }
 }

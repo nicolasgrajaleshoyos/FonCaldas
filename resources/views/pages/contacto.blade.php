@@ -8,7 +8,7 @@
 
         <!-- HEADER -->
         <div class="flex flex-col items-center mb-10">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="celular" class="mb-4" />
             <x-page-header
                 icon="phone"
                 title="Contacto"
@@ -51,7 +51,7 @@
                 </div>
 
                 <a href="https://www.google.com/maps/search/?api=1&query=Calle+60+25-01+Manizales"
-                   target="_blank"
+                   target="_blank" rel="noopener"
                    class="mt-6 inline-flex items-center justify-center px-6 py-3 rounded-lg bg-slate-900 text-white text-[14px] font-medium hover:bg-slate-800 transition">
 
                     Ver en Google Maps
@@ -70,7 +70,7 @@
                     </h3>
 
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
-                          :class="status.open ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'">
+                          :class="status.open ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400'">
                         <span class="w-1.5 h-1.5 rounded-full" :class="status.open ? 'bg-green-500 animate-pulse' : 'bg-red-500'"></span>
                         <span x-text="status.open ? 'Abierto ahora' : 'Cerrado ahora'"></span>
                     </span>
@@ -79,22 +79,22 @@
 
                 <div class="space-y-2 text-[14px]">
 
-                    <div class="flex justify-between rounded-xl px-3 py-2.5 -mx-3 transition"
+                    <div class="flex flex-wrap justify-between gap-x-4 gap-y-1 rounded-xl px-3 py-2.5 -mx-3 transition"
                          :class="(status.day !== 'Sat' && status.day !== 'Sun') ? 'bg-[#0C67A3]/5' : ''">
                         <span class="text-slate-600 dark:text-slate-400">Lunes a Viernes</span>
-                        <span class="text-slate-600 dark:text-slate-400">08:00 a.m - 12:00 p.m / 01:00 p.m - 04:00 p.m</span>
+                        <span class="whitespace-nowrap text-slate-600 dark:text-slate-400">08:00 a.m - 12:00 p.m / 01:00 p.m - 04:00 p.m</span>
                     </div>
 
-                    <div class="flex justify-between rounded-xl px-3 py-2.5 -mx-3 transition"
+                    <div class="flex flex-wrap justify-between gap-x-4 gap-y-1 rounded-xl px-3 py-2.5 -mx-3 transition"
                          :class="status.day === 'Sat' ? 'bg-[#0C67A3]/5' : ''">
                         <span class="text-slate-600 dark:text-slate-400">Sábado</span>
-                        <span class="text-red-500 font-medium">Cerrado</span>
+                        <span class="text-red-500 dark:text-red-400 font-medium">Cerrado</span>
                     </div>
 
-                    <div class="flex justify-between rounded-xl px-3 py-2.5 -mx-3 transition"
+                    <div class="flex flex-wrap justify-between gap-x-4 gap-y-1 rounded-xl px-3 py-2.5 -mx-3 transition"
                          :class="status.day === 'Sun' ? 'bg-[#0C67A3]/5' : ''">
                         <span class="text-slate-600 dark:text-slate-400">Domingo</span>
-                        <span class="text-red-500 font-medium">Cerrado</span>
+                        <span class="text-red-500 dark:text-red-400 font-medium">Cerrado</span>
                     </div>
 
                 </div>
@@ -108,6 +108,7 @@
                 <div x-data="{ mapLoaded: false }" class="relative bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden h-[320px]">
 
                     <iframe
+                        title="Mapa de la sede de Foncaldas"
                         src="https://www.google.com/maps?q=Calle+60+25-01+Manizales&output=embed"
                         class="w-full h-full"
                         @load="mapLoaded = true">
@@ -126,7 +127,7 @@
 
                     <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-3 inline-flex items-center gap-3">
 
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-green-500/10 text-green-600">
+                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-green-500/10 text-green-600 dark:text-green-400">
                             <x-icon name="whatsapp" class="w-5 h-5" />
                         </span>
 
@@ -139,7 +140,7 @@
                     </p>
 
                     <a href="https://wa.me/573148330328"
-                       target="_blank"
+                       target="_blank" rel="noopener"
                        class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white text-[14px] font-medium hover:bg-green-700 transition">
 
                         <x-icon name="whatsapp" class="w-4 h-4" />

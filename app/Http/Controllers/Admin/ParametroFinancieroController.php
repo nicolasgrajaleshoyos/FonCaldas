@@ -46,7 +46,7 @@ class ParametroFinancieroController extends Controller
             $request->input('producto_financiero_id')
         )
             ->where('codigo', 'tasa_interes')->where('activo', true)
-            ->where(function ($consulta) use ($fechaInicio, $fechaFin) {
+            ->where(function ($consulta) use ($fechaInicio) {
                 $consulta
                     ->whereNull('fecha_fin_vigencia')
                     ->orWhere('fecha_fin_vigencia', '>=', $fechaInicio);
@@ -62,8 +62,7 @@ class ParametroFinancieroController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'fecha_inicio_vigencia' =>
-                    'Ya existe una tasa registrada para este producto cuya vigencia se superpone con las fechas indicadas.',
+                    'fecha_inicio_vigencia' => 'Ya existe una tasa registrada para este producto cuya vigencia se superpone con las fechas indicadas.',
                 ]);
         }
 

@@ -6,7 +6,7 @@
 <div class="min-h-screen page-bg py-14">
     <div class="max-w-md mx-auto px-6">
         <div class="flex flex-col items-center mb-10">
-            <x-mascot class="mb-4" />
+            <x-mascot pose="pensando" class="mb-4" />
             <x-page-header
                 icon="search"
                 title="Consulta el estado de tu solicitud"
@@ -16,22 +16,23 @@
 
         <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm p-8">
             @if($errors->any())
-                <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <div class="mb-4 rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-4 py-3 text-sm text-red-700 dark:text-red-300">
                     @foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('solicitudes.buscar') }}" class="space-y-4">
+            <form method="POST" action="{{ route('solicitudes.buscar') }}" data-cargando="Consultando tu solicitud…" class="space-y-4">
                 @csrf
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Código de solicitud</label>
-                    <input type="text" name="codigo" value="{{ old('codigo') }}" required placeholder="FC-26-XXXXXX" class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]">
+                    <label for="f-codigo" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Código de solicitud</label>
+                    <input type="text" id="f-codigo" name="codigo" value="{{ old('codigo') }}" required placeholder="FC-26-XXXXXX" class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]">
+                <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Lo recibiste en el mensaje de confirmación y por correo al radicar.</p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de documento</label>
-                    <input type="text" name="asociado_documento" value="{{ old('asociado_documento') }}" required class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]">
+                    <label for="f-asociado-documento" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de documento</label>
+                    <input type="text" id="f-asociado-documento" name="asociado_documento" value="{{ old('asociado_documento') }}" required class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]">
                 </div>
 
                 <button type="submit" class="w-full rounded-lg bg-[#0B4870] px-4 py-3 text-white font-semibold hover:bg-[#0a3d60] transition">Consultar</button>

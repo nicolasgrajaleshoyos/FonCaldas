@@ -14,6 +14,9 @@ class EnsureAdmin
 
         if (! $user || ! $user->is_active) {
             auth()->logout();
+            // Invalida la sesión para que una cuenta desactivada no conserve el identificador de sesión.
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
             return redirect()->route('admin')->with('error', 'Debes iniciar sesión.');
         }

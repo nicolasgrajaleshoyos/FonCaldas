@@ -45,7 +45,7 @@
                             <p class="text-slate-600 dark:text-slate-400">{{ $document->description }}</p>
                             <div class="mt-6 flex items-center justify-between gap-4">
                                 <span class="rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/40 px-4 py-2 text-sm text-slate-600 dark:text-slate-400">Publicado: {{ $document->published_at->format('d/m/Y') }}</span>
-                                <a href="{{ asset($document->file_path) }}" target="_blank" class="inline-flex items-center gap-2 rounded-lg bg-[#0B4870] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0a3d60]">
+                                <a href="{{ asset($document->file_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg bg-[#0B4870] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0a3d60]">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
                                         <path d="M12 5v14" />
                                         <path d="M5 12l7 7 7-7" />

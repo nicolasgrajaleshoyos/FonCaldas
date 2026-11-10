@@ -5,19 +5,19 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentoController;
 use App\Http\Controllers\Admin\EventoController as AdminEventoController;
+use App\Http\Controllers\Admin\ParametroFinancieroController;
 use App\Http\Controllers\Admin\PqrsController as AdminPqrsController;
 use App\Http\Controllers\Admin\SolicitudController as AdminSolicitudController;
 use App\Http\Controllers\Admin\TramiteTipoController;
 use App\Http\Controllers\Admin\UsuarioController;
-use App\Http\Controllers\Admin\ParametroFinancieroController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PqrsController;
+use App\Http\Controllers\SimuladorAhorroController;
+use App\Http\Controllers\SimuladorCreditoController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\TransparenciaController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SimuladorCreditoController;
-use App\Http\Controllers\SimuladorAhorroController;
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -60,10 +60,14 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/documentos', [DocumentoController::class, 'index'])->name('documents');
     Route::post('/documentos', [DocumentoController::class, 'store'])->name('documents.store');
+    Route::get('/documentos/{document}/editar', [DocumentoController::class, 'edit'])->name('documents.edit');
+    Route::put('/documentos/{document}', [DocumentoController::class, 'update'])->name('documents.update');
     Route::post('/documentos/{document}/delete', [DocumentoController::class, 'destroy'])->name('documents.delete');
 
     Route::get('/eventos', [AdminEventoController::class, 'index'])->name('events');
     Route::post('/eventos', [AdminEventoController::class, 'store'])->name('events.store');
+    Route::get('/eventos/{event}/editar', [AdminEventoController::class, 'edit'])->name('events.edit');
+    Route::put('/eventos/{event}', [AdminEventoController::class, 'update'])->name('events.update');
     Route::post('/eventos/{event}/delete', [AdminEventoController::class, 'destroy'])->name('events.delete');
 
     Route::get('/solicitudes', [AdminSolicitudController::class, 'index'])->name('solicitudes.index');
@@ -76,14 +80,20 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/solicitudes/{solicitud}/finalizar', [AdminSolicitudController::class, 'finalizar'])->name('solicitudes.finalizar');
     Route::post('/solicitudes/{solicitud}/documentos', [AdminSolicitudController::class, 'subirDocumento'])->name('solicitudes.documentos.store');
 
-    Route::get('/pqrs', [AdminPqrsController::class, 'index'])->name('pqrs.index');
-    Route::get('/pqrs/{pqrs}', [AdminPqrsController::class, 'show'])->name('pqrs.show');
-    Route::post('/pqrs/{pqrs}/tramitar', [AdminPqrsController::class, 'tramitar'])->name('pqrs.tramitar');
-    Route::post('/pqrs/{pqrs}/responder', [AdminPqrsController::class, 'responder'])->name('pqrs.responder');
-
     Route::get('/auditoria', [AuditoriaController::class, 'index'])->name('auditoria');
 
     Route::middleware('super_admin')->group(function () {
+        // PQRS: las gestiona únicamente el administrador principal.
+        Route::get('/pqrs', [AdminPqrsController::class, 'index'])->name('pqrs.index');
+        Route::get('/pqrs/{pqrs}', [AdminPqrsController::class, 'show'])->name('pqrs.show');
+        Route::post('/pqrs/{pqrs}/tramitar', [AdminPqrsController::class, 'tramitar'])->name('pqrs.tramitar');
+        Route::post('/pqrs/{pqrs}/responder', [AdminPqrsController::class, 'responder'])->name('pqrs.responder');
+
+        Route::post('/auditoria/eliminar', [AuditoriaController::class, 'destroy'])->name('auditoria.destroy');
+        Route::post('/auditoria/vaciar', [AuditoriaController::class, 'vaciar'])->name('auditoria.vaciar');
+        Route::post('/solicitudes/{solicitud}/delete', [AdminSolicitudController::class, 'destroy'])->name('solicitudes.delete');
+        Route::post('/pqrs/{pqrs}/delete', [AdminPqrsController::class, 'destroy'])->name('pqrs.delete');
+
         Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
         Route::get('/usuarios/nuevo', [UsuarioController::class, 'create'])->name('usuarios.create');
         Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
@@ -105,7 +115,10 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/tipos-tramite', [TramiteTipoController::class, 'index'])->name('tramite-tipos.index');
         Route::post('/tipos-tramite', [TramiteTipoController::class, 'store'])->name('tramite-tipos.store');
+        Route::get('/tipos-tramite/{tramiteTipo}/editar', [TramiteTipoController::class, 'edit'])->name('tramite-tipos.edit');
+        Route::put('/tipos-tramite/{tramiteTipo}', [TramiteTipoController::class, 'update'])->name('tramite-tipos.update');
         Route::post('/tipos-tramite/{tramiteTipo}/toggle', [TramiteTipoController::class, 'toggleActive'])->name('tramite-tipos.toggle');
+        Route::post('/tipos-tramite/{tramiteTipo}/delete', [TramiteTipoController::class, 'destroy'])->name('tramite-tipos.delete');
     });
 });
 

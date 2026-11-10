@@ -5,6 +5,8 @@
 
         <div class="max-w-6xl mx-auto px-6">
 
+            <x-back-link :route="route('servicios')" label="Volver a servicios" />
+
             <x-page-header icon="coins" title="Ahorro"
                 subtitle="Productos de ahorro diseñados para ayudarte a alcanzar tus metas financieras con seguridad y rentabilidad." />
 
@@ -59,19 +61,12 @@
 
             </div>
             <!-- Botón Simulador -->
-            <div class="mt-8 mb-8 rounded-2xl border border-slate-200 bg-white px-6 py-6 shadow-sm
-            dark:border-slate-700 dark:bg-slate-800/60">
+            <x-cta-simulador :route="route('simuladores.ahorro')" pose="dinero"
+                titulo="Conoce las tasas de tus ahorros"
+                texto="Consulta la tasa de referencia de cada línea de ahorro y elige la que mejor se adapte a tu meta."
+                boton="Ir al simulador"
+                :puntos="['Tasas actualizadas', 'Todas las líneas', 'Sin compromiso']" />
 
-                <div class="flex justify-center">
-                    <a href="{{ route('simuladores.ahorro') }}"
-                        class="inline-flex items-center justify-center px-6 py-3 rounded-xl
-                   bg-[#0C67A3] text-white font-semibold
-                   hover:bg-[#09598d] transition">
-                        Simular ahorro
-                    </a>
-                </div>
-
-            </div>
             <!-- VENTAJAS -->
             <div
                 class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-8 mb-6">
@@ -121,8 +116,6 @@
                 </p>
 
             </div>
-
-            <x-back-link :route="route('servicios')" label="← Volver a servicios" />
 
         </div>
 
