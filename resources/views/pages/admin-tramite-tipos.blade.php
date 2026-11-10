@@ -48,7 +48,7 @@
                                 </td>
                                 <td class="px-3 py-3">
                                     <div class="flex flex-wrap items-center gap-2">
-                                    <form method="POST" action="{{ route('admin.tramite-tipos.toggle', $tipo) }}" onsubmit="return confirm('{{ $tipo->activo ? '¿Desactivar este tipo de trámite? Dejará de aparecer en el formulario público.' : '¿Activar este tipo de trámite?' }}')">
+                                    <form method="POST" action="{{ route('admin.tramite-tipos.toggle', $tipo) }}" data-confirm="{{ $tipo->activo ? '¿Desactivar este tipo de trámite? Dejará de aparecer en el formulario público.' : '¿Activar este tipo de trámite?' }}">
                                         @csrf
                                         <button type="submit" class="rounded-full border border-slate-200 dark:border-slate-600 px-3.5 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">{{ $tipo->activo ? 'Desactivar' : 'Activar' }}</button>
                                     </form>

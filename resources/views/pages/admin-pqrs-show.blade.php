@@ -49,7 +49,7 @@
                     </form>
                 @endif
 
-                <form method="POST" action="{{ route('admin.pqrs.responder', $pqrs) }}" class="space-y-3" onsubmit="return confirm('¿Enviar esta respuesta? Se enviará por correo al asociado y no podrá editarse.')">
+                <form method="POST" action="{{ route('admin.pqrs.responder', $pqrs) }}" class="space-y-3" data-confirm="¿Enviar esta respuesta? Se enviará por correo al asociado y no podrá editarse.">
                     @csrf
                     <label for="f-respuesta" class="sr-only">Respuesta para el asociado</label>
                     <textarea id="f-respuesta" name="respuesta" rows="5" required maxlength="5000" placeholder="Escribe la respuesta para el asociado" class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 px-4 py-3 text-sm">{{ old('respuesta') }}</textarea>

@@ -83,7 +83,7 @@
                                     <div class="flex flex-wrap gap-2">
                                         <a href="{{ asset($document->file_path) }}" target="_blank" rel="noopener" class="rounded-full border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Ver</a>
                                         <a href="{{ route('admin.documents.edit', $document) }}" class="rounded-full border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Editar</a>
-                                        <form method="POST" action="{{ route('admin.documents.delete', $document) }}" onsubmit="return confirm('Eliminar este documento?');">
+                                        <form method="POST" action="{{ route('admin.documents.delete', $document) }}" data-confirm="¿Eliminar este documento?">
                                             @csrf
                                             <button type="submit" class="rounded-full border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-3 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 transition">Eliminar</button>
                                         </form>

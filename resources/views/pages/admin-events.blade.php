@@ -122,7 +122,7 @@
                                         </div>
                                         <div class="mt-4 flex flex-wrap gap-2">
                                             <a href="{{ route('admin.events.edit', $event) }}" class="rounded-full border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Editar</a>
-                                            <form method="POST" action="{{ route('admin.events.delete', $event) }}" onsubmit="return confirm('Eliminar este evento?');">
+                                            <form method="POST" action="{{ route('admin.events.delete', $event) }}" data-confirm="¿Eliminar este evento?">
                                                 @csrf
                                                 <button type="submit" class="rounded-full border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-3 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 transition">Eliminar</button>
                                             </form>

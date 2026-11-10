@@ -116,7 +116,7 @@
                             <button type="submit" class="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-white text-sm font-semibold hover:bg-emerald-700 transition">Los datos coinciden: verificar identidad</button>
                         </form>
 
-                        <form method="POST" action="{{ route('admin.solicitudes.rechazar', $solicitud) }}" class="space-y-2 border-t border-slate-200 dark:border-slate-700 pt-4" onsubmit="return confirm('¿Rechazar esta solicitud sin verificar la identidad? Se avisará al asociado por correo con el motivo.')">
+                        <form method="POST" action="{{ route('admin.solicitudes.rechazar', $solicitud) }}" class="space-y-2 border-t border-slate-200 dark:border-slate-700 pt-4" data-confirm="¿Rechazar esta solicitud sin verificar la identidad? Se avisará al asociado por correo con el motivo.">
                             @csrf
                             <label for="f-justificacion-recibida" class="sr-only">Motivo del rechazo</label>
                             <textarea id="f-justificacion-recibida" name="justificacion" rows="2" required maxlength="5000" placeholder="Ej.: los datos no coinciden con la información de asociados" class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 px-3 py-2 text-sm">{{ old('justificacion') }}</textarea>
@@ -128,12 +128,12 @@
                     @if($solicitud->estado === 'en_revision')
                         <p class="text-sm text-slate-600 dark:text-slate-300">Identidad verificada. Revisa los documentos y decide: aprobar o rechazar con motivo.</p>
                         <div class="flex flex-col gap-2 pt-2">
-                            <form method="POST" action="{{ route('admin.solicitudes.aprobar', $solicitud) }}" onsubmit="return confirm('¿Aprobar esta solicitud? Se avisará al asociado por correo.')">
+                            <form method="POST" action="{{ route('admin.solicitudes.aprobar', $solicitud) }}" data-confirm="¿Aprobar esta solicitud? Se avisará al asociado por correo.">
                                 @csrf
                                 <button type="submit" class="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-white text-sm font-semibold hover:bg-emerald-700 transition">Aprobar</button>
                             </form>
 
-                            <form method="POST" action="{{ route('admin.solicitudes.rechazar', $solicitud) }}" class="space-y-2 border-t border-slate-200 dark:border-slate-700 pt-4" onsubmit="return confirm('¿Rechazar esta solicitud? Se avisará al asociado por correo con el motivo.')">
+                            <form method="POST" action="{{ route('admin.solicitudes.rechazar', $solicitud) }}" class="space-y-2 border-t border-slate-200 dark:border-slate-700 pt-4" data-confirm="¿Rechazar esta solicitud? Se avisará al asociado por correo con el motivo.">
                                 @csrf
                                 <label for="f-justificacion" class="sr-only">Motivo del rechazo</label>
                                 <textarea id="f-justificacion" name="justificacion" rows="2" required maxlength="5000" placeholder="Motivo del rechazo" class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 px-3 py-2 text-sm">{{ old('justificacion') }}</textarea>
@@ -145,7 +145,7 @@
 
                     @if($solicitud->estado === 'aprobada')
                         <p class="text-sm text-slate-600 dark:text-slate-300">Publica el documento o certificado en «Documentos» y luego marca la solicitud como finalizada.</p>
-                        <form method="POST" action="{{ route('admin.solicitudes.finalizar', $solicitud) }}" onsubmit="return confirm('¿Marcar la solicitud como finalizada? Se avisará al asociado por correo.')">
+                        <form method="POST" action="{{ route('admin.solicitudes.finalizar', $solicitud) }}" data-confirm="¿Marcar la solicitud como finalizada? Se avisará al asociado por correo.">
                             @csrf
                             <button type="submit" class="w-full rounded-lg bg-[#0B4870] px-4 py-2 text-white text-sm font-semibold hover:bg-[#0a3d60] transition">Marcar como finalizada</button>
                         </form>

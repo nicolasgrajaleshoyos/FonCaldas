@@ -130,7 +130,7 @@
                                                         <form
                                                             method="POST"
                                                             action="{{ route('admin.parametros-financieros.tasas.desactivar', $tasa) }}"
-                                                            onsubmit="return confirm('¿Deseas desactivar esta tasa? El registro se conservará en el historial.');">
+                                                            data-confirm="¿Deseas desactivar esta tasa? El registro se conservará en el historial.">
                                                             @csrf
                                                             @method('PATCH')
 

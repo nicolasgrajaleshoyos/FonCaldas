@@ -11,15 +11,6 @@
                 icon="card"
                 subtitle="Administra las tasas y parámetros utilizados por los simuladores." />
 
-            @if (session('success'))
-                <div class="rounded-2xl border border-emerald-200 dark:border-emerald-800
-                        bg-emerald-50 dark:bg-emerald-950/40
-                        px-4 py-3 text-sm
-                        text-emerald-700 dark:text-emerald-300">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <div class="rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm
                     border border-slate-100 dark:border-slate-700">
 

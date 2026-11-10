@@ -11,6 +11,12 @@ class CabecerasSeguridad
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Las precargas del navegador (speculation rules / prefetch) piden la página antes de que el usuario entre:
+        // sin esto consumen el mensaje flash ("solicitud radicada") y la página real llega sin alerta.
+        if (str_contains((string) $request->header('Sec-Purpose'), 'prefetch') || str_contains((string) $request->header('Sec-Purpose'), 'prerender') || $request->header('Purpose') === 'prefetch') {
+            $request->session()->reflash();
+        }
+
         $respuesta = $next($request);
 
         $respuesta->headers->add([

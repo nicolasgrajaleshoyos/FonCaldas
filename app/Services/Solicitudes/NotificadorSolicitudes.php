@@ -41,10 +41,13 @@ class NotificadorSolicitudes
             return;
         }
 
-        try {
-            Mail::to($email)->send($mailable);
-        } catch (\Throwable $e) {
-            Log::warning("No se pudo notificar ({$destino}) por correo: ".$e->getMessage());
-        }
+        // Se envía después de responder: el SMTP tarda segundos y no debe retrasar la alerta de "radicada".
+        defer(function () use ($email, $mailable, $destino) {
+            try {
+                Mail::to($email)->send($mailable);
+            } catch (\Throwable $e) {
+                Log::warning("No se pudo notificar ({$destino}) por correo: ".$e->getMessage());
+            }
+        });
     }
 }

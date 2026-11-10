@@ -32,11 +32,11 @@
                 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                     <p class="text-sm text-slate-500 dark:text-slate-400">Selecciona registros para archivarlos o vacía el panel. Los registros archivados se conservan en la base de datos.</p>
                     <div class="flex gap-2">
-                        <button type="submit" form="auditoria-bulk" onclick="return confirm('¿Archivar los registros seleccionados? Saldrán de este panel.')" class="rounded-full border border-rose-200 dark:border-rose-500/40 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition">Archivar seleccionados</button>
+                        <button type="submit" form="auditoria-bulk" class="rounded-full border border-rose-200 dark:border-rose-500/40 px-4 py-2 text-sm font-medium text-rose-600 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition">Archivar seleccionados</button>
                         <x-admin-delete :action="route('admin.auditoria.vaciar')" label="Vaciar auditoría" message="¿Vaciar el panel de auditoría? Los registros se archivan, no se borran." class="px-4" />
                     </div>
                 </div>
-                <form id="auditoria-bulk" method="POST" action="{{ route('admin.auditoria.destroy') }}">@csrf</form>
+                <form id="auditoria-bulk" method="POST" action="{{ route('admin.auditoria.destroy') }}" data-confirm="¿Archivar los registros seleccionados? Saldrán de este panel.">@csrf</form>
             @endif
             <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-left text-sm">
                 <thead>

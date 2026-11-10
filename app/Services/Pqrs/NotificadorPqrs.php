@@ -36,10 +36,13 @@ class NotificadorPqrs
             return;
         }
 
-        try {
-            Mail::to($email)->send(new PqrsNotificacion($pqrs, $asunto, $mensaje));
-        } catch (\Throwable $e) {
-            Log::warning("No se pudo notificar ({$destino}) la PQRS {$pqrs->codigo}: ".$e->getMessage());
-        }
+        // Se envía después de responder: el SMTP tarda segundos y no debe retrasar la alerta de "radicada".
+        defer(function () use ($email, $pqrs, $asunto, $mensaje, $destino) {
+            try {
+                Mail::to($email)->send(new PqrsNotificacion($pqrs, $asunto, $mensaje));
+            } catch (\Throwable $e) {
+                Log::warning("No se pudo notificar ({$destino}) la PQRS {$pqrs->codigo}: ".$e->getMessage());
+            }
+        });
     }
 }

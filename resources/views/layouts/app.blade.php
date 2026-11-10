@@ -27,7 +27,7 @@
         "prerender": [{
             "where": { "and": [
                 { "href_matches": "/*" },
-                { "not": { "href_matches": ["/storage/*", "/build/*", "/images/*", "/pdf/*", "/tramites/documentos/*", "/admin/solicitudes/*/documentos/*"] } },
+                { "not": { "href_matches": ["/storage/*", "/build/*", "/images/*", "/pdf/*", "/tramites/documentos/*", "/admin/solicitudes/*/documentos/*", "/admin/*", "/admin", "/tramites", "/pqrs*"] } },
                 { "not": { "selector_matches": "[download], [target=_blank]" } }
             ] },
             "eagerness": "moderate"
@@ -41,7 +41,8 @@
             const precargar = (e) => {
                 const enlace = e.target.closest && e.target.closest('a[href]');
                 if (!enlace || enlace.origin !== location.origin || enlace.target === '_blank' || enlace.hasAttribute('download')) return;
-                if (/^\/(storage|build|images|pdf|tramites\/documentos)\//.test(enlace.pathname) || precargados.has(enlace.href)) return;
+                if (/^\/(tramites|pqrs)$/.test(enlace.pathname)) return;
+                if (/^\/(storage|build|images|pdf|admin|tramites\/documentos)\//.test(enlace.pathname) || precargados.has(enlace.href)) return;
                 precargados.add(enlace.href);
                 const link = document.createElement('link');
                 link.rel = 'prefetch';
@@ -71,6 +72,8 @@
     @include('partials.whatsapp-fab')
 
     @include('partials.flash-modal')
+
+    @include('partials.confirm-modal')
 
     @include('partials.cargando')
 
