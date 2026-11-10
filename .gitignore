@@ -26,4 +26,7 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
-/.claude/scheduled_tasks.lock
+
+# Herramientas de asistente de IA: no se versionan
+/.claude/
+/CLAUDE.md
