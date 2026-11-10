@@ -1,19 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-[#F5F7FA] dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-6 py-14">
-    <div class="max-w-7xl mx-auto space-y-8">
+<div class="min-h-screen bg-[#F5F7FA] dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-4 sm:px-6 lg:px-8 py-8">
+    <div class="w-full max-w-[1920px] mx-auto space-y-8">
         <x-admin-tabs active="events" title="Gestión de Eventos" icon="ticket"
             subtitle="Sube, revisa y elimina eventos con foto o video opcional." />
 
-        @if(session('success'))
-            <div class="rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <div class="grid gap-6 lg:grid-cols-2">
-            <div class="rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+        <div class="grid gap-6 xl:grid-cols-2">
+            <div class="rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-200 dark:border-slate-700">
                 <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-4 inline-flex items-center gap-3"><span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="sparkle" class="w-5 h-5" /></span>Crear nuevo evento</h2>
                 <form method="POST" action="{{ route('admin.events.store') }}" enctype="multipart/form-data" class="space-y-4">
                     @csrf
@@ -24,7 +18,7 @@
                             class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]"
                             required>
                         @error('title')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -34,7 +28,7 @@
                             class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]"
                             required>{{ old('description') }}</textarea>
                         @error('description')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -44,7 +38,7 @@
                             class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]"
                             required>
                         @error('location')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -55,7 +49,7 @@
                                 class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:[color-scheme:dark] px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]"
                                 required>
                             @error('event_date')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
@@ -64,7 +58,7 @@
                                 class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:[color-scheme:dark] px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]"
                                 required>
                             @error('event_time')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -74,7 +68,7 @@
                         <input id="media" name="media" type="file" accept="image/*,video/mp4"
                             class="w-full text-sm text-slate-700 dark:text-slate-300 file:rounded-full file:border file:border-slate-300 file:bg-slate-100 file:px-4 file:py-2 file:text-slate-700 file:font-medium">
                         @error('media')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -84,7 +78,7 @@
                 </form>
             </div>
 
-            <div class="rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-100 dark:border-slate-700 overflow-x-auto">
+            <div class="rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
                 <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-4 inline-flex items-center gap-3"><span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="calendar" class="w-5 h-5" /></span>Eventos creados</h2>
 
                 @if($events->isEmpty())
@@ -127,6 +121,7 @@
                                             <span class="inline-flex items-center gap-1.5 rounded-full bg-white dark:bg-slate-800 px-3 py-1 border border-slate-200 dark:border-slate-600"><x-icon name="clock" class="w-3.5 h-3.5" /> Hora: {{ \Carbon\Carbon::parse($event->event_time)->format('H:i') }}</span>
                                         </div>
                                         <div class="mt-4 flex flex-wrap gap-2">
+                                            <a href="{{ route('admin.events.edit', $event) }}" class="rounded-full border border-slate-200 dark:border-slate-600 px-3 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Editar</a>
                                             <form method="POST" action="{{ route('admin.events.delete', $event) }}" onsubmit="return confirm('Eliminar este evento?');">
                                                 @csrf
                                                 <button type="submit" class="rounded-full border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-3 py-2 text-sm text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 transition">Eliminar</button>
@@ -137,6 +132,8 @@
                             </div>
                         @endforeach
                     </div>
+
+                    <div class="mt-4">{{ $events->links() }}</div>
                 @endif
             </div>
         </div>

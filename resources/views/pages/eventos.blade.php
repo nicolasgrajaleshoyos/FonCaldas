@@ -47,8 +47,8 @@
                             @if($event->media_path)
 
                                 <a href="{{ asset($event->media_path) }}"
-                                   download
-                                   class="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-slate-600 dark:text-slate-400 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:hover:bg-slate-800">
+                                   download aria-label="Descargar archivo del evento"
+                                   class="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-slate-600 dark:text-slate-400 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:hover:bg-slate-800">
 
                                     <svg viewBox="0 0 24 24"
                                          fill="none"

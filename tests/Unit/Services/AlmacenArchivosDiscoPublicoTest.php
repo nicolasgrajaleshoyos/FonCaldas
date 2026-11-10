@@ -14,7 +14,7 @@ test('guardar() sanitiza el nombre y devuelve una ruta pública bajo storage/', 
     $ruta = (new AlmacenArchivosDiscoPublico)->guardar($archivo, 'uploads/eventos');
 
     expect($ruta)->toStartWith('storage/uploads/eventos/')
-        ->and($ruta)->toMatch('#^storage/uploads/eventos/\d+_foto_raro___\.png$#');
+        ->and($ruta)->toMatch('#^storage/uploads/eventos/\d+_[A-Za-z0-9]{6}_foto_raro___\.png$#');
     Storage::disk('public')->assertExists(str($ruta)->after('storage/')->toString());
 });
 

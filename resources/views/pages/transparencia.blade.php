@@ -102,7 +102,7 @@
 
                         <p class="text-slate-500 dark:text-slate-400 text-xs" x-text="doc.published_at_display ? 'Publicado: ' + doc.published_at_display : ''"></p>
 
-                        <a :href="doc.file_url" target="_blank"
+                        <a :href="doc.file_url" target="_blank" rel="noopener"
                            class="mt-4 inline-flex rounded-lg bg-[#0B4870] px-4 py-2 text-sm text-white hover:bg-[#0a3d60] transition">
                             Ver PDF
                         </a>
