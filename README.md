@@ -1,6 +1,35 @@
-# FONCALDAS — Portal de autoservicio y panel administrativo
+<div align="center">
 
-Portal web de **FONCALDAS** (Fondo de Empleados de la Universidad de Caldas, Manizales) con dos partes:
+<img src="docs/banner.svg" alt="FONCALDAS — Fondo de Empleados" width="100%">
+
+<br>
+
+![PHP](https://img.shields.io/badge/PHP-8.4-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Alpine.js](https://img.shields.io/badge/Alpine.js-3-8BC0D0?style=for-the-badge&logo=alpinedotjs&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Pest](https://img.shields.io/badge/Pruebas-Pest-F472B6?style=for-the-badge)
+
+**Portal web de FONCALDAS, el Fondo de Empleados de la Universidad de Caldas (Manizales):**
+trámites, PQRS y transparencia para los asociados, y un panel para gestionarlos con trazabilidad completa.
+
+<br>
+
+<img src="public/images/mascota/pc.webp" alt="Mascota en el computador" width="110">
+<img src="public/images/mascota/tramite.webp" alt="Mascota con un trámite" width="110">
+<img src="public/images/mascota/dinero.webp" alt="Mascota con dinero" width="110">
+<img src="public/images/mascota/estadistica.webp" alt="Mascota con estadísticas" width="110">
+<img src="public/images/mascota/pulgar.webp" alt="Mascota con el pulgar arriba" width="110">
+
+</div>
+
+---
+
+## Resumen
+
+El proyecto tiene dos partes:
 
 - **Sitio público y portal del asociado:** información institucional, servicios, eventos, transparencia, radicación y consulta de trámites y PQRS, sin necesidad de crear cuenta.
 - **Panel administrativo:** gestión de solicitudes, PQRS, documentos, eventos, usuarios y tipos de trámite, con trazabilidad completa.
