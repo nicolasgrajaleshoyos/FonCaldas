@@ -116,6 +116,33 @@
 
                         </div>
 
+                        <!-- TIPO DE BIEN -->
+                        <div id="campo-tipo-bien" class="hidden">
+
+                            <label for="tipo-bien"
+                                class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
+                                Estado del vehículo o motocicleta
+                            </label>
+
+                            <select id="tipo-bien"
+                                class="w-full rounded-xl border border-slate-300 dark:border-slate-600
+               bg-white dark:bg-slate-900
+               text-slate-800 dark:text-slate-100
+               px-4 py-3
+               focus:outline-none focus:ring-2 focus:ring-[#0C67A3]">
+
+                                <option value="">Selecciona una opción</option>
+                                <option value="nuevo">Nuevo</option>
+                                <option value="usado">Usado</option>
+                            </select>
+
+                            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                Las condiciones y porcentajes aplicables a nuevo y usado están pendientes de confirmación
+                                final por FONCALDAS.
+                            </p>
+
+                        </div>
+
 
                         <!-- DATO ESPECÍFICO -->
                         <div id="campo-especifico">
@@ -190,6 +217,9 @@
         const ayudaPlazo = document.getElementById('ayuda-plazo');
         const ayudaEspecifica = document.getElementById('ayuda-especifica');
 
+        const campoTipoBien = document.getElementById('campo-tipo-bien');
+        const tipoBien = document.getElementById('tipo-bien');
+
         const configuracionProductos = {
 
             credito_avances: {
@@ -254,21 +284,25 @@
             },
 
             credito_vehiculo: {
-                plazo: 'Hasta 72 meses',
-                ayudaMonto: 'El porcentaje financiable depende de si el vehículo es nuevo o usado y de las condiciones de la línea.',
+                plazo: 'Pendiente de confirmación final',
+                ayudaMonto: 'El monto financiable depende de las condiciones aplicables a vehículo nuevo o usado.',
                 labelEspecifico: 'Valor comercial o asegurable del vehículo',
-                ayudaEspecifica: 'Referencia: vehículo usado hasta 80 % y nuevo hasta 100 %, sujeto a capacidad de pago y garantías.',
+                ayudaEspecifica: 'Las condiciones de financiación para vehículo nuevo o usado están pendientes de confirmación final por FONCALDAS.',
                 habilitarMonto: true,
-                habilitarEspecifico: true
+                habilitarEspecifico: true,
+                tipoEspecifico: 'number',
+                placeholderEspecifico: 'Ingresa el valor del vehículo'
             },
 
             credito_motocicleta: {
-                plazo: 'Hasta 72 meses',
-                ayudaMonto: 'El monto está sujeto a capacidad de pago y a las condiciones de la línea.',
-                labelEspecifico: 'Valor de la motocicleta',
-                ayudaEspecifica: 'La referencia disponible contempla hasta el 100 % para motocicleta nueva, sujeto a capacidad y garantía.',
+                plazo: 'Pendiente de confirmación final',
+                ayudaMonto: 'El monto financiable depende de las condiciones aplicables a motocicleta nueva o usada.',
+                labelEspecifico: 'Valor comercial o asegurable de la motocicleta',
+                ayudaEspecifica: 'Motocicleta comparte las condiciones generales de Vehículo. Los valores definitivos están pendientes de confirmación por FONCALDAS.',
                 habilitarMonto: true,
-                habilitarEspecifico: true
+                habilitarEspecifico: true,
+                tipoEspecifico: 'number',
+                placeholderEspecifico: 'Ingresa el valor de la motocicleta'
             },
 
             credito_tecnologia: {
@@ -298,6 +332,10 @@
             const simulable = opcionSeleccionada.dataset.simulable === '1';
             const configuracion = configuracionProductos[this.value];
 
+            const requiereTipoBien =
+                this.value === 'credito_vehiculo' ||
+                this.value === 'credito_motocicleta';
+
             montoSolicitado.value = '';
             datoEspecifico.value = '';
             montoSolicitado.disabled = true;
@@ -324,6 +362,9 @@
                     campoPlazo.classList.add('hidden');
                     campoEspecifico.classList.add('hidden');
 
+                    campoTipoBien.classList.add('hidden');
+                    tipoBien.value = '';
+
                     botonSimular.classList.add('hidden');
 
                     tasaProducto.textContent = '';
@@ -338,6 +379,13 @@
                 campoEspecifico.classList.remove('hidden');
 
                 botonSimular.classList.remove('hidden');
+
+                if (requiereTipoBien) {
+                    campoTipoBien.classList.remove('hidden');
+                } else {
+                    campoTipoBien.classList.add('hidden');
+                    tipoBien.value = '';
+                }
 
                 if (this.value === 'credito_libre_inversion') {
 
@@ -437,6 +485,9 @@
                 campoEspecifico.classList.remove('hidden');
 
                 botonSimular.classList.remove('hidden');
+
+                campoTipoBien.classList.add('hidden');
+                tipoBien.value = '';
 
                 labelMonto.textContent = 'Monto solicitado';
                 labelPlazo.textContent = 'Plazo';
