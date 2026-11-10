@@ -48,6 +48,9 @@ class SolicitudController extends Controller
     /** Las rutas de documentos van firmadas: solo quien consultó con código y documento recibe los enlaces. */
     public function descargarDocumento(SolicitudDocumento $documento)
     {
+        // Si la solicitud fue eliminada del panel, sus documentos dejan de ser públicos.
+        abort_unless($documento->solicitud !== null, 404);
+
         return $documento->respuesta();
     }
 
@@ -57,7 +60,7 @@ class SolicitudController extends Controller
 
         $request->validate([
             'documentos' => 'required|array|max:5',
-            'documentos.*' => 'file|max:10240',
+            'documentos.*' => 'file|max:10240|mimes:'.SolicitudDocumento::TIPOS_PERMITIDOS,
         ]);
         $radicador->agregarDocumentos($solicitud, $request->file('documentos'));
 

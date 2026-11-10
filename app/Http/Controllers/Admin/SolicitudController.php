@@ -42,6 +42,13 @@ class SolicitudController extends Controller
         ]);
     }
 
+    public function destroy(Request $request, Solicitud $solicitud)
+    {
+        $this->flujo->eliminar($solicitud, $request->user());
+
+        return redirect()->route('admin.solicitudes.index')->with('success', 'Solicitud eliminada del panel. Su historial y documentos se conservan para auditoría.');
+    }
+
     public function descargarDocumento(Solicitud $solicitud, SolicitudDocumento $documento)
     {
         Gate::authorize('gestionar', $solicitud);
@@ -69,7 +76,7 @@ class SolicitudController extends Controller
     public function rechazar(Request $request, Solicitud $solicitud)
     {
         Gate::authorize('gestionar', $solicitud);
-        $data = $request->validate(['justificacion' => 'required|string']);
+        $data = $request->validate(['justificacion' => 'required|string|max:5000']);
         $this->flujo->rechazar($solicitud, $request->user(), $data['justificacion']);
 
         return back()->with('success', 'Solicitud rechazada.');
@@ -95,7 +102,7 @@ class SolicitudController extends Controller
     public function subirDocumento(Request $request, Solicitud $solicitud)
     {
         Gate::authorize('gestionar', $solicitud);
-        $data = $request->validate(['documento' => 'required|file|max:10240']);
+        $data = $request->validate(['documento' => 'required|file|max:10240|mimes:'.SolicitudDocumento::TIPOS_PERMITIDOS]);
         $this->flujo->publicarDocumento($solicitud, $request->user(), $data['documento']);
 
         return back()->with('success', 'Documento publicado para el asociado.');
