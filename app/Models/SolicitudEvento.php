@@ -12,6 +12,7 @@ class SolicitudEvento extends Model
     protected $fillable = [
         'solicitud_id',
         'user_id',
+        'actor_nombre',
         'accion',
         'detalle',
         'estado_anterior',
@@ -38,7 +39,9 @@ class SolicitudEvento extends Model
     /** Quién ejecutó la acción: el funcionario, el asociado (acciones sin usuario) o el sistema. */
     public function actor(): string
     {
+        // actor_nombre conserva quién fue aunque después se elimine su cuenta.
         return $this->usuario?->name
+            ?? $this->actor_nombre
             ?? (in_array($this->accion, ['solicitud_creada', 'documento_adjuntado'], true) ? 'Asociado' : 'Sistema');
     }
 }

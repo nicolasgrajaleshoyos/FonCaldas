@@ -469,7 +469,8 @@
             }
 
             const monto = parseFloat(montoSolicitado.value);
-            const sueldoBasico = parseFloat(datoEspecifico.value);
+            // El campo es de texto: se quitan puntos y espacios de miles para no leer "1.500.000" como 1.5.
+            const sueldoBasico = parseFloat(datoEspecifico.value.replace(/[^\d]/g, ''));
 
             if (isNaN(monto) || isNaN(sueldoBasico)) {
                 mostrarAyudaMonto(

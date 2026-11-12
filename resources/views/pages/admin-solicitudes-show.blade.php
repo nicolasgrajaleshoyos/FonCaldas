@@ -8,7 +8,7 @@
 
         <div class="flex items-center justify-between gap-3">
             <a href="{{ route('admin.solicitudes.index') }}" class="adm-btn-sec">← Volver al listado</a>
-            <x-admin-delete :action="route('admin.solicitudes.delete', $solicitud)" label="Eliminar solicitud" message="¿Eliminar esta solicitud del panel? Su historial y documentos se conservan para auditoría." />
+            @if(auth()->user()->esPropietario())<x-admin-delete :action="route('admin.solicitudes.delete', $solicitud)" label="Eliminar solicitud" message="¿Eliminar esta solicitud del panel? Su historial y documentos se conservan para auditoría." />@endif
         </div>
 
         @php
@@ -163,6 +163,7 @@
                 <div class="adm-card p-6 space-y-3">
                     <h2 class="adm-titulo text-lg"><span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300"><x-icon name="user" class="w-4 h-4" /></span>Responsable</h2>
                     <p class="text-sm text-slate-600 dark:text-slate-300">{{ $solicitud->asignadoA?->name ?? 'Sin asignar' }}</p>
+                    @unless(in_array($solicitud->estado, ['rechazada', 'finalizada'], true))
                     <form method="POST" action="{{ route('admin.solicitudes.reasignar', $solicitud) }}" class="flex gap-2">
                         @csrf
                         <label for="f-asignado-a" class="sr-only">Funcionario responsable</label>
@@ -174,6 +175,7 @@
                         </select>
                         <button type="submit" class="rounded-full bg-slate-800 dark:bg-slate-600 px-4 py-2 text-white text-sm font-semibold hover:bg-slate-900 dark:hover:bg-slate-500 transition whitespace-nowrap">Asignar</button>
                     </form>
+                    @endunless
                 </div>
             </div>
         </div>

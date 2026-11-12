@@ -17,6 +17,7 @@ class RadicarSolicitudRequest extends FormRequest
             'asociado_email' => 'required|email|max:255',
             'asociado_telefono' => 'nullable|string|max:30',
             'descripcion' => 'required|string|max:5000',
+            'documentos' => 'nullable|array|max:5',
             'documentos.*' => 'nullable|file|max:10240|mimes:'.SolicitudDocumento::TIPOS_PERMITIDOS,
         ];
     }

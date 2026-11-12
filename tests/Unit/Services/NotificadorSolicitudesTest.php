@@ -1,10 +1,12 @@
 <?php
 
 use App\Mail\NuevaSolicitudAdmin;
+use App\Mail\SolicitudEstadoCambiado;
 use App\Models\Solicitud;
 use App\Models\TramiteTipo;
 use App\Models\User;
 use App\Services\Solicitudes\NotificadorSolicitudes;
+use App\Services\Solicitudes\RadicadorSolicitudes;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -32,6 +34,51 @@ test('aAdmins() notifica solo a los responsables activos del tipo de trámite', 
 
     Mail::assertSent(NuevaSolicitudAdmin::class, fn ($m) => $m->hasTo($responsable->email));
     Mail::assertNotSent(NuevaSolicitudAdmin::class, fn ($m) => $m->hasTo($ajeno->email));
+});
+
+test('al radicar avisa al encargado y al super admin, no a otros funcionarios del mismo trámite', function () {
+    Mail::fake();
+    $tipo = TramiteTipo::create(['nombre' => 'T', 'slug' => 't', 'activo' => true, 'es_certificacion' => false]);
+    $admin = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
+    $encargado = User::factory()->create(['is_super_admin' => false, 'is_active' => true]);
+    $otro = User::factory()->create(['is_super_admin' => false, 'is_active' => true]);
+    $encargado->tramiteTipos()->sync([$tipo->id]);
+    $otro->tramiteTipos()->sync([$tipo->id]);
+    Solicitud::create([ // le da carga a $otro para que el reparto elija a $encargado
+        'tramite_tipo_id' => $tipo->id, 'asociado_nombre' => 'B', 'asociado_documento' => '9',
+        'asociado_email' => 'b@test.co', 'descripcion' => 'x', 'estado' => Solicitud::ESTADO_RECIBIDA, 'asignado_a' => $otro->id,
+    ]);
+
+    $solicitud = app(RadicadorSolicitudes::class)->radicar([
+        'tramite_tipo_id' => $tipo->id, 'asociado_nombre' => 'Ana', 'asociado_documento' => '123',
+        'asociado_email' => 'ana@test.co', 'descripcion' => 'x',
+    ]);
+
+    expect($solicitud->asignado_a)->toBe($encargado->id);
+    Mail::assertSent(NuevaSolicitudAdmin::class, 2);
+    Mail::assertSent(NuevaSolicitudAdmin::class, fn ($m) => $m->hasTo($encargado->email));
+    Mail::assertSent(NuevaSolicitudAdmin::class, fn ($m) => $m->hasTo($admin->email));
+    Mail::assertNotSent(NuevaSolicitudAdmin::class, fn ($m) => $m->hasTo($otro->email));
+    Mail::assertSent(SolicitudEstadoCambiado::class, fn ($m) => $m->hasTo('ana@test.co'));
+});
+
+test('si el encargado es el super admin, al radicar recibe un solo correo', function () {
+    Mail::fake();
+    $tipo = TramiteTipo::create(['nombre' => 'T', 'slug' => 't', 'activo' => true, 'es_certificacion' => false]);
+    $admin = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
+
+    $solicitud = app(RadicadorSolicitudes::class)->radicar([
+        'tramite_tipo_id' => $tipo->id, 'asociado_nombre' => 'Ana', 'asociado_documento' => '123',
+        'asociado_email' => 'ana@test.co', 'descripcion' => 'x',
+    ]);
+
+    expect($solicitud->asignado_a)->toBe($admin->id);
+    Mail::assertSent(NuevaSolicitudAdmin::class, 1);
+    Mail::assertSent(SolicitudEstadoCambiado::class, 1);
+});
+
+test('el correo del usuario se guarda en minúsculas para que no se repita por mayúsculas', function () {
+    expect(User::factory()->create(['email' => ' Admin@Test.CO '])->email)->toBe('admin@test.co');
 });
 
 test('un fallo de correo se registra en el log y no interrumpe el flujo', function () {

@@ -194,3 +194,26 @@ test('todas las pantallas del panel responden 200', function () {
         $this->actingAs($this->super)->get("/admin/{$ruta}")->assertOk();
     }
 });
+
+test('una solicitud cerrada no se puede reasignar ni genera aviso', function () {
+    $s = radicar($this);
+    $original = $s->asignado_a;
+    $this->actingAs($this->super)->post("/admin/solicitudes/{$s->id}/rechazar", ['justificacion' => 'Datos no coinciden']);
+    Mail::fake(); // se descartan los correos previos para medir solo la reasignación
+
+    $this->actingAs($this->super)->post("/admin/solicitudes/{$s->id}/reasignar", ['asignado_a' => $this->super->id])
+        ->assertSessionHasErrors('asignado_a');
+
+    expect($s->fresh()->asignado_a)->toBe($original);
+    Mail::assertNothingSent();
+});
+
+test('al radicar no se aceptan más de 5 documentos', function () {
+    $this->post('/tramites', [
+        'tramite_tipo_id' => $this->tipo->id, 'asociado_nombre' => 'Ana', 'asociado_documento' => '123',
+        'asociado_email' => 'a@b.co', 'descripcion' => 'd',
+        'documentos' => array_map(fn ($i) => UploadedFile::fake()->create("d{$i}.pdf", 5), range(1, 6)),
+    ])->assertSessionHasErrors('documentos');
+
+    expect(Solicitud::count())->toBe(0);
+});

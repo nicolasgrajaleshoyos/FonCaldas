@@ -21,7 +21,7 @@ class NotificadorPqrs
     {
         $mensaje = "Nueva {$pqrs->tipoLabel()} radicada: {$pqrs->asunto}. Revísala en el panel de administración.";
 
-        User::where('is_active', true)->where('is_super_admin', true)->pluck('email')->each(
+        User::where('is_active', true)->where('is_super_admin', true)->pluck('email')->map(fn (string $e) => strtolower($e))->unique()->each(
             fn (string $email) => $this->enviar($pqrs, $email, "Nueva {$pqrs->tipoLabel()} {$pqrs->codigo}", $mensaje, 'admin')
         );
     }

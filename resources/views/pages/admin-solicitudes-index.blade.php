@@ -81,7 +81,7 @@
 
                         <div class="flex shrink-0 flex-wrap items-center gap-2">
                             <a href="{{ route('admin.solicitudes.show', $solicitud) }}" class="adm-btn py-2.5">Ver detalle <x-icon name="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1" /></a>
-                            <x-admin-delete :action="route('admin.solicitudes.delete', $solicitud)" message="¿Eliminar esta solicitud del panel? Su historial y documentos se conservan para auditoría." />
+                            @if(auth()->user()->esPropietario())<x-admin-delete :action="route('admin.solicitudes.delete', $solicitud)" message="¿Eliminar esta solicitud del panel? Su historial y documentos se conservan para auditoría." />@endif
                         </div>
                     </div>
                 @empty

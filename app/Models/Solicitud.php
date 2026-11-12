@@ -132,6 +132,7 @@ class Solicitud extends Model
     {
         return $this->eventos()->create([
             'user_id' => $userId,
+            'actor_nombre' => $userId ? User::whereKey($userId)->value('name') : null,
             'accion' => $accion,
             'detalle' => $detalle,
             'estado_anterior' => $estadoAnterior,

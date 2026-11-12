@@ -92,8 +92,8 @@ Desarrollado en el marco de la práctica profesional en el área de Tecnologías
 
 ## Roles y permisos
 
-- **Administrador principal:** acceso total a todos los módulos y trámites. Recibe todas las notificaciones y no se puede desactivar. Siempre debe existir al menos uno activo. El **primero que se creó** (el del `.env`) es el administrador principal original: es el único que edita a otros administradores y cambia contraseñas ajenas; los demás administradores solo editan funcionarios (sin cambiarles la contraseña) y su propia cuenta.
-- **Funcionario:** solo ve el Panel y las Solicitudes de los tipos de trámite que tiene asignados. Recibe por correo solo los avisos de esos tipos. No tiene acceso a PQRS, Documentos, Eventos, Auditoría ni Usuarios.
+- **Administrador principal:** acceso total a todos los módulos y trámites. Recibe todas las notificaciones y no se puede desactivar. Siempre debe existir al menos uno activo. El **primero que se creó** (el del `.env`) es el administrador principal original: es el único que edita a otros administradores y cambia contraseñas ajenas; los demás administradores solo editan funcionarios (sin cambiarles la contraseña) y su propia cuenta. También es el único que archiva registros de la auditoría y elimina solicitudes o PQRS del panel, para que otro administrador no pueda borrar el rastro de lo que hizo.
+- **Funcionario:** solo ve el Panel y las Solicitudes de los tipos de trámite que tiene asignados. Recibe por correo solo el aviso de las solicitudes que le quedan asignadas. No tiene acceso a PQRS, Documentos, Eventos, Auditoría ni Usuarios.
 - **PQRS:** las ve, tramita y responde únicamente el administrador principal, que es también quien recibe el aviso de cada PQRS nueva.
 
 Los permisos por tipo de trámite se aplican con políticas de autorización en cada acción, no solo ocultando botones.

@@ -16,6 +16,14 @@ class GuardarUsuarioRequest extends FormRequest
         return ! $usuario || $this->user()->puedeEditar($usuario);
     }
 
+    /** SQLite compara con mayúsculas: sin esto "Ana@x.co" y "ana@x.co" pasarían como correos distintos. */
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->email)) {
+            $this->merge(['email' => strtolower(trim($this->email))]);
+        }
+    }
+
     public function rules(): array
     {
         /** @var User|null $usuario */

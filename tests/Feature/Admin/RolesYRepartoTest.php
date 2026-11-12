@@ -111,3 +111,19 @@ test('al eliminar a un funcionario sus solicitudes abiertas no quedan sin respon
     expect(User::find($saliente->id))->toBeNull()
         ->and($abierta->fresh()->asignado_a)->toBe($propietario->id);
 });
+
+test('solo el propietario puede archivar la auditoría y eliminar solicitudes o PQRS', function () {
+    $propietario = usuarioRol(true);
+    $secundario = usuarioRol(true);
+    $solicitud = abiertaPara(tipoReparto('Ahorros'), $propietario);
+
+    $this->actingAs($secundario)->post('/admin/auditoria/vaciar')->assertForbidden();
+    $this->actingAs($secundario)->post('/admin/auditoria/eliminar', ['ids' => [1]])->assertForbidden();
+    $this->actingAs($secundario)->post("/admin/solicitudes/{$solicitud->id}/delete")->assertForbidden();
+    $this->actingAs($secundario)->get("/admin/solicitudes/{$solicitud->id}")->assertOk()->assertDontSee('Eliminar solicitud');
+    expect($solicitud->fresh()->trashed())->toBeFalse();
+
+    $this->actingAs($propietario)->get("/admin/solicitudes/{$solicitud->id}")->assertSee('Eliminar solicitud');
+    $this->actingAs($propietario)->post("/admin/solicitudes/{$solicitud->id}/delete")->assertRedirect();
+    expect($solicitud->fresh()->trashed())->toBeTrue();
+});

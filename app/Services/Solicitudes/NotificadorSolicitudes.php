@@ -19,11 +19,14 @@ class NotificadorSolicitudes
         $this->enviar($solicitud->asociado_email, new SolicitudEstadoCambiado($solicitud), 'asociado');
     }
 
+    /** Avisa al encargado asignado y a los super admins; un admin que además es el encargado recibe un solo correo. */
     public function aAdmins(Solicitud $solicitud): void
     {
-        User::responsablesDe($solicitud->tramite_tipo_id)->pluck('email')->each(
-            fn (string $email) => $this->enviar($email, new NuevaSolicitudAdmin($solicitud), 'admin')
-        );
+        User::where('is_active', true)
+            ->where(fn ($q) => $q->where('is_super_admin', true)->orWhere('id', $solicitud->asignado_a))
+            ->pluck('email')->map(fn (string $e) => strtolower($e))->unique()->each(
+                fn (string $email) => $this->enviar($email, new NuevaSolicitudAdmin($solicitud), 'admin')
+            );
     }
 
     public function alResponsable(Solicitud $solicitud, User $responsable): void

@@ -36,6 +36,7 @@
             if (!formPendiente) return;
             formPendiente.dataset.confirmado = '1';
             formPendiente.requestSubmit();
+            delete formPendiente.dataset.confirmado;
             formPendiente = null;
         });
         d.querySelector('[data-confirm-cancelar]').addEventListener('click', cancelar);

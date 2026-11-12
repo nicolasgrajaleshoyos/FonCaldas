@@ -8,7 +8,7 @@
 
         <div class="flex items-center justify-between gap-3">
             <a href="{{ route('admin.pqrs.index') }}" class="adm-btn-sec">← Volver al listado</a>
-            <x-admin-delete :action="route('admin.pqrs.delete', $pqrs)" label="Eliminar PQRS" message="¿Eliminar esta PQRS del panel? El registro se conserva." />
+            @if(auth()->user()->esPropietario())<x-admin-delete :action="route('admin.pqrs.delete', $pqrs)" label="Eliminar PQRS" message="¿Eliminar esta PQRS del panel? El registro se conserva." />@endif
         </div>
 
         @if($errors->any())

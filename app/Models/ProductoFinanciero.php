@@ -16,6 +16,7 @@ class ProductoFinanciero extends Model
         'tipo',
         'descripcion',
         'activo',
+        'simulable',
     ];
 
     protected $casts = [

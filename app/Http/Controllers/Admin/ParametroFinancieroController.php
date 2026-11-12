@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GuardarTasaFinancieraRequest;
 use App\Models\ParametroFinanciero;
 use App\Models\ProductoFinanciero;
+use Illuminate\Http\RedirectResponse;
 
 class ParametroFinancieroController extends Controller
 {
@@ -41,14 +42,8 @@ class ParametroFinancieroController extends Controller
         $fechaInicio = $request->input('fecha_inicio_vigencia');
         $fechaFin = $request->input('fecha_fin_vigencia');
 
-        $existeSuperposicion = ParametroFinanciero::haySuperposicion((int) $request->input('producto_financiero_id'), $fechaInicio, $fechaFin);
-
-        if ($existeSuperposicion) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'fecha_inicio_vigencia' => 'Ya existe una tasa registrada para este producto cuya vigencia se superpone con las fechas indicadas.',
-                ]);
+        if ($error = $this->errorPorSuperposicion($request, 'Ya existe una tasa registrada para este producto cuya vigencia se superpone con las fechas indicadas.')) {
+            return $error;
         }
 
         ParametroFinanciero::create([
@@ -91,14 +86,8 @@ class ParametroFinancieroController extends Controller
         $fechaInicio = $request->input('fecha_inicio_vigencia');
         $fechaFin = $request->input('fecha_fin_vigencia');
 
-        $existeSuperposicion = ParametroFinanciero::haySuperposicion((int) $request->input('producto_financiero_id'), $fechaInicio, $fechaFin, excluirId: $tasa->id);
-
-        if ($existeSuperposicion) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'fecha_inicio_vigencia' => 'Ya existe otra tasa activa para este producto cuya vigencia se superpone con las fechas indicadas.',
-                ]);
+        if ($error = $this->errorPorSuperposicion($request, 'Ya existe otra tasa activa para este producto cuya vigencia se superpone con las fechas indicadas.', $tasa)) {
+            return $error;
         }
 
         $tasa->update([
@@ -128,5 +117,23 @@ class ParametroFinancieroController extends Controller
         return redirect()
             ->route('admin.parametros-financieros.historial', $productoId)
             ->with('success', 'La tasa fue desactivada correctamente y se conserva en el historial.');
+    }
+
+    /**
+     * Comprobación compartida por el registro y la edición: si la vigencia se cruza con otra tasa activa del producto,
+     * devuelve la redirección con el error; si no, null. Al editar se excluye la propia tasa.
+     */
+    private function errorPorSuperposicion(GuardarTasaFinancieraRequest $request, string $mensaje, ?ParametroFinanciero $tasa = null): ?RedirectResponse
+    {
+        $seSuperpone = ParametroFinanciero::haySuperposicion(
+            (int) $request->input('producto_financiero_id'),
+            $request->input('fecha_inicio_vigencia'),
+            $request->input('fecha_fin_vigencia'),
+            excluirId: $tasa?->id,
+        );
+
+        return $seSuperpone
+            ? back()->withInput()->withErrors(['fecha_inicio_vigencia' => $mensaje])
+            : null;
     }
 }

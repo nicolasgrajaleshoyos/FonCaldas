@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,6 +29,12 @@ class User extends Authenticatable
             'is_super_admin' => 'boolean',
             'is_active' => 'boolean',
         ];
+    }
+
+    /** Se guarda en minúsculas por cualquier vía (formulario, seeder, consola) para que el índice único no admita duplicados por mayúsculas. */
+    protected function email(): Attribute
+    {
+        return Attribute::set(fn (string $valor) => strtolower(trim($valor)));
     }
 
     public function tramiteTipos(): BelongsToMany
@@ -53,7 +60,7 @@ class User extends Authenticatable
     // ponytail: se deduce del id más bajo entre administradores; usar una columna explícita si hiciera falta traspasar el rol.
     public function esPropietario(): bool
     {
-        return $this->is_super_admin && $this->id === static::idPropietario();
+        return $this->is_super_admin && $this->id === self::idPropietario();
     }
 
     /** Método estático con once(): una sola consulta por petición aunque la lista de usuarios lo pregunte por cada fila. */
@@ -98,6 +105,7 @@ class User extends Authenticatable
             ->withCount(['solicitudesAsignadas' => fn ($q) => $q->whereIn('estado', Solicitud::ESTADOS_ABIERTOS)])
             ->orderBy('is_super_admin')
             ->orderBy('solicitudes_asignadas_count')
+            ->orderBy('id') // empate: siempre el mismo (el más antiguo), no el que la BD devuelva primero
             ->first();
     }
 }

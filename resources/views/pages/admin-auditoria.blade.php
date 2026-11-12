@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $esSuper = auth()->user()->is_super_admin;
+    $esSuper = auth()->user()->esPropietario(); // archivar registros es solo del propietario
     $hayFiltros = count(request()->except('page')) > 0;
 @endphp
 <div class="min-h-screen page-bg text-slate-900 dark:text-slate-100 px-4 sm:px-6 lg:px-8 py-8">

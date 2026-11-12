@@ -131,9 +131,10 @@
                                 <span class="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300"><x-icon name="upload" class="w-6 h-6" /></span>
                                 <div class="min-w-0 flex-1">
                                     <input type="file" id="f-documentos" name="documentos[]" multiple class="w-full text-sm text-slate-700 dark:text-slate-200 file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-[#0B4870] file:px-5 file:py-2.5 file:font-semibold file:text-white hover:file:bg-[#0a3d60] dark:file:bg-[#0C67A3]">
-                                    <p class="{{ $ayuda }}">Hasta 10 MB por archivo. Formatos: PDF, JPG, PNG, Word y Excel.</p>
+                                    <p class="{{ $ayuda }}">Hasta 5 archivos de 10 MB cada uno. Formatos: PDF, JPG, PNG, Word y Excel.</p>
                                 </div>
                             </div>
+                            @error('documentos')<p class="{{ $error }}">{{ $message }}</p>@enderror
                             @error('documentos.*')<p class="{{ $error }}">{{ $message }}</p>@enderror
                         </div>
                     </fieldset>

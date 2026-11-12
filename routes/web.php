@@ -94,10 +94,13 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::post('/documentos/{document}/delete', [DocumentoController::class, 'destroy'])->name('documents.delete');
         Route::post('/eventos/{event}/delete', [AdminEventoController::class, 'destroy'])->name('events.delete');
 
-        Route::post('/auditoria/eliminar', [AuditoriaController::class, 'destroy'])->name('auditoria.destroy');
-        Route::post('/auditoria/vaciar', [AuditoriaController::class, 'vaciar'])->name('auditoria.vaciar');
-        Route::post('/solicitudes/{solicitud}/delete', [AdminSolicitudController::class, 'destroy'])->name('solicitudes.delete');
-        Route::post('/pqrs/{pqrs}/delete', [AdminPqrsController::class, 'destroy'])->name('pqrs.delete');
+        // Archivar auditoría y eliminar solicitudes o PQRS: solo el propietario, para que otro administrador no pueda borrar su propio rastro.
+        Route::middleware('super_admin:propietario')->group(function () {
+            Route::post('/auditoria/eliminar', [AuditoriaController::class, 'destroy'])->name('auditoria.destroy');
+            Route::post('/auditoria/vaciar', [AuditoriaController::class, 'vaciar'])->name('auditoria.vaciar');
+            Route::post('/solicitudes/{solicitud}/delete', [AdminSolicitudController::class, 'destroy'])->name('solicitudes.delete');
+            Route::post('/pqrs/{pqrs}/delete', [AdminPqrsController::class, 'destroy'])->name('pqrs.delete');
+        });
 
         Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
         Route::get('/usuarios/nuevo', [UsuarioController::class, 'create'])->name('usuarios.create');

@@ -74,7 +74,7 @@
 
                         <div class="flex shrink-0 flex-wrap items-center gap-2">
                             <a href="{{ route('admin.pqrs.show', $item) }}" class="adm-btn py-2.5">Ver y responder <x-icon name="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1" /></a>
-                            <x-admin-delete :action="route('admin.pqrs.delete', $item)" message="¿Eliminar esta PQRS del panel? El registro se conserva." />
+                            @if(auth()->user()->esPropietario())<x-admin-delete :action="route('admin.pqrs.delete', $item)" message="¿Eliminar esta PQRS del panel? El registro se conserva." />@endif
                         </div>
                     </div>
                 @empty

@@ -57,7 +57,7 @@ class SolicitudController extends Controller
 
     private function urlEstado(Solicitud $solicitud): string
     {
-        return URL::temporarySignedRoute('solicitudes.estado', now()->addMinutes(30), $solicitud);
+        return URL::temporarySignedRoute('solicitudes.estado', now()->addMinutes(30), ['solicitud' => $solicitud]);
     }
 
     /** Las rutas de documentos van firmadas: solo quien consultó con código y documento recibe los enlaces. */

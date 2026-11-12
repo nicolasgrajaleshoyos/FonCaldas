@@ -5,6 +5,7 @@ use App\Models\Pqrs;
 use App\Models\ProductoFinanciero;
 use App\Models\Solicitud;
 use App\Models\TramiteTipo;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -68,4 +69,27 @@ test('un producto financiero con tasas no se puede borrar y toda tasa exige prod
     $vacio = ProductoFinanciero::create(['nombre' => 'Vacío', 'codigo' => 'vacio-x', 'tipo' => 'credito']);
     $vacio->delete();
     expect(ProductoFinanciero::whereKey($vacio->id)->exists())->toBeFalse();
+});
+
+test('la auditoría conserva el nombre del funcionario aunque se elimine su cuenta', function () {
+    $tipo = TramiteTipo::create(['nombre' => 'Aud', 'slug' => 'aud', 'activo' => true, 'es_certificacion' => false]);
+    $funcionario = User::factory()->create(['name' => 'Laura Ríos', 'is_active' => true]);
+    $solicitud = Solicitud::create([
+        'tramite_tipo_id' => $tipo->id, 'asociado_nombre' => 'Ana', 'asociado_documento' => '1',
+        'asociado_email' => 'ana@test.co', 'descripcion' => 'x', 'estado' => 'recibida',
+    ]);
+    $evento = $solicitud->registrarEvento('identidad_verificada', userId: $funcionario->id);
+
+    $funcionario->delete();
+
+    expect($evento->fresh()->user_id)->toBeNull()
+        ->and($evento->fresh()->actor())->toBe('Laura Ríos');
+});
+
+test('una instalación nueva queda con los productos financieros y su marca de simulable', function () {
+    $this->seed();
+
+    expect(ProductoFinanciero::count())->toBeGreaterThan(0)
+        ->and(ProductoFinanciero::where('codigo', 'credito_bonos')->value('simulable'))->toBeFalse()
+        ->and(ProductoFinanciero::where('codigo', 'credito_vehiculo')->value('simulable'))->toBeTrue();
 });

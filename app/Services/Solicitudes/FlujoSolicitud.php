@@ -75,6 +75,11 @@ class FlujoSolicitud
 
     public function reasignar(Solicitud $solicitud, User $actor, User $responsable): void
     {
+        // Una solicitud rechazada o finalizada ya no tiene nada que gestionar: reasignarla solo enviaría un aviso engañoso.
+        if (in_array($solicitud->estado, [Solicitud::ESTADO_RECHAZADA, Solicitud::ESTADO_FINALIZADA], true)) {
+            throw ValidationException::withMessages(['asignado_a' => 'La solicitud ya está cerrada y no se puede reasignar.']);
+        }
+
         if (! User::responsablesDe($solicitud->tramite_tipo_id)->whereKey($responsable->id)->exists()) {
             throw ValidationException::withMessages(['asignado_a' => 'Solo se puede reasignar a un usuario activo con acceso a este tipo de trámite.']);
         }
