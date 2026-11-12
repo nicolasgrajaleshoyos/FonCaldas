@@ -82,7 +82,7 @@
                     <x-icon name="users" class="pointer-events-none absolute -bottom-10 -right-8 h-52 w-52 text-white/10" />
                     <p class="relative text-xs font-semibold uppercase tracking-widest text-[#FACC15]">Vínculo requerido</p>
                     <p class="hero-title relative mt-3 text-2xl md:text-[1.75rem] leading-snug">
-                        Personas con vínculo laboral con universidades del departamento de Caldas.
+                        Personas con vínculo laboral con universidades del Eje Cafetero.
                     </p>
                     <p class="relative mt-4 text-base leading-relaxed text-white/85">
                         Pueden aspirar a ser asociados a Foncaldas las personas naturales que cumplan ese vínculo.

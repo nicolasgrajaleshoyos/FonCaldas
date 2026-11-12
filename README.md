@@ -201,19 +201,60 @@ El sitio queda disponible en `http://127.0.0.1:8000`. En Windows con Laravel Her
 
 ## Configuración del correo
 
-Por defecto los correos solo se escriben en el log (`MAIL_MAILER=log`). Para enviarlos de verdad, configura un servidor SMTP en el `.env`:
+> **Importante para FONCALDAS:** durante el desarrollo los correos salieron desde una cuenta personal del practicante. Esa cuenta **no** forma parte de la entrega. Antes de usar el sistema en producción, FONCALDAS debe configurar su propia cuenta de correo institucional siguiendo los pasos de esta sección; si no lo hace, el sistema no enviará avisos (o los enviará desde una cuenta ajena).
+
+La aplicación envía estos correos:
+
+| Correo | Quién lo recibe |
+|---|---|
+| Solicitud radicada / cambio de estado | El asociado que la radicó |
+| Nueva solicitud o solicitud reasignada | El funcionario encargado y los administradores principales |
+| PQRS radicada | Los administradores principales |
+| Avances y respuesta de una PQRS | La persona que la radicó |
+
+Por defecto los correos solo se escriben en el log (`MAIL_MAILER=log`) y no llega nada. Para enviarlos de verdad, toda la configuración vive en el archivo `.env` del servidor (nunca en el código ni en el repositorio).
+
+### Paso 1. Elegir la cuenta que enviará los correos
+
+Se recomienda una cuenta institucional dedicada, por ejemplo `notificaciones@foncaldas.co`, y no el correo personal de un empleado: así los avisos no dependen de una persona y no se pierden cuando alguien deja la entidad.
+
+### Paso 2. Obtener los datos SMTP de esa cuenta
+
+| Proveedor | `MAIL_HOST` | `MAIL_PORT` | Contraseña |
+|---|---|---|---|
+| Gmail / Google Workspace | `smtp.gmail.com` | `587` | **Contraseña de aplicación** de 16 caracteres (requiere verificación en dos pasos activada; se crea en *Cuenta de Google → Seguridad → Contraseñas de aplicaciones*). La contraseña normal de la cuenta **no** funciona. |
+| Outlook / Microsoft 365 | `smtp.office365.com` | `587` | La de la cuenta (el administrador de Microsoft 365 debe tener habilitado *SMTP AUTH* para ese buzón). |
+| Hosting propio (cPanel u otro) | El que indique el proveedor, p. ej. `mail.foncaldas.co` | `587` o `465` | La del buzón. |
+
+### Paso 3. Ponerlos en el `.env`
 
 ```env
 MAIL_MAILER=smtp
-MAIL_HOST=smtp.ejemplo.com
+MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=usuario
-MAIL_PASSWORD=contraseña
-MAIL_FROM_ADDRESS=notificaciones@ejemplo.com
+MAIL_USERNAME=notificaciones@foncaldas.co
+MAIL_PASSWORD=contraseña-de-aplicacion
+MAIL_FROM_ADDRESS=notificaciones@foncaldas.co
 MAIL_FROM_NAME="FONCALDAS"
 ```
 
-Después ejecuta `php artisan config:clear`. Si se usa Gmail, se necesita una **contraseña de aplicación** (con la verificación en dos pasos activada). Cada correo de aviso a un funcionario llega según los tipos de trámite que tenga asignados, así que cada usuario debe tener su correo real registrado.
+- `MAIL_USERNAME` y `MAIL_FROM_ADDRESS` deben ser la **misma** cuenta; Gmail y Microsoft rechazan o marcan como spam los correos enviados "a nombre de" otra dirección.
+- Si el puerto es `465`, agrega `MAIL_SCHEME=smtps`.
+- Revisa también `ADMIN_EMAIL` (ver *Instalación*): es el correo del administrador principal, que recibe todos los avisos.
+
+### Paso 4. Aplicar y probar
+
+```bash
+php artisan config:clear
+```
+
+Luego radica una solicitud de prueba desde el sitio público y comprueba que llegue el aviso. Si falla, el motivo queda en `storage/logs/laravel.log` (los errores más comunes son contraseña equivocada o, en Gmail, usar la contraseña normal en vez de la de aplicación).
+
+### Paso 5. Correos de los funcionarios
+
+Cada aviso a un funcionario llega según los tipos de trámite que tenga asignados, así que en *Panel → Usuarios* cada usuario debe tener registrado su correo real.
+
+**Cambiar de cuenta más adelante:** basta con repetir los pasos 2 a 4 con los datos nuevos; no hay que tocar el código.
 
 ## Calidad del código y pruebas
 
