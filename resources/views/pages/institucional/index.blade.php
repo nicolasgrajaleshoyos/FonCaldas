@@ -144,7 +144,7 @@
                         ['Camilo Andrés Montoya Arias', 'Coordinador de cartera y créditos', 'Administrativa'],
                         ['Santiago Granada', 'Auxiliar de créditos', 'Administrativa'],
                         ['Laura Ríos Franco', 'Líder de bienestar', 'Administrativa'],
-                        ['Jesús David Fuquene', 'Analista de Comunicaciones', 'Administrativa'],
+                        ['Juan Felipe Arango', 'Analista de Comunicaciones', 'Administrativa'],
                     ]" />
                 </x-comite>
 

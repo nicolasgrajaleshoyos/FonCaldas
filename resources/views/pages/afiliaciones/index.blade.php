@@ -64,13 +64,32 @@
                 <x-section-title as="span">¿Quién puede ser socio?</x-section-title>
             </h2>
 
-            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-8 mb-6">
-                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-3">Vínculo requerido</h3>
-                <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Pueden aspirar a ser asociados a Foncaldas las personas naturales con vínculo laboral con
-                    universidades del departamento de Caldas.
-                </p>
-            </div>
+            <div class="grid gap-6 lg:grid-cols-2">
+
+                <!-- Vínculo requerido: tarjeta destacada -->
+                <div class="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#0B4870] via-[#0C67A3] to-[#0B8B7B] p-8 md:p-10 text-white shadow-xl shadow-[#0B4870]/25 ring-1 ring-white/15">
+                    <x-icon name="users" class="pointer-events-none absolute -bottom-10 -right-8 h-52 w-52 text-white/10" />
+                    <p class="relative text-xs font-semibold uppercase tracking-widest text-[#FACC15]">Vínculo requerido</p>
+                    <p class="hero-title relative mt-3 text-2xl md:text-[1.75rem] leading-snug">
+                        Personas con vínculo laboral con universidades del Eje Cafetero.
+                    </p>
+                    <p class="relative mt-4 text-base leading-relaxed text-white/85">
+                        Pueden aspirar a ser asociados a Foncaldas las personas naturales que cumplan ese vínculo.
+                    </p>
+                </div>
+
+                <!-- Requisitos -->
+                <div class="{{ $tarjeta }} p-8 md:p-10">
+                    <h3 class="hero-title text-2xl text-slate-900 dark:text-white">Requisitos de vinculación</h3>
+                    <ul class="mt-6 space-y-4">
+                        @foreach ($requisitos as $requisito)
+                            <li class="flex items-center gap-4 text-base md:text-[17px] text-slate-700 dark:text-slate-200">
+                                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0B8B7B]/15 text-[#0B8B7B] dark:bg-teal-400/15 dark:text-teal-300"><x-icon name="check" class="w-4 h-4" /></span>
+                                {{ $requisito }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
 
             <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-8">
                 <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-5">Requisitos de vinculación</h3>
