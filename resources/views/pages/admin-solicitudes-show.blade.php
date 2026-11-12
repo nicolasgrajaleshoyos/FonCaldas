@@ -144,10 +144,15 @@
                     @endif
 
                     @if($solicitud->estado === 'aprobada')
-                        <p class="text-sm text-slate-600 dark:text-slate-300">Publica el documento o certificado en «Documentos» y luego marca la solicitud como finalizada.</p>
+                        @php $faltaCertificado = $solicitud->faltaCertificado(); @endphp
+                        @if($faltaCertificado)
+                            <p class="rounded-2xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 px-4 py-2 text-sm font-semibold text-amber-800 dark:text-amber-300">Esta solicitud es una certificación. Publica el certificado en «Documentos» para poder finalizarla.</p>
+                        @else
+                            <p class="text-sm text-slate-600 dark:text-slate-300">Publica el documento o certificado en «Documentos» y luego marca la solicitud como finalizada.</p>
+                        @endif
                         <form method="POST" action="{{ route('admin.solicitudes.finalizar', $solicitud) }}" data-confirm="¿Marcar la solicitud como finalizada? Se avisará al asociado por correo.">
                             @csrf
-                            <button type="submit" class="w-full rounded-full bg-[#0B4870] px-4 py-2 text-white text-sm font-semibold hover:bg-[#0a3d60] transition shadow-lg shadow-[#0B4870]/20 hover:-translate-y-0.5">Marcar como finalizada</button>
+                            <button type="submit" @disabled($faltaCertificado) class="w-full rounded-full bg-[#0B4870] px-4 py-2 text-white text-sm font-semibold hover:bg-[#0a3d60] transition shadow-lg shadow-[#0B4870]/20 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0">Marcar como finalizada</button>
                         </form>
                     @endif
 

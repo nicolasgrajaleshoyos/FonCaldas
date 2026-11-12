@@ -70,7 +70,11 @@ class FlujoSolicitud
 
     public function finalizar(Solicitud $solicitud, User $actor): void
     {
-        $this->cambiarEstado($solicitud, $actor, Solicitud::ESTADO_FINALIZADA, 'solicitud_finalizada', null, ['finalizado_at' => now()], [[Solicitud::ESTADO_APROBADA], 'Solo se puede finalizar una solicitud aprobada.']);
+        $this->cambiarEstado($solicitud, $actor, Solicitud::ESTADO_FINALIZADA, 'solicitud_finalizada', null, ['finalizado_at' => now()], [[Solicitud::ESTADO_APROBADA], 'Solo se puede finalizar una solicitud aprobada.'], function () use ($solicitud) {
+            if ($solicitud->faltaCertificado()) {
+                throw ValidationException::withMessages(['documento' => 'Esta solicitud es una certificación: publica el certificado en «Documentos» antes de finalizarla.']);
+            }
+        });
     }
 
     public function reasignar(Solicitud $solicitud, User $actor, User $responsable): void
@@ -148,13 +152,15 @@ class FlujoSolicitud
     /**
      * @param  string|Closure|null  $detalle  texto, o función evaluada con el estado ya recargado
      * @param  array{0: list<string>, 1: string}|null  $exigido  estados permitidos de origen y mensaje de error
+     * @param  Closure|null  $requisito  comprobación extra, con el estado ya validado; lanza ValidationException si no se cumple
      */
-    private function cambiarEstado(Solicitud $solicitud, User $actor, string $nuevo, string $accion, string|Closure|null $detalle = null, array $extra = [], ?array $exigido = null): void
+    private function cambiarEstado(Solicitud $solicitud, User $actor, string $nuevo, string $accion, string|Closure|null $detalle = null, array $extra = [], ?array $exigido = null, ?Closure $requisito = null): void
     {
-        $this->enTransaccion($solicitud, function () use ($solicitud, $actor, $nuevo, $accion, $detalle, $extra, $exigido) {
+        $this->enTransaccion($solicitud, function () use ($solicitud, $actor, $nuevo, $accion, $detalle, $extra, $exigido, $requisito) {
             if ($exigido && ! in_array($solicitud->estado, $exigido[0], true)) {
                 throw ValidationException::withMessages(['estado' => $exigido[1]]);
             }
+            $requisito && $requisito();
 
             $anterior = $solicitud->estado;
             $detalle = $detalle instanceof Closure ? $detalle() : $detalle;

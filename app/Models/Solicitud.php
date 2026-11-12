@@ -123,6 +123,13 @@ class Solicitud extends Model
         ]);
     }
 
+    /** Una certificación no puede cerrarse sin que FONCALDAS haya publicado el certificado. */
+    public function faltaCertificado(): bool
+    {
+        return $this->tramiteTipo->es_certificacion
+            && ! $this->documentos()->where('origen', 'admin')->exists();
+    }
+
     public function estadoLabel(): string
     {
         return self::ESTADOS[$this->estado] ?? $this->estado;

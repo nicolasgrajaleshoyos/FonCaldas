@@ -89,6 +89,26 @@ test('el flujo admin cambia estados, audita con el actor y notifica al asociado'
     Mail::assertSent(SolicitudEstadoCambiado::class, 3);
 });
 
+test('una certificación no se finaliza hasta publicar el certificado', function () {
+    Mail::fake();
+    Storage::fake('local');
+    $actor = admin();
+    $tipo = tipo();
+    $tipo->update(['es_certificacion' => true]);
+    $solicitud = solicitud($tipo);
+    $solicitud->documentos()->create(['origen' => 'asociado', 'nombre_original' => 'cedula.pdf', 'path' => 'x', 'version' => 1]);
+
+    $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/verificar");
+    $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/aprobar");
+    $this->actingAs($actor)->get("/admin/solicitudes/{$solicitud->id}")->assertSee('Publica el certificado en «Documentos» para poder finalizarla', false);
+    $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/finalizar")->assertSessionHasErrors('documento');
+    expect($solicitud->fresh()->estado)->toBe(Solicitud::ESTADO_APROBADA);
+
+    $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/documentos", ['documento' => UploadedFile::fake()->create('certificado.pdf', 5)]);
+    $this->actingAs($actor)->post("/admin/solicitudes/{$solicitud->id}/finalizar")->assertSessionHasNoErrors();
+    expect($solicitud->fresh()->estado)->toBe(Solicitud::ESTADO_FINALIZADA);
+});
+
 test('un funcionario sin el tipo de trámite recibe 403', function () {
     $solicitud = solicitud(tipo());
     $ajeno = admin(false, [tipo('Otro')->id]);
