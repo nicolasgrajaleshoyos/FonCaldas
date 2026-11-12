@@ -13,7 +13,8 @@ class PqrsNotificacion extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Pqrs $pqrs, public string $asunto, public string $mensaje) {}
+    /** $paraAdmin cambia el correo al aviso para el administrador (botón al panel en vez de "Consultar mi PQRS"). */
+    public function __construct(public Pqrs $pqrs, public string $asunto, public string $mensaje, public bool $paraAdmin = false) {}
 
     public function envelope(): Envelope
     {

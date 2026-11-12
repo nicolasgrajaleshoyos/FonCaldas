@@ -41,22 +41,7 @@ class ParametroFinancieroController extends Controller
         $fechaInicio = $request->input('fecha_inicio_vigencia');
         $fechaFin = $request->input('fecha_fin_vigencia');
 
-        $existeSuperposicion = ParametroFinanciero::where(
-            'producto_financiero_id',
-            $request->input('producto_financiero_id')
-        )
-            ->where('codigo', 'tasa_interes')->where('activo', true)
-            ->where(function ($consulta) use ($fechaInicio) {
-                $consulta
-                    ->whereNull('fecha_fin_vigencia')
-                    ->orWhere('fecha_fin_vigencia', '>=', $fechaInicio);
-            })
-            ->when($fechaFin, function ($consulta) use ($fechaFin) {
-                $consulta->where('fecha_inicio_vigencia', '<=', $fechaFin);
-            }, function ($consulta) {
-                $consulta->whereNotNull('fecha_inicio_vigencia');
-            })
-            ->exists();
+        $existeSuperposicion = ParametroFinanciero::haySuperposicion((int) $request->input('producto_financiero_id'), $fechaInicio, $fechaFin);
 
         if ($existeSuperposicion) {
             return back()
@@ -106,24 +91,7 @@ class ParametroFinancieroController extends Controller
         $fechaInicio = $request->input('fecha_inicio_vigencia');
         $fechaFin = $request->input('fecha_fin_vigencia');
 
-        $existeSuperposicion = ParametroFinanciero::where(
-            'producto_financiero_id',
-            $request->input('producto_financiero_id')
-        )
-            ->where('codigo', 'tasa_interes')
-            ->where('activo', true)
-            ->where('id', '!=', $tasa->id)
-            ->where(function ($consulta) use ($fechaInicio) {
-                $consulta
-                    ->whereNull('fecha_fin_vigencia')
-                    ->orWhere('fecha_fin_vigencia', '>=', $fechaInicio);
-            })
-            ->when($fechaFin, function ($consulta) use ($fechaFin) {
-                $consulta->where('fecha_inicio_vigencia', '<=', $fechaFin);
-            }, function ($consulta) {
-                $consulta->whereNotNull('fecha_inicio_vigencia');
-            })
-            ->exists();
+        $existeSuperposicion = ParametroFinanciero::haySuperposicion((int) $request->input('producto_financiero_id'), $fechaInicio, $fechaFin, excluirId: $tasa->id);
 
         if ($existeSuperposicion) {
             return back()

@@ -16,7 +16,7 @@
 
                 <x-section-title as="h2" class="mb-5">¿Por qué ahorrar en Foncaldas?</x-section-title>
 
-                <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
                     Foncaldas es una entidad del sector solidario que busca que tus ahorros crezcan de manera segura.
                     Ofrecemos diferentes líneas de ahorro adaptadas a tus necesidades, con tasas competitivas y
                     acompañamiento constante.
@@ -35,11 +35,11 @@
                     <div class="p-5 border border-slate-100 dark:border-slate-700 rounded-2xl">
                         <div class="inline-flex items-center gap-3 mb-3">
                             <span
-                                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon
+                                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300"><x-icon
                                     name="briefcase" class="w-5 h-5" /></span>
                             <h3 class="font-semibold text-slate-800 dark:text-slate-100">Ahorro ordinario</h3>
                         </div>
-                        <p class="text-slate-500 dark:text-slate-400 text-[14px] mt-1">
+                        <p class="text-slate-500 dark:text-slate-300 text-[14px] mt-1">
                             Cuenta flexible sin monto mínimo de permanencia.
                         </p>
                     </div>
@@ -47,11 +47,11 @@
                     <div class="p-5 border border-slate-100 dark:border-slate-700 rounded-2xl">
                         <div class="inline-flex items-center gap-3 mb-3">
                             <span
-                                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon
+                                class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300"><x-icon
                                     name="trending-up" class="w-5 h-5" /></span>
                             <h3 class="font-semibold text-slate-800 dark:text-slate-100">Ahorro CDAT</h3>
                         </div>
-                        <p class="text-slate-500 dark:text-slate-400 text-[14px] mt-1">
+                        <p class="text-slate-500 dark:text-slate-300 text-[14px] mt-1">
                             Certificado a término fijo con tasa preferencial, ideal para hacer crecer tus ahorros a mediano
                             plazo.
                         </p>
@@ -73,17 +73,17 @@
 
                 <x-section-title as="h2" class="mb-7">Ventajas de ahorrar con nosotros</x-section-title>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-600 dark:text-slate-400">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-600 dark:text-slate-300">
 
-                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3]" /> Tasas
+                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3] dark:text-sky-300" /> Tasas
                         competitivas del mercado</p>
-                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3]" /> Seguridad
+                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3] dark:text-sky-300" /> Seguridad
                         garantizada</p>
-                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3]" />
+                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3] dark:text-sky-300" />
                         Transparencia total</p>
-                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3]" /> Atención
+                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3] dark:text-sky-300" /> Atención
                         personalizada</p>
-                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3]" /> Retiros sin
+                    <p class="flex items-center gap-2"><x-icon name="check" class="w-4 h-4 text-[#0C67A3] dark:text-sky-300" /> Retiros sin
                         penalización</p>
 
                 </div>
@@ -96,7 +96,7 @@
 
                 <x-section-title as="h2" class="mb-7">Proceso de apertura</x-section-title>
 
-                <ol class="space-y-3 text-slate-600 dark:text-slate-400 list-decimal pl-5">
+                <ol class="space-y-3 text-slate-600 dark:text-slate-300 list-decimal pl-5">
                     <li>Completa el formulario de vinculación como asociado</li>
                     <li>Elige la línea de ahorro que se adapte a tu meta</li>
                     <li>Realiza tu depósito inicial</li>

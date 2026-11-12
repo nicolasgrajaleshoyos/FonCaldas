@@ -21,13 +21,14 @@
     <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ Vite::asset('node_modules/@fontsource-variable/sora/files/sora-latin-wght-normal.woff2') }}">
 
     {{-- Navegación instantánea: al pasar el mouse (o tocar) un enlace, el navegador prepara la página de destino
-         y al hacer clic ya está lista. Se excluyen descargas, archivos y enlaces que abren otra pestaña. --}}
+         y al hacer clic ya está lista. Incluye el panel (sus enlaces solo muestran información; las acciones son POST).
+         Se excluyen descargas, archivos, formularios con mensajes y enlaces que abren otra pestaña. --}}
     <script type="speculationrules">
     {
         "prerender": [{
             "where": { "and": [
                 { "href_matches": "/*" },
-                { "not": { "href_matches": ["/storage/*", "/build/*", "/images/*", "/pdf/*", "/tramites/documentos/*", "/admin/solicitudes/*/documentos/*", "/admin/*", "/admin", "/tramites", "/pqrs*"] } },
+                { "not": { "href_matches": ["/storage/*", "/build/*", "/images/*", "/pdf/*", "/tramites/documentos/*", "/tramites/*/estado", "/admin/solicitudes/*/documentos/*", "/admin/*/descargar*", "/admin", "/tramites", "/pqrs*"] } },
                 { "not": { "selector_matches": "[download], [target=_blank]" } }
             ] },
             "eagerness": "moderate"
@@ -42,7 +43,7 @@
                 const enlace = e.target.closest && e.target.closest('a[href]');
                 if (!enlace || enlace.origin !== location.origin || enlace.target === '_blank' || enlace.hasAttribute('download')) return;
                 if (/^\/(tramites|pqrs)$/.test(enlace.pathname)) return;
-                if (/^\/(storage|build|images|pdf|admin|tramites\/documentos)\//.test(enlace.pathname) || precargados.has(enlace.href)) return;
+                if (/^\/(storage|build|images|pdf|tramites\/documentos)\//.test(enlace.pathname) || /\/documentos\/\d+$/.test(enlace.pathname) || precargados.has(enlace.href)) return;
                 precargados.add(enlace.href);
                 const link = document.createElement('link');
                 link.rel = 'prefetch';

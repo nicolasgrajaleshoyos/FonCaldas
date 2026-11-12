@@ -3,11 +3,10 @@
 @section('title', 'Consultar PQRS | Foncaldas')
 
 @section('content')
-@php $input = 'w-full rounded-2xl border border-slate-200 dark:border-slate-600 dark:bg-slate-900 px-4 py-3 focus:ring-2 focus:ring-[#0C67A3]'; @endphp
 <div class="min-h-screen page-bg py-14">
-    <div class="max-w-md mx-auto px-6">
-        <div class="flex flex-col items-center mb-10">
-            <x-mascot pose="pensativo" class="mb-4" />
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col items-center mb-4">
+            <x-mascot pose="pensativo" class="mb-6" sol />
             <x-page-header
                 icon="search"
                 title="Consulta tu PQRS"
@@ -15,31 +14,9 @@
                 center />
         </div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm p-8">
-            @if($errors->any())
-                <div class="mb-4 rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 px-4 py-3 text-sm text-red-700 dark:text-red-300">
-                    @foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('pqrs.buscar') }}" data-cargando="Consultando tu PQRS…" class="space-y-4">
-                @csrf
-                <div>
-                    <label for="f-codigo" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Código</label>
-                    <input type="text" id="f-codigo" name="codigo" value="{{ old('codigo') }}" required placeholder="PQ-26-XXXXXX" class="{{ $input }}">
-                <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Lo recibiste en el mensaje de confirmación y por correo al radicar.</p>
-                </div>
-                <div>
-                    <label for="f-documento" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de documento</label>
-                    <input type="text" id="f-documento" name="documento" value="{{ old('documento') }}" required class="{{ $input }}">
-                </div>
-                <button type="submit" class="w-full rounded-lg bg-[#0B4870] px-4 py-3 text-white font-semibold hover:bg-[#0a3d60] transition">Consultar</button>
-            </form>
-        </div>
-
-        <p class="mt-6 text-center text-sm text-slate-500">
-            <a href="{{ route('pqrs.crear') }}" class="text-[#0C67A3] font-semibold hover:underline">← Radicar una nueva PQRS</a>
-        </p>
+        <x-formulario-consulta :accion="route('pqrs.buscar')" mensaje-carga="Consultando tu PQRS…"
+            prefijo="PQ" campo-documento="documento" que="tu PQRS"
+            :nueva-ruta="route('pqrs.crear')" nueva-texto="Radica una PQRS" />
     </div>
 </div>
 @endsection

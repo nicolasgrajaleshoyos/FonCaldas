@@ -10,7 +10,7 @@ class GuardarEventoRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'required|string|max:5000',
             'location' => 'required|string|max:255',
             'event_date' => 'required|date',
             'event_time' => 'required|date_format:H:i,H:i:s',

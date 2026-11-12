@@ -48,7 +48,7 @@
                             class="hidden mt-4 rounded-xl border border-slate-200 dark:border-slate-700
                                 bg-slate-50 dark:bg-slate-900/40 px-4 py-3">
 
-                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                            <p class="text-sm text-slate-600 dark:text-slate-300">
                                 <span class="font-semibold text-slate-700 dark:text-slate-200">
                                     Producto seleccionado:
                                 </span>
@@ -60,7 +60,7 @@
                                 class="mt-2 text-sm text-slate-600 dark:text-slate-300">
                             </p>
 
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            <p class="text-sm text-slate-500 dark:text-slate-300 mt-1">
                                 Los campos y condiciones de este producto se ajustarán cuando FONCALDAS confirme sus reglas.
                             </p>
 
@@ -124,7 +124,7 @@
                             Simular
                         </button>
 
-                        <p class="text-sm text-center text-slate-500 dark:text-slate-400 mt-3">
+                        <p class="text-sm text-center text-slate-500 dark:text-slate-300 mt-3">
                             Los campos varían según el producto.
                         </p>
 

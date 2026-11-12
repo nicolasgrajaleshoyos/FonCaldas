@@ -39,10 +39,16 @@ return [
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
+            // Ajustes para varios usuarios a la vez (sesiones, caché y límites de envío también escriben aquí):
+            // - WAL: los lectores no esperan a quien escribe y viceversa (el modo por defecto bloquea todo el archivo).
+            // - busy_timeout: si hay otra escritura en curso, espera hasta 5 s en vez de fallar con "database is locked".
+            // - synchronous NORMAL: seguro con WAL y bastante más rápido que FULL.
+            // - IMMEDIATE: la transacción toma el permiso de escritura al empezar. Con DEFERRED, dos transacciones que
+            //   leen y luego escriben (como los cambios de estado de una solicitud) chocan y una falla sin esperar.
+            'busy_timeout' => env('DB_BUSY_TIMEOUT', 5000),
+            'journal_mode' => env('DB_JOURNAL_MODE', 'wal'),
+            'synchronous' => env('DB_SYNCHRONOUS', 'normal'),
+            'transaction_mode' => env('DB_TRANSACTION_MODE', 'IMMEDIATE'),
         ],
 
         'mysql' => [

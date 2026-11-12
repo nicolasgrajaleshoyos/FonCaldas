@@ -12,7 +12,7 @@ class GuardarDocumentoRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'required|string|max:5000',
             'category' => ['required', Rule::in($categorias->slugs())],
             // Al editar (PUT) el PDF es opcional: sin archivo nuevo se conserva el actual.
             'document' => [$this->isMethod('PUT') ? 'nullable' : 'required', 'file', 'mimes:pdf', 'max:20480'],

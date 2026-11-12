@@ -53,7 +53,13 @@ class User extends Authenticatable
     // ponytail: se deduce del id más bajo entre administradores; usar una columna explícita si hiciera falta traspasar el rol.
     public function esPropietario(): bool
     {
-        return $this->is_super_admin && $this->id === static::where('is_super_admin', true)->min('id');
+        return $this->is_super_admin && $this->id === static::idPropietario();
+    }
+
+    /** Método estático con once(): una sola consulta por petición aunque la lista de usuarios lo pregunte por cada fila. */
+    private static function idPropietario(): ?int
+    {
+        return once(fn () => static::where('is_super_admin', true)->min('id'));
     }
 
     /** Editar la cuenta de otro: el propietario edita a cualquiera; los demás administradores, solo funcionarios y a sí mismos. */
@@ -85,9 +91,10 @@ class User extends Authenticatable
     }
 
     /** Responsable con menos solicitudes abiertas; los super admins solo si nadie más atiende el tipo. */
-    public static function responsableSugerido(int $tramiteTipoId): ?self
+    public static function responsableSugerido(int $tramiteTipoId, ?int $excluir = null): ?self
     {
         return static::responsablesDe($tramiteTipoId)
+            ->when($excluir, fn ($q) => $q->whereKeyNot($excluir))
             ->withCount(['solicitudesAsignadas' => fn ($q) => $q->whereIn('estado', Solicitud::ESTADOS_ABIERTOS)])
             ->orderBy('is_super_admin')
             ->orderBy('solicitudes_asignadas_count')

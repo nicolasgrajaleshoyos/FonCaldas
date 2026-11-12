@@ -43,6 +43,8 @@ Route::get('/tramites/consultar', [SolicitudController::class, 'consultar'])->na
 Route::post('/tramites/consultar', [SolicitudController::class, 'buscar'])->middleware('throttle:10,1')->name('solicitudes.buscar');
 Route::middleware('signed')->group(function () {
     Route::get('/tramites/documentos/{documento}', [SolicitudController::class, 'descargarDocumento'])->name('solicitudes.documentos.descargar');
+    // Página de estado con enlace firmado y temporal: tras consultar o adjuntar se redirige aquí, así recargar no reenvía el formulario.
+    Route::get('/tramites/{solicitud}/estado', [SolicitudController::class, 'estado'])->name('solicitudes.estado');
     Route::post('/tramites/{solicitud}/documentos', [SolicitudController::class, 'adjuntarDocumentos'])->middleware('throttle:10,1')->name('solicitudes.documentos.store');
 });
 

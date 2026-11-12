@@ -2,12 +2,12 @@
 
 @section('content')
 @php
-    $input = 'w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-slate-100 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0C67A3]';
+    $input = 'w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-slate-100 px-4 py-2.5 focus:outline-none';
     $label = 'block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5';
-    $card = 'rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-200 dark:border-slate-700';
+    $card = 'rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-200 dark:border-white/10';
     $mediaUrl = $event->media_path ? (preg_match('/^https?:\/\//', $event->media_path) ? $event->media_path : asset($event->media_path)) : null;
 @endphp
-<div class="min-h-screen bg-[#F5F7FA] dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-4 sm:px-6 lg:px-8 py-8">
+<div class="min-h-screen page-bg text-slate-900 dark:text-slate-100 px-4 sm:px-6 lg:px-8 py-8">
     <div class="w-full max-w-[1920px] mx-auto space-y-6">
         <x-admin-tabs active="events" title="Editar evento" icon="ticket" subtitle="{{ $event->title }}" />
 
@@ -21,7 +21,7 @@
             <div class="{{ $card }} lg:col-span-2 space-y-5">
                 <div>
                     <h2 class="text-base font-bold text-slate-900 dark:text-white">Información del evento</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Estos datos se muestran en la página pública de eventos.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-300">Estos datos se muestran en la página pública de eventos.</p>
                 </div>
 
                 <div>
@@ -61,11 +61,11 @@
                 <div class="{{ $card }} space-y-4">
                     <div>
                         <h2 class="text-base font-bold text-slate-900 dark:text-white">Foto o video</h2>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">Opcional. Sube un archivo nuevo solo si quieres reemplazar el actual.</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-300">Opcional. Sube un archivo nuevo solo si quieres reemplazar el actual.</p>
                     </div>
 
                     @if($mediaUrl)
-                        <div class="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900">
+                        <div class="overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-900">
                             @if($event->media_type === 'video')
                                 <video controls class="aspect-video w-full bg-black"><source src="{{ $mediaUrl }}" type="video/mp4"></video>
                             @else
@@ -73,7 +73,7 @@
                             @endif
                         </div>
                     @else
-                        <div class="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 text-sm text-slate-500 dark:text-slate-400">Sin multimedia</div>
+                        <div class="flex aspect-video items-center justify-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 text-sm text-slate-500 dark:text-slate-300">Sin multimedia</div>
                     @endif
 
                     <input id="media" name="media" type="file" accept="image/*,video/mp4" aria-label="Reemplazar foto o video"
@@ -82,8 +82,8 @@
                 </div>
             </div>
             <div class="lg:col-span-3 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                <a href="{{ route('admin.events') }}" class="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Cancelar</a>
-                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0C67A3] px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#095c8f] transition"><x-icon name="check" class="w-4 h-4" /> Guardar cambios</button>
+                <a href="{{ route('admin.events') }}" class="inline-flex items-center justify-center rounded-full border border-slate-300 dark:border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Cancelar</a>
+                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-full bg-[#0C67A3] px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#095c8f] transition shadow-lg shadow-[#0B4870]/20 hover:-translate-y-0.5"><x-icon name="check" class="w-4 h-4" /> Guardar cambios</button>
             </div>
         </form>
     </div>

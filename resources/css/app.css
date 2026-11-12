@@ -199,8 +199,115 @@ html {
     }
 }
 
+/* HERO DE INICIO: título en Sora, entrada escalonada, trama de puntos,
+   subrayado que se dibuja y el sol del logo girando detrás de la mascota. */
+.hero-title {
+    font-family: 'Sora', Inter, sans-serif;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+}
+
+@keyframes hero-in {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: none; }
+}
+
+.hero-in {
+    animation: hero-in .7s cubic-bezier(.22,1,.36,1) both;
+}
+
+.hero-dots {
+    background-image: radial-gradient(rgba(12,103,163,.22) 1px, transparent 1.5px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(ellipse 60% 70% at 30% 40%, #000, transparent 75%);
+    mask-image: radial-gradient(ellipse 60% 70% at 30% 40%, #000, transparent 75%);
+}
+
+.dark .hero-dots {
+    background-image: radial-gradient(rgba(255,255,255,.12) 1px, transparent 1.5px);
+}
+
+@keyframes hero-underline-draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+}
+
+.hero-underline {
+    stroke-dasharray: 1;
+    animation: hero-underline-draw .8s .6s cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes hero-sun-spin {
+    to { transform: rotate(360deg); }
+}
+
+.hero-sun {
+    border-radius: 50%;
+    background: repeating-conic-gradient(rgba(253,224,71,.8) 0deg 6deg, transparent 6deg 20deg);
+    -webkit-mask-image: radial-gradient(circle, #000 10%, transparent 70%);
+    mask-image: radial-gradient(circle, #000 10%, transparent 70%);
+    animation: hero-sun-spin 60s linear infinite;
+}
+
+/* Sol detrás de la mascota en los encabezados: sobre el fondo claro de la página
+   los rayos van en ámbar para que se noten; en oscuro quedan en amarillo. */
+.hero-sun--pagina {
+    background: repeating-conic-gradient(rgba(245,158,11,.6) 0deg 6deg, transparent 6deg 20deg);
+}
+
+.dark .hero-sun--pagina {
+    background: repeating-conic-gradient(rgba(253,224,71,.85) 0deg 6deg, transparent 6deg 20deg);
+}
+
+/* Degradado de "financiero" que se desplaza lentamente */
+@keyframes hero-shine {
+    to { background-position: 100% 50%; }
+}
+
+.hero-shine {
+    background-size: 200% auto;
+    animation: hero-shine 5s ease-in-out infinite alternate;
+}
+
+/* PANTALLA DE CARGA (partials/cargando): barra que va y viene */
+@keyframes cargando-barra {
+    from { left: -40%; }
+    to { left: 100%; }
+}
+
+.cargando-barra {
+    animation: cargando-barra 1.3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cargando-barra {
+        animation: none;
+        left: 30%;
+    }
+
+    .hero-in,
+    .hero-underline,
+    .hero-sun,
+    .hero-shine {
+        animation: none;
+    }
+}
+
 body {
     background: var(--background);
+}
+
+/* RESPONSIVE: por defecto una columna de cuadrícula no se encoge por debajo de su contenido más ancho
+   (un campo, un nombre de archivo largo), y en celulares pequeños empuja la página hacia los lados.
+   Así cualquier columna puede encogerse y el texto largo se corta o se parte dentro de ella. */
+.grid > * {
+    min-width: 0;
+}
+
+/* Los adornos que giran (el sol de la mascota) crecen en diagonal al rotar y en celulares pequeños asomaban
+   unos píxeles por el borde. "clip" recorta sin crear una zona de desplazamiento, así que lo fijo (sticky) sigue funcionando. */
+main {
+    overflow-x: clip;
 }
 
 /* ACCESIBILIDAD: foco visible en navegación por teclado */
@@ -310,39 +417,13 @@ img.img-loading {
 
     font-weight: 500;
 
-    padding: 8px 7px;
+    padding: 7px 10px;
 
-    border-radius: 10px;
+    border-radius: 999px;
 
     white-space: nowrap;
 
-    transition: color .2s ease, background-color .2s ease;
-
-}
-
-.nav-link::after {
-
-    content: '';
-
-    position: absolute;
-
-    left: 12px;
-
-    right: 12px;
-
-    bottom: 3px;
-
-    height: 2px;
-
-    border-radius: 2px;
-
-    background: white;
-
-    transform: scaleX(0);
-
-    transform-origin: left;
-
-    transition: transform .25s ease;
+    transition: color .2s ease, background-color .2s ease, box-shadow .2s ease;
 
 }
 
@@ -351,25 +432,20 @@ img.img-loading {
 
     color: white;
 
-    background: rgba(255,255,255,.08);
+    background: rgba(255,255,255,.14);
 
 }
 
-.nav-link:hover::after,
-.nav-link:focus-visible::after,
-.nav-link.is-active::after {
-
-    transform: scaleX(1);
-
-}
-
+/* Pestaña activa: píldora blanca sobre la cápsula del menú */
 .nav-link.is-active {
 
-    color: white;
+    color: #0B4870;
 
-    background: rgba(255,255,255,.12);
+    background: white;
 
     font-weight: 600;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,.22);
 
 }
 
@@ -383,6 +459,116 @@ img.img-loading {
 
     transform: rotate(180deg);
 
+}
+
+/* INTERRUPTOR DÍA/NOCHE (x-theme-toggle): la perilla es el sol y se desliza
+   para volverse luna; el riel pasa de cielo con nube a noche con estrellas. */
+.theme-switch {
+    position: relative;
+    width: 56px;
+    height: 32px;
+    border-radius: 999px;
+    overflow: hidden;
+    cursor: pointer;
+    background: linear-gradient(135deg, #7DD3FC, #0EA5E9);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.35);
+    transition: background .4s ease;
+}
+
+.dark .theme-switch {
+    background: linear-gradient(135deg, #0F172A, #1E3A8A);
+}
+
+/* Estrellas (solo de noche) */
+.theme-switch::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(1.5px 1.5px at 10px 9px, #fff, transparent),
+        radial-gradient(1px 1px at 17px 21px, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 25px 12px, #fff, transparent),
+        radial-gradient(1px 1px at 8px 24px, #fff, transparent);
+    opacity: 0;
+    transition: opacity .4s ease;
+}
+
+.dark .theme-switch::before {
+    opacity: 1;
+}
+
+/* Nube (solo de día) */
+.theme-switch::after {
+    content: '';
+    position: absolute;
+    right: 7px;
+    bottom: 8px;
+    width: 14px;
+    height: 6px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: -4px -3px 0 1px #fff;
+    transition: opacity .3s ease, transform .4s ease;
+}
+
+.dark .theme-switch::after {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.theme-switch__knob {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FACC15;
+    color: #0B4870;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3), 0 0 10px rgba(250,204,21,.7);
+    transition: transform .45s cubic-bezier(.34,1.56,.64,1), background-color .4s ease, box-shadow .4s ease;
+}
+
+.theme-switch:hover .theme-switch__knob {
+    transform: rotate(25deg);
+}
+
+.dark .theme-switch__knob {
+    transform: translateX(24px);
+    background: #F1F5F9;
+    box-shadow: 0 2px 6px rgba(0,0,0,.4), 0 0 10px rgba(255,255,255,.45);
+}
+
+.dark .theme-switch:hover .theme-switch__knob {
+    transform: translateX(24px) rotate(-20deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .theme-switch,
+    .theme-switch::before,
+    .theme-switch::after,
+    .theme-switch__knob {
+        transition: none;
+    }
+}
+
+/* ESTADO ABIERTO/CERRADO (x-open-status): destello que cruza la píldora al pasar el mouse */
+.status-pill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,.45) 50%, transparent 65%);
+    transform: translateX(-120%);
+    pointer-events: none;
+}
+
+.status-pill:hover::after {
+    transform: translateX(120%);
+    transition: transform .8s ease;
 }
 
 /* DARK BUTTON */
@@ -446,6 +632,61 @@ img.img-loading {
 @media (min-width: 1536px) {
     .nav-link {
         font-size: 15px;
-        padding: 8px 12px;
+        padding: 8px 16px;
+    }
+}
+
+/* ESTADO DE UNA SOLICITUD: la barra de progreso se llena desde cero hasta el ancho del paso actual. */
+@keyframes estado-llenar {
+    from { width: 0; }
+}
+
+.estado-llenar {
+    animation: estado-llenar 1.2s .5s cubic-bezier(.22,1,.36,1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .estado-llenar {
+        animation: none;
+    }
+}
+
+/* PANEL ADMINISTRATIVO: piezas que se repiten en todas sus pestañas (tarjetas, campos y botones).
+   Van en la capa "components" para que una utilidad puesta al lado (p. ej. py-2.5) pueda ajustarlas. */
+@layer components {
+    .adm-card {
+        @apply rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-800;
+    }
+
+    .adm-titulo {
+        @apply flex items-center gap-3 text-xl font-bold text-slate-900 dark:text-white;
+    }
+
+    .adm-etiqueta {
+        @apply mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200;
+    }
+
+    .adm-campo {
+        @apply w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-base text-slate-900 transition placeholder:text-slate-400 focus:border-[#0C67A3] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#0C67A3]/15 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:[color-scheme:dark] dark:placeholder:text-slate-500 dark:focus:border-sky-400 dark:focus:bg-slate-900;
+    }
+
+    .adm-btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#0B4870] px-6 py-3 font-semibold text-white shadow-lg shadow-[#0B4870]/25 transition hover:-translate-y-0.5 hover:bg-[#0a3d60] dark:bg-[#0C67A3] dark:hover:bg-sky-600;
+    }
+
+    .adm-btn-sec {
+        @apply inline-flex items-center justify-center gap-1.5 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#0B4870] hover:bg-[#0B4870] hover:text-white dark:border-white/15 dark:text-slate-200 dark:hover:border-sky-400 dark:hover:bg-sky-400/15 dark:hover:text-white;
+    }
+
+    .adm-btn-peligro {
+        @apply inline-flex items-center justify-center gap-1.5 rounded-full border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-600 transition hover:border-rose-600 hover:bg-rose-600 hover:text-white dark:border-rose-500/40 dark:text-rose-300 dark:hover:bg-rose-500/20 dark:hover:text-rose-100;
+    }
+
+    .adm-chip {
+        @apply inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600 dark:bg-white/10 dark:text-slate-300;
+    }
+
+    .adm-archivo {
+        @apply w-full text-sm text-slate-700 dark:text-slate-200 file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-[#0B4870] file:px-5 file:py-2.5 file:font-semibold file:text-white hover:file:bg-[#0a3d60] dark:file:bg-[#0C67A3];
     }
 }

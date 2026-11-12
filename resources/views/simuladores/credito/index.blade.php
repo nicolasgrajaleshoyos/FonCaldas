@@ -43,7 +43,7 @@
                         <div id="descripcion-producto"
                             class="hidden mt-4 rounded-xl border border-slate-200 dark:border-slate-700
                                bg-slate-50 dark:bg-slate-900/40 px-4 py-3">
-                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                            <p class="text-sm text-slate-600 dark:text-slate-300">
                                 <span class="font-semibold text-slate-700 dark:text-slate-200">
                                     Producto seleccionado:
                                 </span>
@@ -54,7 +54,7 @@
                             <p id="tasa-producto" class="mt-2 text-sm text-slate-600 dark:text-slate-300">
                             </p>
 
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            <p class="text-sm text-slate-500 dark:text-slate-300 mt-1">
                                 Las condiciones específicas de esta línea están pendientes de confirmación por FONCALDAS.
                             </p>
 
@@ -89,7 +89,7 @@
                                    bg-slate-100 dark:bg-slate-900
                                    text-slate-500 px-4 py-3">
 
-                            <p id="ayuda-monto" class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            <p id="ayuda-monto" class="mt-2 text-xs text-slate-500 dark:text-slate-300">
                             </p>
 
                         </div>
@@ -111,7 +111,7 @@
                                 </span>
                             </div>
 
-                            <p id="ayuda-plazo" class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            <p id="ayuda-plazo" class="mt-2 text-xs text-slate-500 dark:text-slate-300">
                             </p>
 
                         </div>
@@ -131,7 +131,7 @@
                                     bg-slate-100 dark:bg-slate-900
                                     text-slate-500 px-4 py-3">
 
-                            <p id="ayuda-especifica" class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            <p id="ayuda-especifica" class="mt-2 text-xs text-slate-500 dark:text-slate-300">
                             </p>
 
                         </div>
@@ -149,7 +149,7 @@
                             Simular
                         </button>
 
-                        <p class="text-sm text-center text-slate-500 dark:text-slate-400 mt-3">
+                        <p class="text-sm text-center text-slate-500 dark:text-slate-300 mt-3">
                             Los campos varían según el producto.
                         </p>
 
@@ -309,7 +309,7 @@
 
             ayudaMonto.classList.add(
                 'text-slate-500',
-                'dark:text-slate-400'
+                'dark:text-slate-300'
             );
 
             if (this.value !== '') {
@@ -499,7 +499,7 @@
 
             ayudaMonto.classList.remove(
                 'text-slate-500',
-                'dark:text-slate-400'
+                'dark:text-slate-300'
             );
 
             ayudaMonto.classList.add(
@@ -518,7 +518,7 @@
 
             ayudaMonto.classList.add(
                 'text-slate-500',
-                'dark:text-slate-400'
+                'dark:text-slate-300'
             );
         }
     </script>

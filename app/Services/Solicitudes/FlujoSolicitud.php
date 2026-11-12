@@ -86,6 +86,41 @@ class FlujoSolicitud
         $this->notificador->alResponsable($solicitud, $responsable);
     }
 
+    /**
+     * Reparte las solicitudes abiertas de un funcionario que ya no puede atenderlas (desactivado, eliminado o sin
+     * acceso a ese tipo de trámite) entre los demás responsables, para que ninguna quede sin quién la gestione.
+     *
+     * @param  bool  $saliente  true cuando el usuario está por eliminarse: todas sus solicitudes abiertas se reparten.
+     * @return int cuántas solicitudes cambiaron de responsable
+     */
+    public function redistribuirAbiertasDe(User $usuario, User $actor, bool $saliente = false): int
+    {
+        $abiertas = Solicitud::where('asignado_a', $usuario->id)->whereIn('estado', Solicitud::ESTADOS_ABIERTOS)->get();
+        $movidas = 0;
+
+        foreach ($abiertas as $solicitud) {
+            if (! $saliente && User::responsablesDe($solicitud->tramite_tipo_id)->whereKey($usuario->id)->exists()) {
+                continue; // aún puede atenderla
+            }
+
+            $nuevo = User::responsableSugerido($solicitud->tramite_tipo_id, excluir: $usuario->id);
+
+            DB::transaction(function () use ($solicitud, $actor, $usuario, $nuevo) {
+                $solicitud->update(['asignado_a' => $nuevo?->id]);
+                $solicitud->registrarEvento('solicitud_reasignada', $nuevo
+                    ? "Reasignada a {$nuevo->name} porque {$usuario->name} ya no puede atenderla."
+                    : "Quedó sin responsable porque {$usuario->name} ya no puede atenderla y no hay otro disponible.", userId: $actor->id);
+            });
+
+            if ($nuevo) {
+                $this->notificador->alResponsable($solicitud, $nuevo);
+            }
+            $movidas++;
+        }
+
+        return $movidas;
+    }
+
     public function publicarDocumento(Solicitud $solicitud, User $actor, UploadedFile $archivo): void
     {
         DB::transaction(function () use ($solicitud, $actor, $archivo) {

@@ -5,15 +5,15 @@
     <div class="max-w-6xl mx-auto px-6">
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3"><span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon name="document" class="w-6 h-6" /></span>{{ $category }}</h1>
-                <p class="text-slate-600 dark:text-slate-400 mt-2">Documentos publicados en esta categoría.</p>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3"><span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300"><x-icon name="document" class="w-6 h-6" /></span>{{ $category }}</h1>
+                <p class="text-slate-600 dark:text-slate-300 mt-2">Documentos publicados en esta categoría.</p>
             </div>
-            <a href="{{ route('transparencia') }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">Volver a Transparencia</a>
+            <a href="{{ route('transparencia') }}" class="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">Volver a Transparencia</a>
         </div>
 
         @if($documents->isEmpty())
             <div class="rounded-3xl bg-white dark:bg-slate-800 p-8 text-center shadow-sm border border-slate-100 dark:border-slate-700">
-                <p class="text-slate-600 dark:text-slate-400">No hay documentos publicados en esta categoría todavía.</p>
+                <p class="text-slate-600 dark:text-slate-300">No hay documentos publicados en esta categoría todavía.</p>
             </div>
         @else
             @php
@@ -37,15 +37,15 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">{{ $document->category }}</p>
+                                <p class="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500 dark:text-slate-300">{{ $document->category }}</p>
                                 <p class="mt-1 text-xl font-semibold text-slate-900 dark:text-white">{{ $document->title }}</p>
                             </div>
                         </div>
                         <div class="p-6">
-                            <p class="text-slate-600 dark:text-slate-400">{{ $document->description }}</p>
+                            <p class="text-slate-600 dark:text-slate-300">{{ $document->description }}</p>
                             <div class="mt-6 flex items-center justify-between gap-4">
-                                <span class="rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/40 px-4 py-2 text-sm text-slate-600 dark:text-slate-400">Publicado: {{ $document->published_at->format('d/m/Y') }}</span>
-                                <a href="{{ asset($document->file_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg bg-[#0B4870] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0a3d60]">
+                                <span class="rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/40 px-4 py-2 text-sm text-slate-600 dark:text-slate-300">Publicado: {{ $document->published_at->format('d/m/Y') }}</span>
+                                <a href="{{ asset($document->file_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-full bg-[#0B4870] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0a3d60] dark:bg-[#0C67A3] dark:hover:bg-sky-600 shadow-lg shadow-[#0B4870]/25 hover:-translate-y-0.5">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
                                         <path d="M12 5v14" />
                                         <path d="M5 12l7 7 7-7" />

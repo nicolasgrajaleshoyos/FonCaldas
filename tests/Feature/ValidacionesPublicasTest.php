@@ -44,8 +44,11 @@ test('consultar una solicitud con datos correctos muestra su estado', function (
         'asociado_email' => 'ana@test.co', 'descripcion' => 'x', 'estado' => Solicitud::ESTADO_RECIBIDA,
     ]);
 
-    $this->post('/tramites/consultar', ['codigo' => $solicitud->codigo, 'asociado_documento' => '123'])
+    $this->followingRedirects()->post('/tramites/consultar', ['codigo' => $solicitud->codigo, 'asociado_documento' => '123'])
         ->assertOk()->assertSee($solicitud->codigo);
+
+    // Sin la firma, la página de estado no se puede abrir.
+    $this->get("/tramites/{$solicitud->id}/estado")->assertForbidden();
 });
 
 test('radicar una PQRS sin aceptar el tratamiento de datos falla la validación', function () {

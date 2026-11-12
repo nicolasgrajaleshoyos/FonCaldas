@@ -83,8 +83,8 @@
 
             <aside class="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#FACC15] to-[#F59E0B] p-8 shadow-sm lg:col-span-2">
                 <x-icon name="heart" class="absolute -bottom-6 -right-6 h-36 w-36 text-white/25" />
-                <p class="relative text-xs font-bold uppercase tracking-wider text-[#0B4870]">Nuestro propósito</p>
-                <p class="relative mt-3 text-lg font-semibold leading-relaxed text-[#0B4870]">
+                <p class="relative text-xs font-bold uppercase tracking-wider text-[#0B4870] dark:text-sky-200">Nuestro propósito</p>
+                <p class="relative mt-3 text-lg font-semibold leading-relaxed text-[#0B4870] dark:text-sky-200">
                     Acompañar a los asociados con experiencias, convenios y servicios que promuevan el crecimiento personal,
                     la sana convivencia y el disfrute de momentos especiales, reafirmando así el compromiso solidario que nos caracteriza.
                 </p>
@@ -103,7 +103,7 @@
                             <x-icon :name="$o['icon']" class="h-7 w-7" />
                         </span>
                         <h3 class="mt-5 text-xl font-bold text-slate-900 dark:text-white">{{ $o['titulo'] }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{{ $o['texto'] }}</p>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-300">{{ $o['texto'] }}</p>
                         <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#0C67A3] dark:text-[#5EB3E4]">
                             Conocer más
                             <svg class="h-4 w-4 transition group-hover:translate-x-1" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg>

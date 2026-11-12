@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GuardarUsuarioRequest;
 use App\Models\TramiteTipo;
 use App\Models\User;
+use App\Services\Solicitudes\FlujoSolicitud;
 use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
 {
+    public function __construct(private FlujoSolicitud $flujo) {}
+
     public function index()
     {
         return view('pages.admin-usuarios-index', [
@@ -46,14 +49,16 @@ class UsuarioController extends Controller
     {
         $this->autorizarEdicion($request, $usuario);
 
-        $quedaSinPrincipal = $usuario->is_super_admin && ! $request->boolean('is_super_admin')
+        $atributos = $this->atributos($request);
+
+        // Se decide con el rol que realmente se va a guardar (un administrador secundario no puede cambiarlo).
+        $quedaSinPrincipal = $usuario->is_super_admin && ! $atributos['is_super_admin']
             && User::where('is_super_admin', true)->where('is_active', true)->whereKeyNot($usuario->id)->doesntExist();
 
         if ($quedaSinPrincipal) {
             return back()->withInput()->withErrors(['is_super_admin' => 'Debe existir al menos un administrador principal activo; no puedes quitar este rol al último.']);
         }
 
-        $atributos = $this->atributos($request);
         if (! $request->user()->puedeCambiarClaveDe($usuario)) {
             unset($atributos['password']);
         }
@@ -61,7 +66,10 @@ class UsuarioController extends Controller
         $usuario->update($atributos);
         $usuario->tramiteTipos()->sync($request->input('tramite_tipos', []));
 
-        return redirect()->route('admin.usuarios.index')->with('success', 'Funcionario actualizado correctamente.');
+        // Si perdió acceso a algún tipo de trámite, sus solicitudes abiertas de ese tipo pasan a otro responsable.
+        $movidas = $this->flujo->redistribuirAbiertasDe($usuario->refresh(), $request->user());
+
+        return redirect()->route('admin.usuarios.index')->with('success', 'Funcionario actualizado correctamente.'.$this->avisoReparto($movidas));
     }
 
     public function toggleActive(Request $request, User $usuario)
@@ -76,7 +84,13 @@ class UsuarioController extends Controller
 
         $usuario->update(['is_active' => ! $usuario->is_active]);
 
-        return back()->with('success', $usuario->is_active ? 'Funcionario activado.' : 'Funcionario desactivado.');
+        if ($usuario->is_active) {
+            return back()->with('success', 'Funcionario activado.');
+        }
+
+        $movidas = $this->flujo->redistribuirAbiertasDe($usuario, $request->user());
+
+        return back()->with('success', 'Funcionario desactivado.'.$this->avisoReparto($movidas));
     }
 
     public function destroy(Request $request, User $usuario)
@@ -85,9 +99,20 @@ class UsuarioController extends Controller
             return back()->withErrors(['usuario' => 'No se puede eliminar a un administrador principal ni a tu propia cuenta.']);
         }
 
-        $usuario->delete(); // las solicitudes/PQRS que tenía asociadas quedan sin responsable (nullOnDelete)
+        // Antes de borrar: sus solicitudes abiertas pasan a otro responsable en vez de quedar sin nadie.
+        $movidas = $this->flujo->redistribuirAbiertasDe($usuario, $request->user(), saliente: true);
+        $usuario->delete();
 
-        return back()->with('success', 'Funcionario eliminado.');
+        return back()->with('success', 'Funcionario eliminado.'.$this->avisoReparto($movidas));
+    }
+
+    private function avisoReparto(int $movidas): string
+    {
+        return match ($movidas) {
+            0 => '',
+            1 => ' Su solicitud abierta se asignó a otro responsable.',
+            default => " Sus {$movidas} solicitudes abiertas se asignaron a otros responsables.",
+        };
     }
 
     private function formulario(User $usuario)
@@ -107,6 +132,12 @@ class UsuarioController extends Controller
             $atributos['password'] = $request->input('password');
         }
 
-        return $atributos + ['is_super_admin' => $request->boolean('is_super_admin')];
+        // Otorgar o quitar el rol de administrador es exclusivo del administrador principal original: si no,
+        // un administrador secundario podría crear administradores y saltarse esa jerarquía.
+        $usuario = $request->route('usuario');
+
+        return $atributos + ['is_super_admin' => $request->user()->esPropietario()
+            ? $request->boolean('is_super_admin')
+            : (bool) $usuario?->is_super_admin];
     }
 }

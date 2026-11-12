@@ -2,11 +2,11 @@
 
 @section('content')
 @php
-    $input = 'w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-slate-100 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#0C67A3]';
+    $input = 'w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-slate-100 px-4 py-2.5 focus:outline-none';
     $label = 'block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5';
-    $card = 'rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-200 dark:border-slate-700';
+    $card = 'rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-200 dark:border-white/10';
 @endphp
-<div class="min-h-screen bg-[#F5F7FA] dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-4 sm:px-6 lg:px-8 py-8">
+<div class="min-h-screen page-bg text-slate-900 dark:text-slate-100 px-4 sm:px-6 lg:px-8 py-8">
     <div class="w-full max-w-[1920px] mx-auto space-y-6">
         <x-admin-tabs active="usuarios" title="{{ $usuario->exists ? 'Editar funcionario' : 'Nuevo funcionario' }}" icon="users" />
 
@@ -26,7 +26,7 @@
             <div class="{{ $card }} lg:col-span-2 space-y-5">
                 <div>
                     <h2 class="text-base font-bold text-slate-900 dark:text-white">Datos del funcionario</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Con el usuario y la contraseña inicia sesión en el panel; el correo recibe los avisos de nuevas solicitudes.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-300">Con el usuario y la contraseña inicia sesión en el panel; el correo recibe los avisos de nuevas solicitudes.</p>
                 </div>
 
                 <div class="grid gap-5 md:grid-cols-2">
@@ -57,14 +57,17 @@
                     @endif
                 </div>
 
-                <label class="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-4 text-sm text-slate-700 dark:text-slate-300">
-                    <input type="checkbox" name="is_super_admin" value="1" class="mt-0.5" @checked(old('is_super_admin', $usuario->is_super_admin))>
-                    <span><span class="block font-semibold text-slate-800 dark:text-slate-100">Administrador principal</span>Acceso total a todos los módulos y trámites.</span>
-                </label>
+                {{-- Solo el administrador principal original otorga o quita este rol (UsuarioController::atributos lo hace cumplir). --}}
+                @if(auth()->user()->esPropietario())
+                    <label class="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/50 p-4 text-sm text-slate-700 dark:text-slate-300">
+                        <input type="checkbox" name="is_super_admin" value="1" class="mt-0.5" @checked(old('is_super_admin', $usuario->is_super_admin))>
+                        <span><span class="block font-semibold text-slate-800 dark:text-slate-100">Administrador principal</span>Acceso total a todos los módulos y trámites.</span>
+                    </label>
+                @endif
 
-                <div class="flex flex-col-reverse gap-3 border-t border-slate-200 dark:border-slate-700 pt-5 sm:flex-row sm:justify-end">
-                    <a href="{{ route('admin.usuarios.index') }}" class="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">Cancelar</a>
-                    <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-[#0B4870] px-8 py-2.5 text-sm font-semibold text-white hover:bg-[#0a3d60] transition">Guardar</button>
+                <div class="flex flex-col-reverse gap-3 border-t border-slate-200 dark:border-white/10 pt-5 sm:flex-row sm:justify-end">
+                    <a href="{{ route('admin.usuarios.index') }}" class="inline-flex items-center justify-center rounded-full border border-slate-300 dark:border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition">Cancelar</a>
+                    <button type="submit" class="inline-flex items-center justify-center rounded-full bg-[#0B4870] px-8 py-2.5 text-sm font-semibold text-white hover:bg-[#0a3d60] transition shadow-lg shadow-[#0B4870]/20 hover:-translate-y-0.5">Guardar</button>
                 </div>
             </div>
 
@@ -72,7 +75,7 @@
             <div class="{{ $card }} space-y-4 lg:sticky lg:top-24">
                 <div>
                     <h2 class="text-base font-bold text-slate-900 dark:text-white">Tipos de trámite que puede ver y gestionar</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">No aplica si es administrador principal, quien siempre ve todo.</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-300">No aplica si es administrador principal, quien siempre ve todo.</p>
                 </div>
 
                 <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2">

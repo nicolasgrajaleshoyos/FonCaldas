@@ -7,7 +7,7 @@
 
         <!-- HEADER -->
         <div class="flex flex-col items-center mb-12">
-            <x-mascot pose="campeon" class="mb-4" />
+            <x-mascot pose="campeon" class="mb-6" sol />
             <x-page-header
                 icon="calendar"
                 title="Eventos"
@@ -19,7 +19,7 @@
 
             <div class="rounded-3xl bg-white dark:bg-slate-800 p-10 shadow-sm border border-slate-100 dark:border-slate-700 text-center">
 
-                <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3] mb-5">
+                <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300 mb-5">
                     <x-icon name="calendar" class="w-7 h-7" />
                 </span>
 
@@ -27,7 +27,7 @@
                     No hay eventos disponibles por ahora.
                 </h2>
 
-                <p class="mt-3 text-slate-600 dark:text-slate-400">
+                <p class="mt-3 text-slate-600 dark:text-slate-300">
                     Vuelve pronto para ver los próximos talleres, ferias y encuentros.
                 </p>
 
@@ -48,7 +48,7 @@
 
                                 <a href="{{ asset($event->media_path) }}"
                                    download aria-label="Descargar archivo del evento"
-                                   class="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-slate-600 dark:text-slate-400 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:hover:bg-slate-800">
+                                   class="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-slate-600 dark:text-slate-300 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:hover:bg-slate-800">
 
                                     <svg viewBox="0 0 24 24"
                                          fill="none"
@@ -91,7 +91,7 @@
 
                             @else
 
-                                <div class="flex h-56 w-full items-center justify-center bg-slate-100 dark:bg-slate-700/40 text-slate-500 dark:text-slate-400">
+                                <div class="flex h-56 w-full items-center justify-center bg-slate-100 dark:bg-slate-700/40 text-slate-500 dark:text-slate-300">
                                     Sin multimedia disponible
                                 </div>
 
@@ -105,15 +105,15 @@
                             <!-- TAGS -->
                             <div class="flex flex-wrap gap-2 text-sm mb-4">
 
-                                <span class="inline-flex items-center gap-1.5 rounded-full bg-[#0C67A3]/10 text-[#0C67A3] px-3 py-1">
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300 px-3 py-1">
                                     <x-icon name="map-pin" class="w-3.5 h-3.5" /> {{ $event->location }}
                                 </span>
 
-                                <span class="inline-flex items-center gap-1.5 rounded-full bg-[#0B8B7B]/10 text-[#0B8B7B] px-3 py-1">
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-[#0B8B7B]/10 text-[#0B8B7B] dark:bg-teal-400/15 dark:text-teal-300 px-3 py-1">
                                     <x-icon name="calendar" class="w-3.5 h-3.5" /> {{ $event->event_date->format('d/m/Y') }}
                                 </span>
 
-                                <span class="inline-flex items-center gap-1.5 rounded-full bg-[#CA8A04]/10 text-[#CA8A04] px-3 py-1">
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-[#CA8A04]/10 text-[#CA8A04] dark:bg-amber-400/15 dark:text-amber-300 px-3 py-1">
                                     <x-icon name="clock" class="w-3.5 h-3.5" /> {{ \Carbon\Carbon::parse($event->event_time)->format('H:i') }}
                                 </span>
 
@@ -125,7 +125,7 @@
                             </h2>
 
                             <!-- DESCRIPCION -->
-                            <p class="mt-4 text-slate-600 dark:text-slate-400 leading-relaxed">
+                            <p class="mt-4 text-slate-600 dark:text-slate-300 leading-relaxed">
                                 {{ $event->description }}
                             </p>
 

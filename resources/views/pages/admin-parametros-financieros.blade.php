@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-screen bg-[#F5F7FA] dark:bg-slate-950 text-slate-900 dark:text-slate-100 px-6 py-14">
+    <div class="min-h-screen page-bg text-slate-900 dark:text-slate-100 px-6 py-14">
 
         <div class="max-w-6xl mx-auto space-y-6">
 
@@ -12,13 +12,13 @@
                 subtitle="Administra las tasas y parámetros utilizados por los simuladores." />
 
             <div class="rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm
-                    border border-slate-100 dark:border-slate-700">
+                    border border-slate-100 dark:border-white/10">
 
                 <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
                     Registrar nueva tasa
                 </h2>
 
-                <p class="mt-1 mb-6 text-sm text-slate-500 dark:text-slate-400">
+                <p class="mt-1 mb-6 text-sm text-slate-500 dark:text-slate-300">
                     Registra una nueva tasa sin eliminar el historial de vigencias anteriores.
                 </p>
 
@@ -150,9 +150,9 @@
                     </div>
 
                     <button type="submit"
-                        class="rounded-lg bg-[#0C67A3] px-5 py-3
+                        class="rounded-full bg-[#0C67A3] px-5 py-3
                                 text-white font-semibold
-                                hover:bg-[#095c8f] transition">
+                                hover:bg-[#095c8f] transition shadow-lg shadow-[#0B4870]/20 hover:-translate-y-0.5">
                         Registrar tasa
                     </button>
 
@@ -161,43 +161,43 @@
             </div>
 
             <div class="rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm
-                    border border-slate-100 dark:border-slate-700 overflow-x-auto">
+                    border border-slate-100 dark:border-white/10 overflow-x-auto">
 
                 <div class="mb-6">
                     <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
                         Productos financieros
                     </h2>
 
-                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-300">
                         Las tasas se almacenarán con su vigencia para conservar el historial de cambios.
                     </p>
                 </div>
 
                 <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-left text-sm">
 
-                    <thead>
-                        <tr>
-                            <th class="px-3 py-3 font-medium text-slate-700 dark:text-slate-300">
+                    <thead class="bg-slate-50 dark:bg-slate-900/50">
+                        <tr class="transition hover:bg-slate-50 dark:hover:bg-white/5">
+                            <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
                                 Producto
                             </th>
 
-                            <th class="px-3 py-3 font-medium text-slate-700 dark:text-slate-300">
+                            <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
                                 Tipo
                             </th>
 
-                            <th class="px-3 py-3 font-medium text-slate-700 dark:text-slate-300">
+                            <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
                                 Tasa vigente
                             </th>
 
-                            <th class="px-3 py-3 font-medium text-slate-700 dark:text-slate-300">
+                            <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
                                 Vigencia
                             </th>
 
-                            <th class="px-3 py-3 font-medium text-slate-700 dark:text-slate-300">
+                            <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
                                 Estado
                             </th>
 
-                            <th class="px-3 py-3 font-medium text-slate-700 dark:text-slate-300">
+                            <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
                                 Historial
                             </th>
                         </tr>
@@ -210,17 +210,17 @@
                                 $tasa = $producto->tasaVigente;
                             @endphp
 
-                            <tr>
+                            <tr class="transition hover:bg-slate-50 dark:hover:bg-white/5">
 
                                 <td class="px-3 py-4 font-medium text-slate-900 dark:text-slate-200">
                                     {{ $producto->nombre }}
                                 </td>
 
-                                <td class="px-3 py-4 text-slate-600 dark:text-slate-400">
+                                <td class="px-3 py-4 text-slate-600 dark:text-slate-300">
                                     {{ ucfirst($producto->tipo) }}
                                 </td>
 
-                                <td class="px-3 py-4 text-slate-600 dark:text-slate-400">
+                                <td class="px-3 py-4 text-slate-600 dark:text-slate-300">
 
                                     @if ($tasa)
                                         {{ $tasa->valor }} {{ $tasa->unidad }}
@@ -232,7 +232,7 @@
 
                                 </td>
 
-                                <td class="px-3 py-4 text-slate-600 dark:text-slate-400">
+                                <td class="px-3 py-4 text-slate-600 dark:text-slate-300">
 
                                     @if ($tasa)
                                         {{ $tasa->fecha_inicio_vigencia->format('d/m/Y') }}
@@ -258,7 +258,7 @@
 
                                 </td>
 
-                                <td class="px-3 py-4 text-slate-600 dark:text-slate-400">
+                                <td class="px-3 py-4 text-slate-600 dark:text-slate-300">
                                     <div class="flex flex-col gap-1">
 
                                         <span class="text-slate-400">

@@ -128,13 +128,13 @@
 
                         <button
                             type="submit"
-                            class="inline-flex items-center px-5 py-2.5 rounded-lg bg-sky-700 hover:bg-sky-600 text-white font-medium transition">
+                            class="inline-flex items-center px-5 py-2.5 rounded-full bg-sky-700 hover:bg-sky-600 text-white font-medium transition">
                             Guardar cambios
                         </button>
 
                         <a
                             href="{{ route('admin.parametros-financieros.historial', $tasa->producto_financiero_id) }}"
-                            class="inline-flex items-center px-5 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-medium transition">
+                            class="inline-flex items-center px-5 py-2.5 rounded-full bg-slate-700 hover:bg-slate-600 text-white font-medium transition">
                             Cancelar
                         </a>
 

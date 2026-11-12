@@ -92,7 +92,7 @@
         <section class="mt-12" aria-label="Catálogo de convenios">
             <div class="mb-6 text-center">
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">Nuestros aliados</h2>
-                <p class="mt-2 text-slate-500 dark:text-slate-400">Toca una página para verla en grande y encuentra el contacto de cada asesor.</p>
+                <p class="mt-2 text-slate-500 dark:text-slate-300">Toca una página para verla en grande y encuentra el contacto de cada asesor.</p>
             </div>
 
             <div class="grid gap-6 sm:grid-cols-2">

@@ -8,7 +8,8 @@
         'rechazada' => 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
         default => 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300',
     };
-    $tamano = $grande ? 'inline-block px-5 py-2 text-lg font-bold' : 'px-3 py-1 text-xs font-semibold';
+    $tamano = $grande ? 'px-5 py-2 text-lg font-bold gap-2.5' : 'px-3 py-1 text-xs font-semibold gap-1.5';
 @endphp
 
-<span {{ $attributes->class(['rounded-full', $tamano, $tono]) }}>{{ $etiqueta }}</span>
+{{-- El punto usa el color del texto (bg-current) para reforzar el estado sin depender solo del color de fondo. --}}
+<span {{ $attributes->class(['inline-flex items-center whitespace-nowrap rounded-full', $tamano, $tono]) }}><span class="{{ $grande ? 'h-2.5 w-2.5' : 'h-1.5 w-1.5' }} rounded-full bg-current" aria-hidden="true"></span>{{ $etiqueta }}</span>

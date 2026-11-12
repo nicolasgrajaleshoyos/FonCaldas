@@ -1,9 +1,9 @@
-{{-- Tarjeta gris con una lista de integrantes y, opcionalmente, un subtítulo. --}}
+{{-- Lista de integrantes con un subtítulo opcional (Principales, Suplentes…). --}}
 @props(['nombres', 'titulo' => null])
 
-<div class="bg-[#F8FAFC] dark:bg-slate-700/40 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
+<div>
     @if ($titulo)
-        <h4 class="text-xs font-bold uppercase tracking-wide text-[#0C67A3] mb-3">{{ $titulo }}</h4>
+        <h4 class="mb-3 inline-flex rounded-full bg-[#0C67A3]/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300">{{ $titulo }}</h4>
     @endif
     <x-lista-nombres :nombres="$nombres" />
 </div>

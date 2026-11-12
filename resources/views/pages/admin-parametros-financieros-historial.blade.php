@@ -27,7 +27,7 @@
 
                         <a
                             href="{{ route('admin.parametros-financieros.index') }}"
-                            class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium transition">
+                            class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium transition">
                             Volver a parámetros financieros
                         </a>
 
@@ -51,7 +51,7 @@
                             <table class="w-full text-sm text-left">
 
                                 <thead class="text-xs uppercase text-slate-400 border-b border-slate-700">
-                                    <tr>
+                                    <tr class="transition hover:bg-slate-50 dark:hover:bg-white/5">
                                         <th class="px-4 py-3">Tasa</th>
                                         <th class="px-4 py-3">Unidad</th>
                                         <th class="px-4 py-3">Inicio de vigencia</th>
@@ -122,7 +122,7 @@
 
                                                     <a
                                                         href="{{ route('admin.parametros-financieros.tasas.editar', $tasa) }}"
-                                                        class="inline-flex items-center px-3 py-1.5 rounded-lg bg-sky-700 hover:bg-sky-600 text-white text-xs font-medium transition">
+                                                        class="inline-flex items-center px-3 py-1.5 rounded-full bg-sky-700 hover:bg-sky-600 text-white text-xs font-medium transition">
                                                         Editar
                                                     </a>
 
@@ -136,7 +136,7 @@
 
                                                             <button
                                                                 type="submit"
-                                                                class="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-xs font-medium transition">
+                                                                class="inline-flex items-center px-3 py-1.5 rounded-full bg-amber-700 hover:bg-amber-600 text-white text-xs font-medium transition">
                                                                 Desactivar
                                                             </button>
                                                         </form>

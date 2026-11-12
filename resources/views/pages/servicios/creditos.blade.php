@@ -28,12 +28,12 @@
                     <div class="p-6">
                         <div class="mb-4 inline-flex items-center gap-3">
                             <span
-                                class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon
+                                class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300"><x-icon
                                     name="bolt" class="w-5 h-5" /></span>
                             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Crédito Expres</h2>
                         </div>
 
-                        <p class="text-slate-500 dark:text-slate-400 text-[14px] mt-2 leading-relaxed">
+                        <p class="text-slate-500 dark:text-slate-300 text-[14px] mt-2 leading-relaxed">
                             Aprobación rápida para necesidades inmediatas.
                         </p>
                     </div>
@@ -53,12 +53,12 @@
                     <div class="p-6">
                         <div class="mb-4 inline-flex items-center gap-3">
                             <span
-                                class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon
+                                class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300"><x-icon
                                     name="bank" class="w-5 h-5" /></span>
                             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Líneas de Crédito</h2>
                         </div>
 
-                        <p class="text-slate-500 dark:text-slate-400 text-[14px] mt-2 leading-relaxed">
+                        <p class="text-slate-500 dark:text-slate-300 text-[14px] mt-2 leading-relaxed">
                             Diferentes opciones de financiación según tu perfil.
                         </p>
                     </div>
@@ -78,12 +78,12 @@
                     <div class="p-6">
                         <div class="mb-4 inline-flex items-center gap-3">
                             <span
-                                class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3]"><x-icon
+                                class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0C67A3]/10 text-[#0C67A3] dark:bg-sky-400/15 dark:text-sky-300"><x-icon
                                     name="document" class="w-5 h-5" /></span>
                             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Reglamento de Crédito</h2>
                         </div>
 
-                        <p class="text-slate-500 dark:text-slate-400 text-[14px] mt-2 leading-relaxed">
+                        <p class="text-slate-500 dark:text-slate-300 text-[14px] mt-2 leading-relaxed">
                             Normas y condiciones para acceder a créditos (PDF).
                         </p>
                     </div>

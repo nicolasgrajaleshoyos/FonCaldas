@@ -49,7 +49,7 @@ test('ciclo completo de una solicitud y transiciones inválidas', function () {
 
 test('consulta pública exige código y documento correctos', function () {
     $s = radicar($this);
-    $this->post('/tramites/consultar', ['codigo' => $s->codigo, 'asociado_documento' => '123'])->assertOk();
+    $this->post('/tramites/consultar', ['codigo' => $s->codigo, 'asociado_documento' => '123'])->assertRedirect();
     $this->post('/tramites/consultar', ['codigo' => $s->codigo, 'asociado_documento' => '999'])->assertSessionHasErrors('codigo');
 });
 

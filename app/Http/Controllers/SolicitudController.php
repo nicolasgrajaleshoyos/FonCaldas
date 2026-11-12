@@ -9,6 +9,7 @@ use App\Models\SolicitudDocumento;
 use App\Models\TramiteTipo;
 use App\Services\Solicitudes\RadicadorSolicitudes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class SolicitudController extends Controller
 {
@@ -33,7 +34,7 @@ class SolicitudController extends Controller
 
     public function buscar(ConsultarSolicitudRequest $request)
     {
-        $solicitud = Solicitud::with(['tramiteTipo', 'documentos', 'eventos'])
+        $solicitud = Solicitud::query()
             ->where('codigo', strtoupper(trim($request->input('codigo'))))
             ->where('asociado_documento', trim($request->input('asociado_documento')))
             ->first();
@@ -42,7 +43,21 @@ class SolicitudController extends Controller
             return back()->withErrors(['codigo' => 'No encontramos una solicitud con esos datos.'])->withInput();
         }
 
-        return view('pages.solicitudes.estado', ['solicitud' => $solicitud]);
+        return redirect($this->urlEstado($solicitud));
+    }
+
+    /** Estado de la solicitud; se llega solo por un enlace firmado que se entrega tras validar código y documento. */
+    public function estado(Solicitud $solicitud)
+    {
+        return view('pages.solicitudes.estado', [
+            'solicitud' => $solicitud->load(['tramiteTipo', 'documentos', 'eventos']),
+            'exito' => session('exito'),
+        ]);
+    }
+
+    private function urlEstado(Solicitud $solicitud): string
+    {
+        return URL::temporarySignedRoute('solicitudes.estado', now()->addMinutes(30), $solicitud);
     }
 
     /** Las rutas de documentos van firmadas: solo quien consultó con código y documento recibe los enlaces. */
@@ -64,9 +79,7 @@ class SolicitudController extends Controller
         ]);
         $radicador->agregarDocumentos($solicitud, $request->file('documentos'));
 
-        return view('pages.solicitudes.estado', [
-            'solicitud' => $solicitud->load(['tramiteTipo', 'documentos', 'eventos']),
-            'exito' => 'Documentos adjuntados correctamente.',
-        ]);
+        // Enviar y redirigir: si el asociado recarga la página, no se vuelven a subir los mismos archivos.
+        return redirect($this->urlEstado($solicitud))->with('exito', 'Documentos adjuntados correctamente.');
     }
 }

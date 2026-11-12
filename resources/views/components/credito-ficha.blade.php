@@ -8,7 +8,7 @@
             {{ $titulo }}
         </x-section-title>
 
-        <p class="text-slate-500 dark:text-slate-400">
+        <p class="text-slate-500 dark:text-slate-300">
             {{ $resumen }}
         </p>
     </div>
@@ -27,7 +27,7 @@
             <tbody>
                 <tr class="border-t border-slate-200 dark:border-slate-700">
                     @foreach ([$descripcion, $plazo, $monto, $otras] as $celda)
-                        <td class="px-5 py-4 text-slate-600 dark:text-slate-400">
+                        <td class="px-5 py-4 text-slate-600 dark:text-slate-300">
                             {{ $celda }}
                         </td>
                     @endforeach
@@ -43,7 +43,7 @@
                     {{ $encabezado }}
                 </h3>
 
-                <ul class="space-y-3 text-slate-600 dark:text-slate-400 text-[15px]">
+                <ul class="space-y-3 text-slate-600 dark:text-slate-300 text-[15px]">
                     @foreach ($items as $item)
                         <li>• {{ $item }}</li>
                     @endforeach

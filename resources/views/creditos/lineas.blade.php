@@ -29,7 +29,7 @@
                         Crédito de vehículo
                     </x-section-title>
 
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
                         Crédito de vehículo nuevo o seminuevo con una tasa especial desde el 1.10% mensual.
                         <br><br>
                         Aprovecha este beneficio exclusivo para nuestros asociados y pide tu asesoría personalizada hoy mismo.
@@ -51,7 +51,7 @@
                         Crédito de libre inversión (15+ años)
                     </x-section-title>
 
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
                         Si llevas más de 15 años como asociado, accede a nuestro crédito de libre inversión con una tasa preferencial del 1.35% mensual.
                         <br><br>
                         Renueva tu hogar, estrena electrodomésticos o date un gusto.
@@ -75,7 +75,7 @@
                         Compra de cartera
                     </x-section-title>
 
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
                         Paga tus deudas de tarjetas de crédito o créditos externos con un plazo hasta de 96 meses. Con la mejor tasa del mercado de 0.90% mensual.
                         <br><br>
                         Te ayudamos a recuperar el control de tus finanzas con asesoría personalizada.
@@ -97,7 +97,7 @@
                         Crédito de motocicleta
                     </x-section-title>
 
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
                         ¡Tu nueva moto te espera en FONCALDAS!
                         <br><br>
                         Financia la moto que desees con una excelente tasa de interés del 1.10% mensual y plazos de hasta 84 meses.
@@ -121,7 +121,7 @@
                         Crédito de tecnología
                     </x-section-title>
 
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
                         ¡Estrena articulos tecnologicos de tus sueños con FONCALDAS!
                         <br><br>
                         Si llevas 7 o 15 años como asociado, accede a crédito de libre inversión para comprar tu iPhone o el celular que desees, con una tasa desde 1.25% mensual y plazo de hasta 72 meses.

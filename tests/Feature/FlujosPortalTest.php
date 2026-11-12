@@ -198,8 +198,10 @@ test('el asociado adjunta documentos con enlace firmado solo mientras la solicit
 
     $this->post("/tramites/{$solicitud->id}/documentos", $archivo())->assertForbidden();
 
-    $this->post($url(), $archivo())->assertOk()->assertSee('extra.pdf');
-    expect($solicitud->documentos()->where('origen', 'asociado')->count())->toBe(1)
+    // Enviar y redirigir: tras adjuntar se vuelve a la página de estado firmada (recargar no reenvía los archivos).
+    $this->post($url(), $archivo())->assertRedirect();
+    $this->followingRedirects()->post($url(), $archivo())->assertOk()->assertSee('extra.pdf')->assertSee('Documentos adjuntados correctamente');
+    expect($solicitud->documentos()->where('origen', 'asociado')->count())->toBe(2)
         ->and($solicitud->eventos()->where('accion', 'documento_adjuntado')->exists())->toBeTrue();
 
     $solicitud->update(['estado' => Solicitud::ESTADO_FINALIZADA]);
