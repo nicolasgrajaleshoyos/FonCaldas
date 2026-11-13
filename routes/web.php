@@ -105,6 +105,10 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::post('/parametros-financieros/tasas', [ParametroFinancieroController::class, 'guardar'])->name('parametros-financieros.tasas.guardar');
         Route::get('/parametros-financieros/{producto}/historial', [ParametroFinancieroController::class, 'historial'])
             ->name('parametros-financieros.historial');
+        Route::post(
+            '/parametros-financieros/parametros',
+            [ParametroFinancieroController::class, 'guardarParametro']
+        )->name('parametros-financieros.parametros.guardar');
 
         Route::get('/parametros-financieros/tasas/{tasa}/editar', [ParametroFinancieroController::class, 'editar'])
             ->name('parametros-financieros.tasas.editar');
