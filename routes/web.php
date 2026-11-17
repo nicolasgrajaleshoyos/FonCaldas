@@ -117,6 +117,11 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::patch('/parametros-financieros/tasas/{tasa}/desactivar', [ParametroFinancieroController::class, 'desactivar'])
             ->name('parametros-financieros.tasas.desactivar');
 
+        Route::delete(
+            '/parametros-financieros/parametros/{tasa}',
+            [ParametroFinancieroController::class, 'eliminar']
+        )->name('parametros-financieros.parametros.eliminar');
+
         Route::get('/tipos-tramite', [TramiteTipoController::class, 'index'])->name('tramite-tipos.index');
         Route::post('/tipos-tramite', [TramiteTipoController::class, 'store'])->name('tramite-tipos.store');
         Route::get('/tipos-tramite/{tramiteTipo}/editar', [TramiteTipoController::class, 'edit'])->name('tramite-tipos.edit');

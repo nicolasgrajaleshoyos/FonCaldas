@@ -326,4 +326,21 @@ class ParametroFinancieroController extends Controller
                 'El parámetro fue desactivado correctamente y se conserva en el historial.'
             );
     }
+
+    public function eliminar(ParametroFinanciero $tasa)
+    {
+        $productoId = $tasa->producto_financiero_id;
+
+        $tasa->delete();
+
+        return redirect()
+            ->route(
+                'admin.parametros-financieros.historial',
+                $productoId
+            )
+            ->with(
+                'success',
+                'El parámetro fue eliminado definitivamente.'
+            );
+    }
 }

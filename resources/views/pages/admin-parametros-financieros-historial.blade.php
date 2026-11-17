@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="min-h-screen bg-slate-950 py-8">
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <x-admin-tabs
@@ -12,11 +13,13 @@
 
             <div class="mt-6 bg-slate-800 border border-slate-700 rounded-2xl shadow-xl overflow-hidden">
 
+                {{-- Encabezado --}}
                 <div class="p-6 border-b border-slate-700">
 
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
                         <div>
+
                             <h2 class="text-xl font-semibold text-white">
                                 {{ $producto->nombre }}
                             </h2>
@@ -24,6 +27,7 @@
                             <p class="text-sm text-slate-400 mt-1">
                                 Tipo: {{ ucfirst($producto->tipo) }}
                             </p>
+
                         </div>
 
                         <a
@@ -39,6 +43,8 @@
 
                 </div>
 
+
+                {{-- Contenido --}}
                 <div class="p-6">
 
                     @if ($parametros->isEmpty())
@@ -65,6 +71,7 @@
                                 <thead class="text-xs uppercase text-slate-400 border-b border-slate-700">
 
                                     <tr>
+
                                         <th class="px-4 py-3">
                                             Parámetro
                                         </th>
@@ -100,6 +107,7 @@
                                         <th class="px-4 py-3">
                                             Acciones
                                         </th>
+
                                     </tr>
 
                                 </thead>
@@ -152,8 +160,10 @@
                                             }
                                         @endphp
 
+
                                         <tr class="text-slate-200">
 
+                                            {{-- Parámetro --}}
                                             <td class="px-4 py-4">
 
                                                 <div class="font-semibold">
@@ -166,18 +176,26 @@
 
                                             </td>
 
+
+                                            {{-- Valor --}}
                                             <td class="px-4 py-4 font-semibold">
                                                 {{ $valorMostrar }}
                                             </td>
 
+
+                                            {{-- Unidad --}}
                                             <td class="px-4 py-4">
                                                 {{ $parametro->unidad ?? '—' }}
                                             </td>
 
+
+                                            {{-- Categoría --}}
                                             <td class="px-4 py-4">
                                                 {{ ucfirst($parametro->categoria ?? '—') }}
                                             </td>
 
+
+                                            {{-- Origen --}}
                                             <td class="px-4 py-4">
 
                                                 @if ($parametro->origen === 'confirmado')
@@ -211,6 +229,8 @@
 
                                             </td>
 
+
+                                            {{-- Vigencia --}}
                                             <td class="px-4 py-4">
 
                                                 <div>
@@ -234,6 +254,8 @@
 
                                             </td>
 
+
+                                            {{-- Estado --}}
                                             <td class="px-4 py-4">
 
                                                 @if (!$parametro->activo)
@@ -276,16 +298,24 @@
 
                                             </td>
 
+
+                                            {{-- Observación --}}
                                             <td class="px-4 py-4 text-slate-400">
                                                 {{ $parametro->descripcion ?? '—' }}
                                             </td>
 
+
+                                            {{-- Acciones --}}
                                             <td class="px-4 py-4">
 
                                                 <div class="flex flex-wrap gap-2">
 
+                                                    {{-- Editar --}}
                                                     <a
-                                                        href="{{ route('admin.parametros-financieros.tasas.editar', $parametro) }}"
+                                                        href="{{ route(
+                                                            'admin.parametros-financieros.tasas.editar',
+                                                            $parametro
+                                                        ) }}"
                                                         class="inline-flex items-center px-3 py-1.5 rounded-lg
                                                             bg-sky-700 hover:bg-sky-600
                                                             text-white text-xs font-medium transition">
@@ -293,12 +323,19 @@
                                                         Editar
                                                     </a>
 
+
+                                                    {{-- Desactivar --}}
                                                     @if ($parametro->activo)
 
                                                         <form
                                                             method="POST"
-                                                            action="{{ route('admin.parametros-financieros.tasas.desactivar', $parametro) }}"
-                                                            onsubmit="return confirm('¿Deseas desactivar este parámetro? El registro se conservará en el historial.');">
+                                                            action="{{ route(
+                                                                'admin.parametros-financieros.tasas.desactivar',
+                                                                $parametro
+                                                            ) }}"
+                                                            class="form-confirmacion"
+                                                            data-accion="desactivar"
+                                                            data-parametro="{{ $parametro->nombre }}">
 
                                                             @csrf
                                                             @method('PATCH')
@@ -315,6 +352,32 @@
                                                         </form>
 
                                                     @endif
+
+
+                                                    {{-- Eliminar --}}
+                                                    <form
+                                                        method="POST"
+                                                        action="{{ route(
+                                                            'admin.parametros-financieros.parametros.eliminar',
+                                                            $parametro
+                                                        ) }}"
+                                                        class="form-confirmacion"
+                                                        data-accion="eliminar"
+                                                        data-parametro="{{ $parametro->nombre }}">
+
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <button
+                                                            type="submit"
+                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg
+                                                                bg-red-700 hover:bg-red-600
+                                                                text-white text-xs font-medium transition">
+
+                                                            Eliminar
+                                                        </button>
+
+                                                    </form>
 
                                                 </div>
 
@@ -337,5 +400,283 @@
             </div>
 
         </div>
+
     </div>
+
+
+    {{-- MODAL DE CONFIRMACIÓN --}}
+    <div
+        id="modalConfirmacion"
+        class="fixed inset-0 z-50 hidden items-center justify-center
+            bg-black/70 backdrop-blur-sm px-4">
+
+        <div
+            class="w-full max-w-md overflow-hidden rounded-2xl
+                border border-slate-700
+                bg-slate-800 shadow-2xl">
+
+            {{-- Contenido --}}
+            <div class="p-6">
+
+                <div class="flex items-start gap-4">
+
+                    {{-- Icono --}}
+                    <div
+                        id="iconoModal"
+                        class="flex h-12 w-12 shrink-0 items-center justify-center
+                            rounded-full">
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 9v3m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z" />
+
+                        </svg>
+
+                    </div>
+
+
+                    {{-- Texto --}}
+                    <div class="flex-1">
+
+                        <h3
+                            id="tituloModal"
+                            class="text-lg font-semibold text-white">
+                        </h3>
+
+                        <p class="mt-2 text-sm leading-6 text-slate-300">
+
+                            <span id="mensajeModal"></span>
+
+                            <span
+                                id="nombreParametroModal"
+                                class="font-semibold text-white">
+                            </span>
+
+                            <span>?</span>
+
+                        </p>
+
+                        <p
+                            id="detalleModal"
+                            class="mt-2 text-sm leading-5 text-slate-400">
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- Botones --}}
+            <div
+                class="flex justify-end gap-3
+                    border-t border-slate-700
+                    bg-slate-900/40 px-6 py-4">
+
+                <button
+                    type="button"
+                    id="cancelarConfirmacion"
+                    class="rounded-lg bg-slate-700 px-4 py-2
+                        text-sm font-medium text-white
+                        hover:bg-slate-600 transition">
+
+                    Cancelar
+                </button>
+
+                <button
+                    type="button"
+                    id="confirmarAccion"
+                    class="rounded-lg px-4 py-2
+                        text-sm font-semibold text-white transition">
+
+                    Confirmar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- CONTROL DEL MODAL --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const modal =
+                document.getElementById('modalConfirmacion');
+
+            const titulo =
+                document.getElementById('tituloModal');
+
+            const mensaje =
+                document.getElementById('mensajeModal');
+
+            const nombreParametro =
+                document.getElementById('nombreParametroModal');
+
+            const detalle =
+                document.getElementById('detalleModal');
+
+            const icono =
+                document.getElementById('iconoModal');
+
+            const botonCancelar =
+                document.getElementById('cancelarConfirmacion');
+
+            const botonConfirmar =
+                document.getElementById('confirmarAccion');
+
+            let formularioActual = null;
+
+
+            function abrirModal(formulario) {
+
+                formularioActual = formulario;
+
+                const accion =
+                    formulario.dataset.accion;
+
+                const nombre =
+                    formulario.dataset.parametro || 'este parámetro';
+
+                nombreParametro.textContent = nombre;
+
+
+                if (accion === 'eliminar') {
+
+                    titulo.textContent =
+                        'Eliminar parámetro';
+
+                    mensaje.textContent =
+                        '¿Deseas eliminar definitivamente ';
+
+                    detalle.textContent =
+                        'Esta acción no se puede deshacer. El registro será eliminado y dejará de aparecer en el historial.';
+
+                    icono.className =
+                        'flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-500/15 text-red-400';
+
+                    botonConfirmar.className =
+                        'rounded-lg bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 transition';
+
+                    botonConfirmar.textContent =
+                        'Sí, eliminar';
+
+                } else {
+
+                    titulo.textContent =
+                        'Desactivar parámetro';
+
+                    mensaje.textContent =
+                        '¿Deseas desactivar ';
+
+                    detalle.textContent =
+                        'El registro no será eliminado y continuará disponible en el historial para futuras consultas.';
+
+                    icono.className =
+                        'flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-amber-400';
+
+                    botonConfirmar.className =
+                        'rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-500 transition';
+
+                    botonConfirmar.textContent =
+                        'Sí, desactivar';
+                }
+
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+
+            function cerrarModal() {
+
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+
+                formularioActual = null;
+            }
+
+
+            document
+                .querySelectorAll('.form-confirmacion')
+                .forEach(function (formulario) {
+
+                    formulario.addEventListener(
+                        'submit',
+                        function (event) {
+
+                            event.preventDefault();
+
+                            abrirModal(formulario);
+                        }
+                    );
+
+                });
+
+
+            botonCancelar.addEventListener(
+                'click',
+                cerrarModal
+            );
+
+
+            modal.addEventListener(
+                'click',
+                function (event) {
+
+                    if (event.target === modal) {
+                        cerrarModal();
+                    }
+
+                }
+            );
+
+
+            document.addEventListener(
+                'keydown',
+                function (event) {
+
+                    if (
+                        event.key === 'Escape'
+                        && !modal.classList.contains('hidden')
+                    ) {
+                        cerrarModal();
+                    }
+
+                }
+            );
+
+
+            botonConfirmar.addEventListener(
+                'click',
+                function () {
+
+                    if (!formularioActual) {
+                        return;
+                    }
+
+                    const formulario =
+                        formularioActual;
+
+                    formularioActual = null;
+
+                    formulario.submit();
+                }
+            );
+
+        });
+    </script>
+
 @endsection
