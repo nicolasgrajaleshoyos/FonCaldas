@@ -29,6 +29,14 @@ class ProductoFinanciero extends Model
         return $this->hasMany(ParametroFinanciero::class);
     }
 
+    public function parametrosVigentes(): HasMany
+    {
+        return $this->hasMany(ParametroFinanciero::class)
+            ->vigente()
+            ->orderBy('codigo')
+            ->orderByDesc('fecha_inicio_vigencia');
+    }
+
     public function tasaVigente(): HasOne
     {
         return $this->hasOne(ParametroFinanciero::class)

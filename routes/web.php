@@ -153,5 +153,12 @@ Route::view('/creditos/lineas', 'creditos.lineas')->name('creditos.lineas');
 Route::get('/simuladores/credito', [SimuladorCreditoController::class, 'index'])
     ->name('simuladores.credito');
 
+Route::post('/simuladores/credito', [SimuladorCreditoController::class, 'simular'])
+    ->name('simuladores.credito.simular');
+
+
+Route::get('/simuladores/credito/resultado', [SimuladorCreditoController::class, 'resultado'])
+    ->name('simuladores.credito.resultado');
+
 Route::get('/simuladores/ahorro', [SimuladorAhorroController::class, 'index'])
     ->name('simuladores.ahorro');
