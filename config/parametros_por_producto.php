@@ -10,12 +10,23 @@ return [
         'porcentaje_maximo_salario',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Crédito Express - productos informativos
+    |--------------------------------------------------------------------------
+    */
+
     'credito_bonos' => [
         'tasa_interes',
         'monto_minimo',
         'monto_maximo',
         'plazo_minimo',
         'plazo_maximo',
+        'modalidad_pago',
+        'limite_referencia',
+        'base_limite_referencia',
+        'descripcion_informativa',
+        'condicion_adicional',
     ],
 
     'credito_bonificacion' => [
@@ -24,6 +35,11 @@ return [
         'monto_maximo',
         'plazo_minimo',
         'plazo_maximo',
+        'modalidad_pago',
+        'limite_referencia',
+        'base_limite_referencia',
+        'descripcion_informativa',
+        'condicion_adicional',
     ],
 
     'credito_cuota_unica_junio' => [
@@ -32,6 +48,11 @@ return [
         'monto_maximo',
         'plazo_minimo',
         'plazo_maximo',
+        'modalidad_pago',
+        'limite_referencia',
+        'base_limite_referencia',
+        'descripcion_informativa',
+        'condicion_adicional',
     ],
 
     'credito_cuota_unica_diciembre' => [
@@ -40,7 +61,19 @@ return [
         'monto_maximo',
         'plazo_minimo',
         'plazo_maximo',
+        'modalidad_pago',
+        'limite_referencia',
+        'base_limite_referencia',
+        'descripcion_informativa',
+        'condicion_adicional',
     ],
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Demás líneas de crédito
+    |--------------------------------------------------------------------------
+    */
 
     'credito_libre_inversion' => [
         'tasa_interes_afiliacion_hasta_5',
@@ -111,6 +144,13 @@ return [
         'periodicidad_tasa',
         'cotizacion_requerida',
     ],
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ahorro
+    |--------------------------------------------------------------------------
+    */
 
     'ahorro_ordinario' => [
         'tasa_interes_ea',

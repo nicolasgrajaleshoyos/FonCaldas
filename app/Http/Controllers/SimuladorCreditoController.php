@@ -26,11 +26,26 @@ class SimuladorCreditoController extends Controller
     ) {
         $datos = $request->validated();
 
-        $producto = ProductoFinanciero::with('parametrosVigentes')
-            ->where('codigo', $datos['producto'])
-            ->where('tipo', 'credito')
-            ->where('activo', true)
-            ->where('simulable', true)
+
+        $producto = ProductoFinanciero::with(
+            'parametrosVigentes'
+        )
+            ->where(
+                'codigo',
+                $datos['producto']
+            )
+            ->where(
+                'tipo',
+                'credito'
+            )
+            ->where(
+                'activo',
+                true
+            )
+            ->where(
+                'simulable',
+                true
+            )
             ->firstOrFail();
 
 
@@ -42,8 +57,11 @@ class SimuladorCreditoController extends Controller
             });
 
 
-        $monto = (float) $datos['monto'];
-        $plazo = (int) $datos['plazo'];
+        $monto =
+            (float) $datos['monto'];
+
+        $plazo =
+            (int) $datos['plazo'];
 
 
         /*
@@ -54,6 +72,7 @@ class SimuladorCreditoController extends Controller
             $parametros
         );
 
+
         $this->validarPlazo(
             $plazo,
             $parametros
@@ -63,35 +82,12 @@ class SimuladorCreditoController extends Controller
         /*
          * VALIDACIONES ESPECÍFICAS
          */
-        if (
-            in_array(
-                $producto->codigo,
-                [
-                    'credito_vehiculo',
-                    'credito_motocicleta',
-                ],
-                true
-            )
-        ) {
-            $this->validarFinanciacionVehiculoMotocicleta(
-                $producto->codigo,
-                $datos,
-                $monto,
-                $parametros
-            );
-        }
-
-
-        if (
-            $producto->codigo ===
-            'credito_avances'
-        ) {
-            $this->validarAvances(
-                $datos,
-                $monto,
-                $parametros
-            );
-        }
+        $this->validarReglasEspecificas(
+            $producto->codigo,
+            $datos,
+            $monto,
+            $parametros
+        );
 
 
         /*
@@ -301,7 +297,9 @@ class SimuladorCreditoController extends Controller
                 ];
 
 
-            if ($antiguedad <= 5) {
+            if (
+                $antiguedad <= 5
+            ) {
 
                 return $this->valorNumerico(
                     $parametros,
@@ -310,7 +308,9 @@ class SimuladorCreditoController extends Controller
             }
 
 
-            if ($antiguedad <= 15) {
+            if (
+                $antiguedad <= 15
+            ) {
 
                 return $this->valorNumerico(
                     $parametros,
@@ -359,7 +359,14 @@ class SimuladorCreditoController extends Controller
 
             throw ValidationException::withMessages([
                 'monto' =>
-                    'El monto solicitado es inferior al mínimo configurado.',
+                    'El monto solicitado es inferior al mínimo configurado de $'
+                    . number_format(
+                        $montoMinimo,
+                        0,
+                        ',',
+                        '.'
+                    )
+                    . '.',
             ]);
         }
 
@@ -371,7 +378,14 @@ class SimuladorCreditoController extends Controller
 
             throw ValidationException::withMessages([
                 'monto' =>
-                    'El monto solicitado supera el máximo configurado.',
+                    'El monto solicitado supera el máximo configurado de $'
+                    . number_format(
+                        $montoMaximo,
+                        0,
+                        ',',
+                        '.'
+                    )
+                    . '.',
             ]);
         }
     }
@@ -403,7 +417,9 @@ class SimuladorCreditoController extends Controller
 
             throw ValidationException::withMessages([
                 'plazo' =>
-                    'El plazo seleccionado es inferior al mínimo configurado.',
+                    'El plazo seleccionado es inferior al mínimo configurado de '
+                    . (int) $plazoMinimo
+                    . ' meses.',
             ]);
         }
 
@@ -415,8 +431,105 @@ class SimuladorCreditoController extends Controller
 
             throw ValidationException::withMessages([
                 'plazo' =>
-                    'El plazo seleccionado supera el máximo configurado.',
+                    'El plazo seleccionado supera el máximo configurado de '
+                    . (int) $plazoMaximo
+                    . ' meses.',
             ]);
+        }
+    }
+
+
+    private function validarReglasEspecificas(
+        string $codigoProducto,
+        array $datos,
+        float $monto,
+        $parametros
+    ): void {
+
+        /*
+         * AVANCES
+         */
+        if (
+            $codigoProducto ===
+            'credito_avances'
+        ) {
+
+            $this->validarAvances(
+                $datos,
+                $monto,
+                $parametros
+            );
+
+            return;
+        }
+
+
+        /*
+         * VEHÍCULO Y MOTOCICLETA
+         */
+        if (
+            in_array(
+                $codigoProducto,
+                [
+                    'credito_vehiculo',
+                    'credito_motocicleta',
+                ],
+                true
+            )
+        ) {
+
+            $this->validarFinanciacionVehiculoMotocicleta(
+                $codigoProducto,
+                $datos,
+                $monto,
+                $parametros
+            );
+
+            return;
+        }
+
+
+        /*
+         * TECNOLOGÍA Y TURISMO
+         *
+         * El monto solicitado no puede
+         * superar el valor de la cotización.
+         */
+        if (
+            in_array(
+                $codigoProducto,
+                [
+                    'credito_tecnologia',
+                    'credito_turismo',
+                ],
+                true
+            )
+        ) {
+
+            $this->validarMontoContraCotizacion(
+                $datos,
+                $monto
+            );
+
+            return;
+        }
+
+
+        /*
+         * COMPRA DE CARTERA
+         *
+         * El monto solicitado no puede
+         * superar el saldo informado.
+         */
+        if (
+            $codigoProducto ===
+            'credito_compra_cartera'
+        ) {
+
+            $this->validarMontoContraSaldo(
+                $datos,
+                $monto
+            );
         }
     }
 
@@ -428,12 +541,10 @@ class SimuladorCreditoController extends Controller
         $parametros
     ): void {
 
-        /*
-         * Validamos que realmente hayan llegado
-         * los datos necesarios.
-         */
         if (
-            empty($datos['tipo_bien'])
+            empty(
+                $datos['tipo_bien']
+            )
         ) {
 
             throw ValidationException::withMessages([
@@ -444,8 +555,14 @@ class SimuladorCreditoController extends Controller
 
 
         if (
-            !isset($datos['dato_especifico'])
-            || (float) $datos['dato_especifico'] <= 0
+            !isset(
+                $datos[
+                    'dato_especifico'
+                ]
+            )
+            || (float) $datos[
+                'dato_especifico'
+            ] <= 0
         ) {
 
             throw ValidationException::withMessages([
@@ -456,7 +573,9 @@ class SimuladorCreditoController extends Controller
 
 
         $tipoBien =
-            $datos['tipo_bien'];
+            $datos[
+                'tipo_bien'
+            ];
 
 
         $valorComercial =
@@ -465,11 +584,9 @@ class SimuladorCreditoController extends Controller
             ];
 
 
-        /*
-         * Determinamos qué porcentaje aplicar.
-         */
         $codigoPorcentaje =
-            $tipoBien === 'nuevo'
+            $tipoBien ===
+                'nuevo'
                 ? 'porcentaje_financiacion_nuevo'
                 : 'porcentaje_financiacion_usado';
 
@@ -481,12 +598,9 @@ class SimuladorCreditoController extends Controller
             );
 
 
-        /*
-         * Si no existe porcentaje configurado,
-         * no permitimos simular.
-         */
         if (
-            $porcentajeFinanciacion === null
+            $porcentajeFinanciacion ===
+            null
         ) {
 
             throw ValidationException::withMessages([
@@ -498,15 +612,6 @@ class SimuladorCreditoController extends Controller
         }
 
 
-        /*
-         * Cálculo del máximo financiable.
-         *
-         * Ejemplo:
-         * valor comercial = 20.000.000
-         * porcentaje = 80
-         *
-         * máximo = 16.000.000
-         */
         $montoMaximoFinanciable =
             $valorComercial
             *
@@ -516,9 +621,6 @@ class SimuladorCreditoController extends Controller
             );
 
 
-        /*
-         * Esta es la validación crítica.
-         */
         if (
             $montoSolicitado >
             $montoMaximoFinanciable
@@ -549,11 +651,9 @@ class SimuladorCreditoController extends Controller
         }
 
 
-        /*
-         * Validación adicional para usados.
-         */
         if (
-            $tipoBien === 'usado'
+            $tipoBien ===
+            'usado'
         ) {
 
             $antiguedadMaxima =
@@ -564,7 +664,8 @@ class SimuladorCreditoController extends Controller
 
 
             if (
-                $antiguedadMaxima === null
+                $antiguedadMaxima ===
+                null
             ) {
 
                 throw ValidationException::withMessages([
@@ -631,7 +732,8 @@ class SimuladorCreditoController extends Controller
 
 
         if (
-            $porcentajeMaximo === null
+            $porcentajeMaximo ===
+            null
         ) {
 
             throw ValidationException::withMessages([
@@ -659,7 +761,123 @@ class SimuladorCreditoController extends Controller
                 'monto' =>
                     'El monto solicitado supera el '
                     . $porcentajeMaximo
-                    . ' % del sueldo básico permitido para esta línea.',
+                    . ' % del sueldo básico permitido para esta línea. '
+                    . 'El valor máximo permitido para esta simulación es $'
+                    . number_format(
+                        $montoMaximo,
+                        0,
+                        ',',
+                        '.'
+                    )
+                    . '.',
+            ]);
+        }
+    }
+
+
+    private function validarMontoContraCotizacion(
+        array $datos,
+        float $monto
+    ): void {
+
+        if (
+            !isset(
+                $datos[
+                    'dato_especifico'
+                ]
+            )
+        ) {
+            return;
+        }
+
+
+        $valorCotizacion =
+            (float) $datos[
+                'dato_especifico'
+            ];
+
+
+        if (
+            $valorCotizacion <= 0
+        ) {
+
+            throw ValidationException::withMessages([
+                'dato_especifico' =>
+                    'El valor de la cotización debe ser mayor que cero.',
+            ]);
+        }
+
+
+        if (
+            $monto >
+            $valorCotizacion
+        ) {
+
+            throw ValidationException::withMessages([
+                'monto' =>
+                    'El monto solicitado no puede superar el valor de la cotización. '
+                    . 'El valor máximo permitido para esta simulación es $'
+                    . number_format(
+                        $valorCotizacion,
+                        0,
+                        ',',
+                        '.'
+                    )
+                    . '.',
+            ]);
+        }
+    }
+
+
+    private function validarMontoContraSaldo(
+        array $datos,
+        float $monto
+    ): void {
+
+        if (
+            !isset(
+                $datos[
+                    'dato_especifico'
+                ]
+            )
+        ) {
+            return;
+        }
+
+
+        $saldoObligacion =
+            (float) $datos[
+                'dato_especifico'
+            ];
+
+
+        if (
+            $saldoObligacion <= 0
+        ) {
+
+            throw ValidationException::withMessages([
+                'dato_especifico' =>
+                    'El saldo de la obligación debe ser mayor que cero.',
+            ]);
+        }
+
+
+        if (
+            $monto >
+            $saldoObligacion
+        ) {
+
+            throw ValidationException::withMessages([
+                'monto' =>
+                    'El monto solicitado no puede superar el saldo de la obligación informado. '
+                    . 'El valor máximo permitido para esta simulación es $'
+                    . number_format(
+                        $saldoObligacion,
+                        0,
+                        ',',
+                        '.'
+                    )
+                    . '.',
             ]);
         }
     }
@@ -686,7 +904,8 @@ class SimuladorCreditoController extends Controller
 
 
         if (
-            $parametro->valor === null
+            $parametro->valor ===
+            null
         ) {
             return null;
         }

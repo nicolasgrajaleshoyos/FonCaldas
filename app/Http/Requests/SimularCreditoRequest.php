@@ -13,40 +13,94 @@ class SimularCreditoRequest extends FormRequest
     }
 
 
-    public function rules(): array
+    protected function prepareForValidation(): void
     {
         $producto = $this->input('producto');
-        $tipoBien = $this->input('tipo_bien');
+
+        $datos = [
+            'monto' => $this->normalizarMoneda(
+                $this->input('monto')
+            ),
+        ];
 
 
-        $requiereDatoEspecifico = in_array(
-            $producto,
-            [
-                'credito_avances',
-                'credito_libre_inversion',
-                'credito_compra_cartera',
-                'credito_vehiculo',
-                'credito_motocicleta',
-                'credito_tecnologia',
-                'credito_turismo',
-            ],
-            true
-        );
+        /*
+         * En estas líneas, dato_especifico representa
+         * un valor monetario:
+         *
+         * Avances       -> sueldo básico
+         * Compra cartera-> saldo obligación
+         * Vehículo      -> valor comercial
+         * Motocicleta   -> valor comercial
+         * Tecnología    -> cotización
+         * Turismo       -> cotización
+         */
+        if (
+            in_array(
+                $producto,
+                [
+                    'credito_avances',
+                    'credito_compra_cartera',
+                    'credito_vehiculo',
+                    'credito_motocicleta',
+                    'credito_tecnologia',
+                    'credito_turismo',
+                ],
+                true
+            )
+        ) {
+            $datos['dato_especifico'] =
+                $this->normalizarMoneda(
+                    $this->input(
+                        'dato_especifico'
+                    )
+                );
+        }
 
 
-        $requiereTipoBien = in_array(
-            $producto,
-            [
-                'credito_vehiculo',
-                'credito_motocicleta',
-            ],
-            true
-        );
+        $this->merge($datos);
+    }
+
+
+    public function rules(): array
+    {
+        $producto =
+            $this->input('producto');
+
+        $tipoBien =
+            $this->input('tipo_bien');
+
+
+        $requiereDatoEspecifico =
+            in_array(
+                $producto,
+                [
+                    'credito_avances',
+                    'credito_libre_inversion',
+                    'credito_compra_cartera',
+                    'credito_vehiculo',
+                    'credito_motocicleta',
+                    'credito_tecnologia',
+                    'credito_turismo',
+                ],
+                true
+            );
+
+
+        $requiereTipoBien =
+            in_array(
+                $producto,
+                [
+                    'credito_vehiculo',
+                    'credito_motocicleta',
+                ],
+                true
+            );
 
 
         $requiereAntiguedadBien =
-            $requiereTipoBien &&
-            $tipoBien === 'usado';
+            $requiereTipoBien
+            && $tipoBien === 'usado';
 
 
         return [
@@ -54,20 +108,38 @@ class SimularCreditoRequest extends FormRequest
             'producto' => [
                 'required',
                 'string',
+
                 Rule::exists(
                     'producto_financieros',
                     'codigo'
                 )
-                    ->where('tipo', 'credito')
-                    ->where('activo', true)
-                    ->where('simulable', true),
+                    ->where(
+                        'tipo',
+                        'credito'
+                    )
+                    ->where(
+                        'activo',
+                        true
+                    )
+                    ->where(
+                        'simulable',
+                        true
+                    ),
             ],
 
 
+            /*
+             * $1.000 se utiliza únicamente como
+             * mínimo técnico del simulador.
+             *
+             * Si el producto tiene un monto mínimo
+             * institucional configurado, el
+             * controlador aplica además ese límite.
+             */
             'monto' => [
                 'required',
                 'numeric',
-                'gt:0',
+                'gte:1000',
             ],
 
 
@@ -82,6 +154,7 @@ class SimularCreditoRequest extends FormRequest
                 Rule::requiredIf(
                     $requiereDatoEspecifico
                 ),
+
                 'nullable',
                 'numeric',
                 'gt:0',
@@ -92,7 +165,9 @@ class SimularCreditoRequest extends FormRequest
                 Rule::requiredIf(
                     $requiereTipoBien
                 ),
+
                 'nullable',
+
                 Rule::in([
                     'nuevo',
                     'usado',
@@ -104,6 +179,7 @@ class SimularCreditoRequest extends FormRequest
                 Rule::requiredIf(
                     $requiereAntiguedadBien
                 ),
+
                 'nullable',
                 'integer',
                 'min:0',
@@ -129,15 +205,15 @@ class SimularCreditoRequest extends FormRequest
             'monto.numeric' =>
                 'El monto solicitado debe ser un valor numérico.',
 
-            'monto.gt' =>
-                'El monto solicitado debe ser mayor que cero.',
+            'monto.gte' =>
+                'Para realizar una simulación, el monto solicitado debe ser de al menos $1.000.',
 
 
             'plazo.required' =>
                 'Debes ingresar el plazo.',
 
             'plazo.integer' =>
-                'El plazo debe expresarse en meses.',
+                'El plazo debe expresarse en meses completos.',
 
             'plazo.gt' =>
                 'El plazo debe ser mayor que cero.',
@@ -169,5 +245,44 @@ class SimularCreditoRequest extends FormRequest
             'antiguedad_bien.min' =>
                 'La antigüedad no puede ser negativa.',
         ];
+    }
+
+
+    private function normalizarMoneda(
+        mixed $valor
+    ): mixed {
+
+        if (
+            $valor === null
+            || $valor === ''
+        ) {
+            return $valor;
+        }
+
+
+        if (
+            is_int($valor)
+            || is_float($valor)
+        ) {
+            return $valor;
+        }
+
+
+        /*
+         * Permite que el usuario escriba:
+         *
+         * 8000000
+         * 8.000.000
+         * 8,000,000
+         *
+         * Laravel recibirá:
+         *
+         * 8000000
+         */
+        return preg_replace(
+            '/[\.\,\s]/',
+            '',
+            trim((string) $valor)
+        );
     }
 }

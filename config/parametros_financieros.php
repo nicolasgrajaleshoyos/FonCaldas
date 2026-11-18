@@ -205,4 +205,50 @@ return [
         'unidad_sugerida' => null,
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Parámetros informativos
+    |--------------------------------------------------------------------------
+    |
+    | Estos parámetros permiten administrar condiciones descriptivas de
+    | productos que no realizan simulación automática.
+    |
+    */
+
+    'modalidad_pago' => [
+        'nombre' => 'Modalidad de pago',
+        'categoria' => 'condicion',
+        'tipo_dato' => 'texto',
+        'unidad_sugerida' => null,
+    ],
+
+    'limite_referencia' => [
+        'nombre' => 'Límite de referencia',
+        'categoria' => 'condicion',
+        'tipo_dato' => 'texto',
+        'unidad_sugerida' => null,
+    ],
+
+    'base_limite_referencia' => [
+        'nombre' => 'Base del límite de referencia',
+        'categoria' => 'condicion',
+        'tipo_dato' => 'texto',
+        'unidad_sugerida' => null,
+    ],
+
+    'descripcion_informativa' => [
+        'nombre' => 'Descripción informativa',
+        'categoria' => 'condicion',
+        'tipo_dato' => 'texto',
+        'unidad_sugerida' => null,
+    ],
+
+    'condicion_adicional' => [
+        'nombre' => 'Condición adicional',
+        'categoria' => 'condicion',
+        'tipo_dato' => 'texto',
+        'unidad_sugerida' => null,
+    ],
+
 ];
