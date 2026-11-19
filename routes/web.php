@@ -162,3 +162,9 @@ Route::get('/simuladores/credito/resultado', [SimuladorCreditoController::class,
 
 Route::get('/simuladores/ahorro', [SimuladorAhorroController::class, 'index'])
     ->name('simuladores.ahorro');
+
+Route::post('/simuladores/ahorro', [SimuladorAhorroController::class, 'simular'])
+    ->name('simuladores.ahorro.simular');
+
+Route::get('/simuladores/ahorro/resultado', [SimuladorAhorroController::class, 'resultado'])
+    ->name('simuladores.ahorro.resultado');

@@ -100,11 +100,11 @@
                             Valor
                         </label>
 
-                        <input type="number" name="valor" id="valor" value="{{ old('valor') }}" min="0"
-                            step="0.000001" placeholder="Ingresa el valor" disabled
+                        <input type="text" name="valor" id="valor" value="{{ old('valor') }}" inputmode="decimal"
+                            autocomplete="off" placeholder="Ingresa el valor" disabled
                             class="w-full rounded-xl border border-slate-300 dark:border-slate-600
-                                bg-white dark:bg-slate-900
-                                text-slate-900 dark:text-slate-100 px-4 py-3">
+                            bg-white dark:bg-slate-900
+                            text-slate-900 dark:text-slate-100 px-4 py-3">
 
                         @error('valor')
                             <p class="mt-2 text-sm text-red-600">
@@ -615,7 +615,7 @@
                     contenedorNumerico.classList.remove('hidden');
 
                     valorNumerico.disabled = false;
-                    valorNumerico.step = '0.000001';
+                    valorNumerico.inputMode = 'decimal';
                 }
 
 
@@ -624,7 +624,7 @@
                     contenedorNumerico.classList.remove('hidden');
 
                     valorNumerico.disabled = false;
-                    valorNumerico.step = '1';
+                    valorNumerico.inputMode = 'numeric';
                 }
 
 

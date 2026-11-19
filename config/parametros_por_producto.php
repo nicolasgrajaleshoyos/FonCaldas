@@ -68,7 +68,6 @@ return [
         'condicion_adicional',
     ],
 
-
     /*
     |--------------------------------------------------------------------------
     | Demás líneas de crédito
@@ -145,7 +144,6 @@ return [
         'cotizacion_requerida',
     ],
 
-
     /*
     |--------------------------------------------------------------------------
     | Ahorro
@@ -164,6 +162,7 @@ return [
         'capitalizacion',
         'aportes_permitidos',
         'retiros_permitidos',
+        'plazo_maximo_simulacion',
     ],
 
     'ahorro_cdat' => [

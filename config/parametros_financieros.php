@@ -86,6 +86,13 @@ return [
         'unidad_sugerida' => 'meses',
     ],
 
+    'plazo_maximo_simulacion' => [
+        'nombre' => 'Plazo máximo de simulación',
+        'categoria' => 'condicion',
+        'tipo_dato' => 'entero',
+        'unidad_sugerida' => 'meses',
+    ],
+
     'tipo_calculo' => [
         'nombre' => 'Tipo de cálculo',
         'categoria' => 'calculo',
@@ -205,15 +212,10 @@ return [
         'unidad_sugerida' => null,
     ],
 
-
     /*
     |--------------------------------------------------------------------------
     | Parámetros informativos
     |--------------------------------------------------------------------------
-    |
-    | Estos parámetros permiten administrar condiciones descriptivas de
-    | productos que no realizan simulación automática.
-    |
     */
 
     'modalidad_pago' => [

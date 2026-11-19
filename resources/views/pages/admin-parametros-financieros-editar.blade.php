@@ -89,18 +89,32 @@
                                 Valor
                             </label>
 
-                            <input type="number" name="valor" min="0"
-                                step="{{ $definicion['tipo_dato'] === 'entero' ? '1' : '0.000001' }}"
-                                value="{{ old(
-                                    'valor',
-                                    $definicion['tipo_dato'] === 'entero'
-                                        ? (int) $tasa->valor
-                                        : rtrim(rtrim(number_format((float) $tasa->valor, 6, '.', ''), '0'), '.'),
-                                       ) }}"
+                            @php
+                                $esMonetario =
+                                    ($definicion['unidad_sugerida'] ?? null) === 'COP' ||
+                                    ($definicion['categoria'] ?? null) === 'monto';
+
+                                if ($definicion['tipo_dato'] === 'entero' || $esMonetario) {
+                                    $valorMostrar = (string) ((int) $tasa->valor);
+                                } else {
+                                    $valorMostrar = rtrim(
+                                        rtrim(number_format((float) $tasa->valor, 6, '.', ''), '0'),
+                                        '.',
+                                    );
+                                }
+                            @endphp
+
+                            <input type="text" name="valor"
+                                inputmode="{{ $definicion['tipo_dato'] === 'entero' || $esMonetario ? 'numeric' : 'decimal' }}"
+                                autocomplete="off" value="{{ old('valor', $valorMostrar) }}"
                                 class="w-full rounded-xl bg-slate-900
-                                    border border-slate-600
-                                    text-white px-4 py-3"
+                                 border border-slate-600
+                                text-white px-4 py-3"
                                 required>
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                Puedes usar punto o coma. Para montos también puedes escribir separadores de miles.
+                            </p>
 
                             @error('valor')
                                 <p class="mt-2 text-sm text-red-400">
