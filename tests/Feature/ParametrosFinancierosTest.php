@@ -22,11 +22,30 @@ function datosTasa(ProductoFinanciero $producto, array $extra = []): array
     ];
 }
 
-test('los simuladores públicos cargan y muestran la tasa vigente del producto', function () {
+test('el formulario de crédito entrega la tasa vigente y el de ahorro abre', function () {
+    $this->freezeTime();
+    $hoy = today();
     $producto = productoDePrueba();
-    ParametroFinanciero::create(datosTasa($producto) + ['nombre' => 'Tasa de interés', 'codigo' => 'tasa_interes', 'activo' => true]);
+    $atributosTasa = ['nombre' => 'Tasa de interés', 'codigo' => 'tasa_interes', 'activo' => true];
+    ParametroFinanciero::create(datosTasa($producto, [
+        'fecha_inicio_vigencia' => $hoy->toDateString(),
+        'fecha_fin_vigencia' => $hoy->toDateString(),
+    ]) + $atributosTasa);
+    ParametroFinanciero::create(datosTasa($producto, [
+        'valor' => '2.50',
+        'fecha_inicio_vigencia' => $hoy->copy()->addDay()->toDateString(),
+    ]) + $atributosTasa);
 
-    $this->get('/simuladores/credito')->assertOk()->assertSee('Crédito Avances')->assertSee('data-tasa="1.350000"', false);
+    $respuesta = $this->get('/simuladores/credito')->assertOk()->assertSee('Crédito Avances');
+    $html = new DOMDocument();
+    $html->loadHTML($respuesta->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
+    $opcion = (new DOMXPath($html))->query('//select[@id="producto_credito"]//option[@value="credito_avances"]')->item(0);
+    expect($opcion)->toBeInstanceOf(DOMElement::class);
+
+    $parametros = json_decode($opcion->getAttribute('data-parametros'), true, flags: JSON_THROW_ON_ERROR);
+    expect($parametros['tasa_interes']['valor'] ?? null)->toBe(1.35)
+        ->and($parametros['tasa_interes']['unidad'] ?? null)->toBe('% mensual');
+
     $this->get('/simuladores/ahorro')->assertOk();
 });
 

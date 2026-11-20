@@ -15,7 +15,12 @@ class ParametroFinanciero extends Model
         'nombre',
         'codigo',
         'valor',
+        'valor_texto',
+        'tipo_dato',
         'unidad',
+        'categoria',
+        'origen',
+        'editable_admin',
         'fecha_inicio_vigencia',
         'fecha_fin_vigencia',
         'activo',
@@ -27,11 +32,20 @@ class ParametroFinanciero extends Model
         'fecha_inicio_vigencia' => 'date',
         'fecha_fin_vigencia' => 'date',
         'activo' => 'boolean',
+        'editable_admin' => 'boolean',
     ];
+
+    public function esSoloLecturaEnPanel(): bool
+    {
+        return $this->codigo === 'tipo_calculo';
+    }
 
     public function producto(): BelongsTo
     {
-        return $this->belongsTo(ProductoFinanciero::class, 'producto_financiero_id');
+        return $this->belongsTo(
+            ProductoFinanciero::class,
+            'producto_financiero_id'
+        );
     }
 
     /**

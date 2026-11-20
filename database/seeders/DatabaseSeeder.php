@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminUserSeeder::class,
             TramiteTipoSeeder::class,
-            // Sin los productos, los simuladores y Parámetros financieros quedan vacíos en una instalación nueva.
             ProductosFinancierosSeeder::class,
         ]);
     }
