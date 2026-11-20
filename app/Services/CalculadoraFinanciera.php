@@ -92,21 +92,25 @@ class CalculadoraFinanciera
      *
      * Se calcula la tasa diaria a partir de la tasa E.A.
      * y se acumula el rendimiento diariamente.
+     *
+     * @param int $baseAnualDias Días del año financiero (365 o 360, según el parámetro base_anual_dias).
      */
     public function calcularAhorroOrdinario(
         float $capital,
         float $tasaEfectivaAnualPorcentaje,
-        int $dias
+        int $dias,
+        int $baseAnualDias = 365
     ): array {
         $this->validarCapital($capital);
         $this->validarTasa($tasaEfectivaAnualPorcentaje);
         $this->validarPeriodo($dias);
+        $this->validarBaseAnual($baseAnualDias);
 
         $tasaEa = $tasaEfectivaAnualPorcentaje / 100;
 
         $tasaDiaria = pow(
             1 + $tasaEa,
-            1 / 365
+            1 / $baseAnualDias
         ) - 1;
 
         $saldoFinal = $capital
@@ -134,17 +138,21 @@ class CalculadoraFinanciera
 
     /**
      * CDAT.
+     *
+     * @param int $baseAnualDias Días del año financiero (365 o 360, según el parámetro base_anual_dias).
      */
     public function calcularCdat(
         float $capital,
         float $tasaEfectivaAnualPorcentaje,
         int $dias,
-        float $retencionPorcentaje = 0
+        float $retencionPorcentaje = 0,
+        int $baseAnualDias = 365
     ): array {
         $this->validarCapital($capital);
         $this->validarTasa($tasaEfectivaAnualPorcentaje);
         $this->validarPeriodo($dias);
         $this->validarTasa($retencionPorcentaje);
+        $this->validarBaseAnual($baseAnualDias);
 
         $tasaEa = $tasaEfectivaAnualPorcentaje / 100;
 
@@ -152,7 +160,7 @@ class CalculadoraFinanciera
             * (
                 pow(
                     1 + $tasaEa,
-                    $dias / 365
+                    $dias / $baseAnualDias
                 ) - 1
             );
 
@@ -209,6 +217,15 @@ class CalculadoraFinanciera
         if ($tasa < 0) {
             throw new InvalidArgumentException(
                 'La tasa no puede ser negativa.'
+            );
+        }
+    }
+
+    private function validarBaseAnual(int $baseAnualDias): void
+    {
+        if (! in_array($baseAnualDias, [360, 365], true)) {
+            throw new InvalidArgumentException(
+                'La base anual debe ser de 360 o 365 días.'
             );
         }
     }

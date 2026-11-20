@@ -117,3 +117,42 @@ test('el formulario conserva el origen elegido tras un error de validación', fu
         ->assertSee('value="pendiente" selected', false)
         ->assertDontSee(')}>', false);
 });
+
+test('un parámetro protegido no se desactiva ni elimina, y solo se edita volviendo a marcar la casilla', function () {
+    $super = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
+    $producto = productoDePrueba();
+    $tasa = ParametroFinanciero::create(datosTasa($producto) + [
+        'nombre' => 'Tasa de interés', 'codigo' => 'tasa_interes', 'activo' => true,
+        'tipo_dato' => 'decimal', 'categoria' => 'tasa', 'origen' => 'confirmado', 'editable_admin' => false,
+    ]);
+
+    $this->actingAs($super)->patch("/admin/parametros-financieros/tasas/{$tasa->id}/desactivar")->assertForbidden();
+    $this->actingAs($super)->delete("/admin/parametros-financieros/parametros/{$tasa->id}")->assertForbidden();
+    expect($tasa->fresh()->activo)->toBeTrue();
+
+    $edicion = [
+        'producto_financiero_id' => $producto->id, 'codigo' => 'tasa_interes', 'valor' => '1.50', 'unidad' => '% mensual',
+        'origen' => 'confirmado', 'fecha_inicio_vigencia' => '2026-01-01',
+    ];
+    $this->actingAs($super)->put("/admin/parametros-financieros/tasas/{$tasa->id}", $edicion)->assertSessionHasErrors('editable_admin');
+    expect((float) $tasa->fresh()->valor)->toBe(1.35);
+
+    $this->actingAs($super)->put("/admin/parametros-financieros/tasas/{$tasa->id}", $edicion + ['editable_admin' => '1'])->assertSessionHasNoErrors();
+    expect((float) $tasa->fresh()->valor)->toBe(1.5)->and($tasa->fresh()->editable_admin)->toBeTrue();
+});
+
+test('el simulador de crédito mantiene los topes por saldo y por monto configurado', function () {
+    $producto = productoDePrueba(['nombre' => 'Compra de cartera', 'codigo' => 'credito_compra_cartera', 'simulable' => true]);
+    $base = ['nombre' => 'x', 'activo' => true, 'fecha_inicio_vigencia' => today()->subDay()->toDateString(), 'producto_financiero_id' => $producto->id];
+    ParametroFinanciero::create($base + ['codigo' => 'tasa_interes', 'valor' => 1, 'unidad' => '% mensual']);
+    ParametroFinanciero::create($base + ['codigo' => 'monto_minimo', 'valor' => 500000, 'unidad' => 'COP']);
+
+    $this->post('/simuladores/credito', ['producto' => 'credito_compra_cartera', 'monto' => '2000000', 'plazo' => 12, 'dato_especifico' => '1500000'])
+        ->assertSessionHasErrors(['monto' => 'El monto solicitado no puede superar el saldo de la obligación informado. El valor máximo permitido para esta simulación es $1.500.000.']);
+
+    $this->post('/simuladores/credito', ['producto' => 'credito_compra_cartera', 'monto' => '100000', 'plazo' => 12, 'dato_especifico' => '1500000'])
+        ->assertSessionHasErrors(['monto' => 'El monto solicitado es inferior al mínimo configurado de $500.000.']);
+
+    $this->post('/simuladores/credito', ['producto' => 'credito_compra_cartera', 'monto' => '1000000', 'plazo' => 12, 'dato_especifico' => '1500000'])
+        ->assertSessionHasNoErrors();
+});

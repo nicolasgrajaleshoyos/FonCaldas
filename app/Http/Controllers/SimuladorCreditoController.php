@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\LeeParametrosSimulador;
 use App\Http\Requests\SimularCreditoRequest;
 use App\Models\ProductoFinanciero;
 use App\Services\CalculadoraFinanciera;
@@ -9,6 +10,8 @@ use Illuminate\Validation\ValidationException;
 
 class SimuladorCreditoController extends Controller
 {
+    use LeeParametrosSimulador;
+
     public function index()
     {
         $productos = $this->obtenerProductos();
@@ -62,9 +65,11 @@ class SimuladorCreditoController extends Controller
         /*
          * VALIDACIONES GENERALES
          */
-        $this->validarMonto(
+        $this->validarLimitesMonto(
+            $parametros,
             $monto,
-            $parametros
+            'El monto solicitado es inferior al mínimo configurado de ',
+            'El monto solicitado supera el máximo configurado de '
         );
 
 
@@ -292,64 +297,6 @@ class SimuladorCreditoController extends Controller
     }
 
 
-    private function validarMonto(
-        float $monto,
-        $parametros
-    ): void {
-
-        $montoMinimo =
-            $this->valorNumerico(
-                $parametros,
-                'monto_minimo'
-            );
-
-
-        $montoMaximo =
-            $this->valorNumerico(
-                $parametros,
-                'monto_maximo'
-            );
-
-
-        if (
-            $montoMinimo !== null
-            && $monto < $montoMinimo
-        ) {
-
-            throw ValidationException::withMessages([
-                'monto' =>
-                    'El monto solicitado es inferior al mínimo configurado de $'
-                    . number_format(
-                        $montoMinimo,
-                        0,
-                        ',',
-                        '.'
-                    )
-                    . '.',
-            ]);
-        }
-
-
-        if (
-            $montoMaximo !== null
-            && $monto > $montoMaximo
-        ) {
-
-            throw ValidationException::withMessages([
-                'monto' =>
-                    'El monto solicitado supera el máximo configurado de $'
-                    . number_format(
-                        $montoMaximo,
-                        0,
-                        ',',
-                        '.'
-                    )
-                    . '.',
-            ]);
-        }
-    }
-
-
     private function validarPlazo(
         int $plazo,
         $parametros
@@ -465,9 +412,10 @@ class SimuladorCreditoController extends Controller
             )
         ) {
 
-            $this->validarMontoContraCotizacion(
+            $this->validarMontoContraDatoEspecifico(
                 $datos,
-                $monto
+                $monto,
+                'El monto solicitado no puede superar el valor de la cotización. '
             );
 
             return;
@@ -485,9 +433,10 @@ class SimuladorCreditoController extends Controller
             'credito_compra_cartera'
         ) {
 
-            $this->validarMontoContraSaldo(
+            $this->validarMontoContraDatoEspecifico(
                 $datos,
-                $monto
+                $monto,
+                'El monto solicitado no puede superar el saldo de la obligación informado. '
             );
         }
     }
@@ -500,37 +449,7 @@ class SimuladorCreditoController extends Controller
         $parametros
     ): void {
 
-        if (
-            empty(
-                $datos['tipo_bien']
-            )
-        ) {
-
-            throw ValidationException::withMessages([
-                'tipo_bien' =>
-                    'Debes indicar si el vehículo o motocicleta es nuevo o usado.',
-            ]);
-        }
-
-
-        if (
-            !isset(
-                $datos[
-                    'dato_especifico'
-                ]
-            )
-            || (float) $datos[
-                'dato_especifico'
-            ] <= 0
-        ) {
-
-            throw ValidationException::withMessages([
-                'dato_especifico' =>
-                    'Debes ingresar el valor comercial o asegurable del bien.',
-            ]);
-        }
-
-
+        // SimularCreditoRequest ya exige tipo_bien, dato_especifico > 0 y, si es usado, antiguedad_bien.
         $tipoBien =
             $datos[
                 'tipo_bien'
@@ -634,21 +553,6 @@ class SimuladorCreditoController extends Controller
             }
 
 
-            if (
-                !isset(
-                    $datos[
-                        'antiguedad_bien'
-                    ]
-                )
-            ) {
-
-                throw ValidationException::withMessages([
-                    'antiguedad_bien' =>
-                        'Debes indicar la antigüedad del vehículo o motocicleta usada.',
-                ]);
-            }
-
-
             $antiguedadBien =
                 (int) $datos[
                     'antiguedad_bien'
@@ -734,143 +638,19 @@ class SimuladorCreditoController extends Controller
     }
 
 
-    private function validarMontoContraCotizacion(
-        array $datos,
-        float $monto
-    ): void {
+    /**
+     * Tecnología/turismo (cotización) y compra de cartera (saldo): el monto no puede superar
+     * el valor informado en dato_especifico, que SimularCreditoRequest ya exige mayor que cero.
+     */
+    private function validarMontoContraDatoEspecifico(array $datos, float $monto, string $texto): void
+    {
+        $tope = (float) $datos['dato_especifico'];
 
-        if (
-            !isset(
-                $datos[
-                    'dato_especifico'
-                ]
-            )
-        ) {
-            return;
-        }
-
-
-        $valorCotizacion =
-            (float) $datos[
-                'dato_especifico'
-            ];
-
-
-        if (
-            $valorCotizacion <= 0
-        ) {
-
+        if ($monto > $tope) {
             throw ValidationException::withMessages([
-                'dato_especifico' =>
-                    'El valor de la cotización debe ser mayor que cero.',
+                'monto' => $texto.'El valor máximo permitido para esta simulación es '.$this->formatoPesos($tope).'.',
             ]);
         }
-
-
-        if (
-            $monto >
-            $valorCotizacion
-        ) {
-
-            throw ValidationException::withMessages([
-                'monto' =>
-                    'El monto solicitado no puede superar el valor de la cotización. '
-                    . 'El valor máximo permitido para esta simulación es $'
-                    . number_format(
-                        $valorCotizacion,
-                        0,
-                        ',',
-                        '.'
-                    )
-                    . '.',
-            ]);
-        }
-    }
-
-
-    private function validarMontoContraSaldo(
-        array $datos,
-        float $monto
-    ): void {
-
-        if (
-            !isset(
-                $datos[
-                    'dato_especifico'
-                ]
-            )
-        ) {
-            return;
-        }
-
-
-        $saldoObligacion =
-            (float) $datos[
-                'dato_especifico'
-            ];
-
-
-        if (
-            $saldoObligacion <= 0
-        ) {
-
-            throw ValidationException::withMessages([
-                'dato_especifico' =>
-                    'El saldo de la obligación debe ser mayor que cero.',
-            ]);
-        }
-
-
-        if (
-            $monto >
-            $saldoObligacion
-        ) {
-
-            throw ValidationException::withMessages([
-                'monto' =>
-                    'El monto solicitado no puede superar el saldo de la obligación informado. '
-                    . 'El valor máximo permitido para esta simulación es $'
-                    . number_format(
-                        $saldoObligacion,
-                        0,
-                        ',',
-                        '.'
-                    )
-                    . '.',
-            ]);
-        }
-    }
-
-
-    private function valorNumerico(
-        $parametros,
-        string $codigo
-    ): ?float {
-
-        if (
-            !$parametros->has(
-                $codigo
-            )
-        ) {
-            return null;
-        }
-
-
-        $parametro =
-            $parametros->get(
-                $codigo
-            );
-
-
-        if (
-            $parametro->valor ===
-            null
-        ) {
-            return null;
-        }
-
-
-        return (float) $parametro->valor;
     }
 
 

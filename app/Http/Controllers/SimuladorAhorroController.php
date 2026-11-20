@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\LeeParametrosSimulador;
 use App\Http\Requests\SimularAhorroRequest;
 use App\Models\ProductoFinanciero;
 use App\Services\CalculadoraFinanciera;
@@ -9,6 +10,8 @@ use Illuminate\Validation\ValidationException;
 
 class SimuladorAhorroController extends Controller
 {
+    use LeeParametrosSimulador;
+
     public function index()
     {
         $productos = $this->obtenerProductos();
@@ -49,9 +52,11 @@ class SimuladorAhorroController extends Controller
             (float) $datos['monto'];
 
 
-        $this->validarMonto(
+        $this->validarLimitesMonto(
+            $parametros,
             $monto,
-            $parametros
+            'El monto mínimo permitido es ',
+            'El monto máximo permitido es '
         );
 
 
@@ -251,7 +256,8 @@ class SimuladorAhorroController extends Controller
                 ->calcularAhorroOrdinario(
                     $monto,
                     $tasa,
-                    $dias
+                    $dias,
+                    $this->baseAnualDias($parametros)
                 );
 
 
@@ -292,7 +298,8 @@ class SimuladorAhorroController extends Controller
                             ->calcularAhorroOrdinario(
                                 $aporteMensual,
                                 $tasa,
-                                $diasRestantes
+                                $diasRestantes,
+                                $this->baseAnualDias($parametros)
                             );
 
 
@@ -462,7 +469,8 @@ class SimuladorAhorroController extends Controller
                     $monto,
                     $tasa,
                     $dias,
-                    $retencion
+                    $retencion,
+                    $this->baseAnualDias($parametros)
                 );
 
 
@@ -519,61 +527,6 @@ class SimuladorAhorroController extends Controller
     }
 
 
-    private function validarMonto(
-        float $monto,
-        $parametros
-    ): void {
-        $minimo =
-            $this->valorNumerico(
-                $parametros,
-                'monto_minimo'
-            );
-
-
-        $maximo =
-            $this->valorNumerico(
-                $parametros,
-                'monto_maximo'
-            );
-
-
-        if (
-            $minimo !== null
-            && $monto < $minimo
-        ) {
-            throw ValidationException::withMessages([
-                'monto' =>
-                    'El monto mínimo permitido es $'
-                    . number_format(
-                        $minimo,
-                        0,
-                        ',',
-                        '.'
-                    )
-                    . '.',
-            ]);
-        }
-
-
-        if (
-            $maximo !== null
-            && $monto > $maximo
-        ) {
-            throw ValidationException::withMessages([
-                'monto' =>
-                    'El monto máximo permitido es $'
-                    . number_format(
-                        $maximo,
-                        0,
-                        ',',
-                        '.'
-                    )
-                    . '.',
-            ]);
-        }
-    }
-
-
     private function obtenerProductos()
     {
         $productos =
@@ -621,34 +574,15 @@ class SimuladorAhorroController extends Controller
     }
 
 
-    private function valorNumerico(
-        $parametros,
-        string $codigo
-    ): ?float {
-        if (
-            !$parametros->has(
-                $codigo
-            )
-        ) {
-            return null;
-        }
+    /**
+     * Base anual configurada en el panel (base_anual_dias). Sin configurar, o con un valor distinto
+     * de 360/365, se usa 365, que es como se ha calculado siempre.
+     */
+    private function baseAnualDias($parametros): int
+    {
+        $base = (int) $this->valorNumerico($parametros, 'base_anual_dias');
 
-
-        $parametro =
-            $parametros->get(
-                $codigo
-            );
-
-
-        if (
-            $parametro->valor === null
-        ) {
-            return null;
-        }
-
-
-        return (float)
-            $parametro->valor;
+        return in_array($base, [360, 365], true) ? $base : 365;
     }
 
 

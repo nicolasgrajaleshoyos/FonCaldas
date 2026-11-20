@@ -69,6 +69,9 @@ class GuardarParametroFinancieroRequest extends FormRequest
         if (isset($definicion['valor_maximo'])) {
             $reglasValor[] = 'max:'.$definicion['valor_maximo'];
         }
+        if (isset($definicion['valores_permitidos'])) {
+            $reglasValor[] = Rule::in($definicion['valores_permitidos']);
+        }
 
         $unidadesPermitidas = $definicion['unidades_permitidas'] ?? [];
         $reglasUnidad = ['nullable', 'string', 'max:50'];
@@ -262,6 +265,9 @@ class GuardarParametroFinancieroRequest extends FormRequest
 
             'valor.max' =>
                 'El valor numérico no puede superar :max.',
+
+            'valor.in' =>
+                'Para este parámetro, el valor debe ser uno de: :values.',
 
             'unidad.in' =>
                 'Para esta tasa, usa una de las unidades permitidas (:values).',

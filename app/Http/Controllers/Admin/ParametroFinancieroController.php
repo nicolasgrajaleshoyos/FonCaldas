@@ -147,6 +147,15 @@ class ParametroFinancieroController extends Controller
     ) {
         abort_if($tasa->esSoloLecturaEnPanel(), 403);
 
+        if ($tasa->estaProtegido() && ! $request->boolean('editable_admin')) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'editable_admin' =>
+                    'Este parámetro está protegido. Marca "Permitir modificación desde el panel administrativo" para poder cambiarlo.',
+                ]);
+        }
+
         /*
      * Por seguridad, desde la edición no permitimos cambiar
      * el producto ni el tipo de parámetro.
@@ -225,7 +234,7 @@ class ParametroFinancieroController extends Controller
 
     public function desactivar(ParametroFinanciero $tasa)
     {
-        abort_if($tasa->esSoloLecturaEnPanel(), 403);
+        abort_if($tasa->esSoloLecturaEnPanel() || $tasa->estaProtegido(), 403);
 
         $productoId = $tasa->producto_financiero_id;
 
@@ -246,7 +255,7 @@ class ParametroFinancieroController extends Controller
 
     public function eliminar(ParametroFinanciero $tasa)
     {
-        abort_if($tasa->esSoloLecturaEnPanel(), 403);
+        abort_if($tasa->esSoloLecturaEnPanel() || $tasa->estaProtegido(), 403);
 
         $productoId = $tasa->producto_financiero_id;
 

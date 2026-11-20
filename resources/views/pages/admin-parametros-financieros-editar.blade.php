@@ -29,6 +29,14 @@
                 @endif
 
 
+                @if ($tasa->estaProtegido())
+                    <div class="mb-6 rounded-xl border border-amber-700 bg-amber-950/40 p-4 text-sm text-amber-200">
+                        Este parámetro está protegido contra cambios. Para guardar modificaciones, marca
+                        «Permitir modificación desde el panel administrativo».
+                    </div>
+                @endif
+
+
                 <form method="POST" action="{{ route('admin.parametros-financieros.tasas.actualizar', $tasa) }}"
                     class="space-y-6">
 

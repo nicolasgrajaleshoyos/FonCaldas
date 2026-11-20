@@ -127,3 +127,14 @@ test('rechaza periodos menores o iguales a cero', function () {
    \InvalidArgumentException::class,
     'El periodo debe ser mayor que cero.'
 );
+
+test('el CDAT y el ahorro ordinario respetan la base anual configurada', function () {
+    $calculadora = new \App\Services\CalculadoraFinanciera();
+
+    // Con base 360, un CDAT a 360 días rinde exactamente la tasa E.A.
+    expect($calculadora->calcularCdat(1000000, 10, 360, 0, 360)['rendimiento_bruto'])->toBe(100000)
+        ->and($calculadora->calcularCdat(1000000, 10, 360)['rendimiento_bruto'])->toBeLessThan(100000)
+        ->and($calculadora->calcularAhorroOrdinario(1000000, 10, 360, 360)['rendimiento'])->toBe(100000);
+
+    expect(fn () => $calculadora->calcularCdat(1000000, 10, 90, 0, 100))->toThrow(InvalidArgumentException::class);
+});

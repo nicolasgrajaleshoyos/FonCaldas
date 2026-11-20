@@ -40,6 +40,15 @@ class ParametroFinanciero extends Model
         return $this->codigo === 'tipo_calculo';
     }
 
+    /**
+     * Con "Permitir modificación desde el panel" desmarcado, el parámetro queda protegido contra cambios
+     * accidentales: no se puede desactivar ni eliminar, y para editarlo hay que volver a marcar la casilla.
+     */
+    public function estaProtegido(): bool
+    {
+        return ! $this->editable_admin;
+    }
+
     public function producto(): BelongsTo
     {
         return $this->belongsTo(

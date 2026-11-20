@@ -319,13 +319,20 @@
                                                                 'admin.parametros-financieros.tasas.editar',
                                                                 $parametro
                                                             ) }}"
-                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg
+                                                            class="inline-flex items-center px-3 py-1.5 rounded-full
                                                                 bg-sky-700 hover:bg-sky-600
                                                                 text-white text-xs font-medium transition">
 
                                                             Editar
                                                         </a>
 
+
+                                                        @if ($parametro->estaProtegido())
+                                                            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-700 text-slate-300"
+                                                                title="Para desactivarlo o eliminarlo, edítalo y marca «Permitir modificación desde el panel administrativo».">
+                                                                Protegido
+                                                            </span>
+                                                        @else
 
                                                         {{-- Desactivar --}}
                                                         @if ($parametro->activo)
@@ -345,7 +352,7 @@
 
                                                                 <button
                                                                     type="submit"
-                                                                    class="inline-flex items-center px-3 py-1.5 rounded-lg
+                                                                    class="inline-flex items-center px-3 py-1.5 rounded-full
                                                                         bg-amber-700 hover:bg-amber-600
                                                                         text-white text-xs font-medium transition">
 
@@ -373,7 +380,7 @@
 
                                                             <button
                                                                 type="submit"
-                                                                class="inline-flex items-center px-3 py-1.5 rounded-lg
+                                                                class="inline-flex items-center px-3 py-1.5 rounded-full
                                                                     bg-red-700 hover:bg-red-600
                                                                     text-white text-xs font-medium transition">
 
@@ -381,6 +388,8 @@
                                                             </button>
 
                                                         </form>
+
+                                                        @endif
 
                                                     </div>
                                                 @endif

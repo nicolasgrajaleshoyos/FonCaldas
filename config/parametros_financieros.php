@@ -189,6 +189,8 @@ return [
         'categoria' => 'calculo',
         'tipo_dato' => 'entero',
         'unidad_sugerida' => 'días',
+        // Los simuladores de ahorro solo calculan con estas bases.
+        'valores_permitidos' => [360, 365],
     ],
 
     'aportes_permitidos' => [
