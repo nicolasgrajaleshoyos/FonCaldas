@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Models\ProductoFinanciero;
+use App\Support\FormatoNumericoFinanciero;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -16,186 +17,65 @@ class GuardarParametroFinancieroRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $valor = $this->input('valor');
+        $formato = $this->formatoNumerico($this->definicionParametro());
+        if (! is_string($valor) || $formato === null) {
+            return;
+        }
+
+        $valorNormalizado = match ($formato) {
+            'monto', 'entero' => FormatoNumericoFinanciero::normalizarEnteroAgrupado($valor),
+            'plazo' => trim($valor),
+            'decimal' => FormatoNumericoFinanciero::normalizarDecimal($valor),
+        };
+
+        $this->merge(['valor' => $valorNormalizado]);
+    }
+
+    private function definicionParametro(): array
+    {
         $codigo = $this->input('codigo');
 
-        $definicion = config(
-            "parametros_financieros.$codigo"
-        );
-
-
-        if (
-            !$definicion
-            || !in_array(
-                $definicion['tipo_dato'],
-                ['decimal', 'entero'],
-                true
-            )
-        ) {
-            return;
-        }
-
-
-        $valor = $this->input('valor');
-
-
-        if (
-            $valor === null
-            || $valor === ''
-        ) {
-            return;
-        }
-
-
-        $this->merge([
-            'valor' =>
-                $this->normalizarValorNumerico(
-                    (string) $valor,
-                    $definicion
-                ),
-        ]);
+        return is_string($codigo) ? (config('parametros_financieros', [])[$codigo] ?? []) : [];
     }
 
+    private function formatoNumerico(array $definicion): ?string
+    {
+        $unidad = $definicion['unidad_sugerida'] ?? null;
+        $esMonetario = $unidad === 'COP' || ($definicion['categoria'] ?? null) === 'monto';
 
-    private function normalizarValorNumerico(
-        string $valor,
-        array $definicion
-    ): string {
-        $valor = trim($valor);
-
-        $valor = preg_replace(
-            '/\s+/',
-            '',
-            $valor
-        );
-
-
-        $esMonetario =
-            ($definicion['unidad_sugerida'] ?? null) === 'COP'
-            || ($definicion['categoria'] ?? null) === 'monto';
-
-
-        /*
-         * Valores monetarios:
-         *
-         * 50000
-         * 50.000
-         * 50,000
-         *
-         * Todos se interpretan como 50000.
-         */
-        if ($esMonetario) {
-            return preg_replace(
-                '/[.,]/',
-                '',
-                $valor
-            );
-        }
-
-
-        /*
-         * Valores enteros:
-         *
-         * 365
-         * 1.000
-         *
-         * Se eliminan separadores visuales.
-         */
-        if (
-            $definicion['tipo_dato']
-            === 'entero'
-        ) {
-            return preg_replace(
-                '/[.,]/',
-                '',
-                $valor
-            );
-        }
-
-
-        /*
-         * Decimales no monetarios:
-         *
-         * 8,5  -> 8.5
-         * 8.5  -> 8.5
-         * 1.234,56 -> 1234.56
-         * 1,234.56 -> 1234.56
-         */
-        $tieneComa =
-            str_contains(
-                $valor,
-                ','
-            );
-
-        $tienePunto =
-            str_contains(
-                $valor,
-                '.'
-            );
-
-
-        if (
-            $tieneComa
-            && $tienePunto
-        ) {
-            $ultimaComa =
-                strrpos(
-                    $valor,
-                    ','
-                );
-
-            $ultimoPunto =
-                strrpos(
-                    $valor,
-                    '.'
-                );
-
-
-            if (
-                $ultimaComa
-                > $ultimoPunto
-            ) {
-                $valor =
-                    str_replace(
-                        '.',
-                        '',
-                        $valor
-                    );
-
-                $valor =
-                    str_replace(
-                        ',',
-                        '.',
-                        $valor
-                    );
-            } else {
-                $valor =
-                    str_replace(
-                        ',',
-                        '',
-                        $valor
-                    );
-            }
-
-
-            return $valor;
-        }
-
-
-        if ($tieneComa) {
-            return str_replace(
-                ',',
-                '.',
-                $valor
-            );
-        }
-
-
-        return $valor;
+        return match ($definicion['tipo_dato'] ?? null) {
+            'decimal' => $esMonetario ? 'monto' : 'decimal',
+            'entero' => $unidad === 'meses' ? 'plazo' : 'entero',
+            default => null,
+        };
     }
-
 
     public function rules(): array
     {
+        $definiciones = config('parametros_financieros', []);
+        $definicion = $this->definicionParametro();
+        $formato = $this->formatoNumerico($definicion);
+
+        $reglasValor = ['bail', 'nullable'];
+        if ($formato !== null) {
+            $reglasValor[] = $formato === 'decimal'
+                ? FormatoNumericoFinanciero::REGLA_DECIMAL
+                : FormatoNumericoFinanciero::REGLA_ENTERO;
+        }
+
+        $reglasValor[] = 'numeric';
+        $reglasValor[] = 'min:0';
+        if (isset($definicion['valor_maximo'])) {
+            $reglasValor[] = 'max:'.$definicion['valor_maximo'];
+        }
+
+        $unidadesPermitidas = $definicion['unidades_permitidas'] ?? [];
+        $reglasUnidad = ['nullable', 'string', 'max:50'];
+        if ($unidadesPermitidas !== []) {
+            $reglasUnidad[] = Rule::in($unidadesPermitidas);
+        }
+
         return [
             'producto_financiero_id' => [
                 'required',
@@ -204,21 +84,10 @@ class GuardarParametroFinancieroRequest extends FormRequest
 
             'codigo' => [
                 'required',
-                Rule::in(
-                    array_keys(
-                        config(
-                            'parametros_financieros',
-                            []
-                        )
-                    )
-                ),
+                Rule::in(array_keys($definiciones)),
             ],
 
-            'valor' => [
-                'nullable',
-                'numeric',
-                'min:0',
-            ],
+            'valor' => $reglasValor,
 
             'valor_texto' => [
                 'nullable',
@@ -226,11 +95,7 @@ class GuardarParametroFinancieroRequest extends FormRequest
                 'max:255',
             ],
 
-            'unidad' => [
-                'nullable',
-                'string',
-                'max:50',
-            ],
+            'unidad' => $reglasUnidad,
 
             'origen' => [
                 'required',
@@ -273,10 +138,7 @@ class GuardarParametroFinancieroRequest extends FormRequest
                         'codigo'
                     );
 
-                $definicion =
-                    config(
-                        "parametros_financieros.$codigo"
-                    );
+                $definicion = $this->definicionParametro();
 
 
                 $productoId =
@@ -388,8 +250,21 @@ class GuardarParametroFinancieroRequest extends FormRequest
             'valor.numeric' =>
                 'El valor numérico debe ser válido. Puedes usar punto o coma para los decimales.',
 
+            'valor.regex' => match ($this->formatoNumerico($this->definicionParametro())) {
+                'monto' => 'Ingresa el valor en pesos enteros. Puedes separar los miles con puntos o comas.',
+                'plazo' => 'Ingresa el plazo en meses completos, sin separadores.',
+                'entero' => 'Ingresa un número entero válido.',
+                default => 'Ingresa un número válido. Puedes usar punto o coma para los decimales.',
+            },
+
             'valor.min' =>
                 'El valor numérico no puede ser negativo.',
+
+            'valor.max' =>
+                'El valor numérico no puede superar :max.',
+
+            'unidad.in' =>
+                'Para esta tasa, usa una de las unidades permitidas (:values).',
 
             'origen.required' =>
                 'Debes indicar el origen del parámetro.',

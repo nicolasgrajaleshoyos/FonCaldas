@@ -26,7 +26,7 @@ class SimuladorAhorroController extends Controller
     ) {
         $datos = $request->validated();
 
-        $producto = ProductoFinanciero::query()
+        $producto = ProductoFinanciero::with('parametrosVigentes')
             ->where('codigo', $datos['producto'])
             ->where('tipo', 'ahorro')
             ->where('activo', true)
@@ -42,11 +42,7 @@ class SimuladorAhorroController extends Controller
         }
 
 
-        $parametros = $producto
-            ->parametros()
-            ->vigente()
-            ->get()
-            ->keyBy('codigo');
+        $parametros = $producto->parametrosVigentesPorCodigo();
 
 
         $monto =
@@ -581,13 +577,17 @@ class SimuladorAhorroController extends Controller
     private function obtenerProductos()
     {
         $productos =
-            ProductoFinanciero::query()
+            ProductoFinanciero::with('parametrosVigentes')
                 ->where(
                     'tipo',
                     'ahorro'
                 )
                 ->where(
                     'activo',
+                    true
+                )
+                ->where(
+                    'simulable',
                     true
                 )
                 ->orderBy(
@@ -600,39 +600,20 @@ class SimuladorAhorroController extends Controller
             $productos
             as $producto
         ) {
-            $parametros =
-                $producto
-                    ->parametros()
-                    ->vigente()
-                    ->get();
+            $parametros = $producto->parametrosVigentesPorCodigo();
 
+            $producto->aportes_simulador_permitidos =
+                $this->valorBooleano($parametros, 'aportes_permitidos') !== false;
 
-            $producto
-                ->parametros_simulador =
-                $parametros
-                    ->mapWithKeys(
-                        function ($parametro) {
-                            return [
-                                $parametro->codigo => [
-                                    'valor' =>
-                                        $parametro->valor,
-
-                                    'valor_texto' =>
-                                        $parametro->valor_texto,
-
-                                    'tipo_dato' =>
-                                        $parametro->tipo_dato,
-
-                                    'unidad' =>
-                                        $parametro->unidad,
-
-                                    'origen' =>
-                                        $parametro->origen,
-                                ],
-                            ];
-                        }
-                    )
-                    ->toArray();
+            $producto->parametros_simulador = $parametros
+                ->map(fn ($parametro) => [
+                    'valor' => $parametro->valor,
+                    'valor_texto' => $parametro->valor_texto,
+                    'tipo_dato' => $parametro->tipo_dato,
+                    'unidad' => $parametro->unidad,
+                    'origen' => $parametro->origen,
+                ])
+                ->toArray();
         }
 
 

@@ -35,6 +35,11 @@ class ParametroFinanciero extends Model
         'editable_admin' => 'boolean',
     ];
 
+    public function esSoloLecturaEnPanel(): bool
+    {
+        return $this->codigo === 'tipo_calculo';
+    }
+
     public function producto(): BelongsTo
     {
         return $this->belongsTo(

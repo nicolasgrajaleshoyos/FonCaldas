@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\GuardarTasaFinancieraRequest;
 use App\Http\Requests\Admin\GuardarParametroFinancieroRequest;
 use App\Models\ParametroFinanciero;
 use App\Models\ProductoFinanciero;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\ValidationException;
 
 class ParametroFinancieroController extends Controller
 {
@@ -40,43 +42,9 @@ class ParametroFinancieroController extends Controller
 
     public function guardarParametro(GuardarParametroFinancieroRequest $request)
     {
-
-        $fechaInicio = $request->input('fecha_inicio_vigencia');
-        $fechaFin = $request->input('fecha_fin_vigencia');
         $codigo = $request->input('codigo');
         $definicion = config("parametros_financieros.$codigo");
         $tipoDato = $definicion['tipo_dato'];
-
-        $existeSuperposicion = ParametroFinanciero::where(
-            'producto_financiero_id',
-            $request->input('producto_financiero_id')
-        )
-            ->where('codigo', $codigo)
-            ->where('activo', true)
-            ->where(function ($consulta) use ($fechaInicio) {
-                $consulta
-                    ->whereNull('fecha_fin_vigencia')
-                    ->orWhere('fecha_fin_vigencia', '>=', $fechaInicio);
-            })
-            ->when(
-                $fechaFin,
-                function ($consulta) use ($fechaFin) {
-                    $consulta->where('fecha_inicio_vigencia', '<=', $fechaFin);
-                },
-                function ($consulta) {
-                    $consulta->whereNotNull('fecha_inicio_vigencia');
-                }
-            )
-            ->exists();
-
-        if ($existeSuperposicion) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'fecha_inicio_vigencia' =>
-                    'Ya existe un parámetro activo con el mismo código para este producto cuya vigencia se superpone con las fechas indicadas.',
-                ]);
-        }
 
         if (in_array($tipoDato, ['decimal', 'entero'])) {
             $valor = $request->input('valor');
@@ -86,10 +54,8 @@ class ParametroFinancieroController extends Controller
             $valorTexto = $request->input('valor_texto');
         }
 
-        ParametroFinanciero::create([
-            'producto_financiero_id' => $request->input('producto_financiero_id'),
+        $guardado = $this->guardarVigencia($request->integer('producto_financiero_id'), $codigo, [
             'nombre' => $definicion['nombre'],
-            'codigo' => $codigo,
             'valor' => $valor,
             'valor_texto' => $valorTexto,
             'tipo_dato' => $tipoDato,
@@ -99,11 +65,19 @@ class ParametroFinancieroController extends Controller
             'categoria' => $definicion['categoria'],
             'origen' => $request->input('origen'),
             'editable_admin' => $request->boolean('editable_admin'),
-            'fecha_inicio_vigencia' => $fechaInicio,
-            'fecha_fin_vigencia' => $fechaFin,
-            'activo' => true,
+            'fecha_inicio_vigencia' => $request->date('fecha_inicio_vigencia')->toDateString(),
+            'fecha_fin_vigencia' => $request->date('fecha_fin_vigencia')?->toDateString(),
             'descripcion' => $request->input('descripcion'),
         ]);
+
+        if (! $guardado) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'fecha_inicio_vigencia' =>
+                    'Ya existe un parámetro activo con el mismo código para este producto cuya vigencia se superpone con las fechas indicadas.',
+                ]);
+        }
 
         return back()->with(
             'success',
@@ -127,45 +101,22 @@ class ParametroFinancieroController extends Controller
 
     public function guardar(GuardarTasaFinancieraRequest $request)
     {
-        $fechaInicio = $request->input('fecha_inicio_vigencia');
-        $fechaFin = $request->input('fecha_fin_vigencia');
+        $guardado = $this->guardarVigencia($request->integer('producto_financiero_id'), 'tasa_interes', [
+            'nombre' => 'Tasa de interés',
+            'valor' => $request->input('valor'),
+            'unidad' => $request->input('unidad'),
+            'fecha_inicio_vigencia' => $request->date('fecha_inicio_vigencia')->toDateString(),
+            'fecha_fin_vigencia' => $request->date('fecha_fin_vigencia')?->toDateString(),
+            'descripcion' => $request->input('descripcion'),
+        ]);
 
-        $existeSuperposicion = ParametroFinanciero::where(
-            'producto_financiero_id',
-            $request->input('producto_financiero_id')
-        )
-            ->where('codigo', 'tasa_interes')->where('activo', true)
-            ->where(function ($consulta) use ($fechaInicio) {
-                $consulta
-                    ->whereNull('fecha_fin_vigencia')
-                    ->orWhere('fecha_fin_vigencia', '>=', $fechaInicio);
-            })
-            ->when($fechaFin, function ($consulta) use ($fechaFin) {
-                $consulta->where('fecha_inicio_vigencia', '<=', $fechaFin);
-            }, function ($consulta) {
-                $consulta->whereNotNull('fecha_inicio_vigencia');
-            })
-            ->exists();
-
-        if ($existeSuperposicion) {
+        if (! $guardado) {
             return back()
                 ->withInput()
                 ->withErrors([
                     'fecha_inicio_vigencia' => 'Ya existe una tasa registrada para este producto cuya vigencia se superpone con las fechas indicadas.',
                 ]);
         }
-
-        ParametroFinanciero::create([
-            'producto_financiero_id' => $request->input('producto_financiero_id'),
-            'nombre' => 'Tasa de interés',
-            'codigo' => 'tasa_interes',
-            'valor' => $request->input('valor'),
-            'unidad' => $request->input('unidad'),
-            'fecha_inicio_vigencia' => $fechaInicio,
-            'fecha_fin_vigencia' => $fechaFin,
-            'activo' => true,
-            'descripcion' => $request->input('descripcion'),
-        ]);
 
         return back()->with(
             'success',
@@ -175,6 +126,8 @@ class ParametroFinancieroController extends Controller
 
     public function editar(ParametroFinanciero $tasa)
     {
+        abort_if($tasa->esSoloLecturaEnPanel(), 403);
+
         $definicion = config("parametros_financieros.{$tasa->codigo}");
 
         abort_unless($definicion, 404);
@@ -189,6 +142,8 @@ class ParametroFinancieroController extends Controller
         GuardarParametroFinancieroRequest $request,
         ParametroFinanciero $tasa
     ) {
+        abort_if($tasa->esSoloLecturaEnPanel(), 403);
+
         /*
      * Por seguridad, desde la edición no permitimos cambiar
      * el producto ni el tipo de parámetro.
@@ -221,51 +176,6 @@ class ParametroFinancieroController extends Controller
 
         $tipoDato = $definicion['tipo_dato'];
 
-        $fechaInicio = $request->input('fecha_inicio_vigencia');
-        $fechaFin = $request->input('fecha_fin_vigencia');
-
-        $existeSuperposicion = ParametroFinanciero::where(
-            'producto_financiero_id',
-            $tasa->producto_financiero_id
-        )
-            ->where('codigo', $codigo)
-            ->where('activo', true)
-            ->where('id', '!=', $tasa->id)
-            ->where(function ($consulta) use ($fechaInicio) {
-                $consulta
-                    ->whereNull('fecha_fin_vigencia')
-                    ->orWhere(
-                        'fecha_fin_vigencia',
-                        '>=',
-                        $fechaInicio
-                    );
-            })
-            ->when(
-                $fechaFin,
-                function ($consulta) use ($fechaFin) {
-                    $consulta->where(
-                        'fecha_inicio_vigencia',
-                        '<=',
-                        $fechaFin
-                    );
-                },
-                function ($consulta) {
-                    $consulta->whereNotNull(
-                        'fecha_inicio_vigencia'
-                    );
-                }
-            )
-            ->exists();
-
-        if ($existeSuperposicion) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'fecha_inicio_vigencia' =>
-                    'Ya existe otro parámetro activo del mismo tipo cuya vigencia se superpone con las fechas indicadas.',
-                ]);
-        }
-
         if (in_array($tipoDato, ['decimal', 'entero'])) {
             $valor = $request->input('valor');
             $valorTexto = null;
@@ -274,28 +184,30 @@ class ParametroFinancieroController extends Controller
             $valorTexto = $request->input('valor_texto');
         }
 
-        $tasa->update([
+        $guardado = $this->guardarVigencia((int) $tasa->producto_financiero_id, $codigo, [
             'nombre' => $definicion['nombre'],
             'valor' => $valor,
             'valor_texto' => $valorTexto,
             'tipo_dato' => $tipoDato,
             'categoria' => $definicion['categoria'],
-
             'unidad' => $request->filled('unidad')
                 ? $request->input('unidad')
                 : $definicion['unidad_sugerida'],
-
             'origen' => $request->input('origen'),
+            'editable_admin' => $request->boolean('editable_admin'),
+            'fecha_inicio_vigencia' => $request->date('fecha_inicio_vigencia')->toDateString(),
+            'fecha_fin_vigencia' => $request->date('fecha_fin_vigencia')?->toDateString(),
+            'descripcion' => $request->input('descripcion'),
+        ], $tasa->id);
 
-            'editable_admin' =>
-            $request->boolean('editable_admin'),
-
-            'fecha_inicio_vigencia' => $fechaInicio,
-            'fecha_fin_vigencia' => $fechaFin,
-
-            'descripcion' =>
-            $request->input('descripcion'),
-        ]);
+        if (! $guardado) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'fecha_inicio_vigencia' =>
+                    'Ya existe otro parámetro activo del mismo tipo cuya vigencia se superpone con las fechas indicadas.',
+                ]);
+        }
 
         return redirect()
             ->route(
@@ -310,6 +222,8 @@ class ParametroFinancieroController extends Controller
 
     public function desactivar(ParametroFinanciero $tasa)
     {
+        abort_if($tasa->esSoloLecturaEnPanel(), 403);
+
         $productoId = $tasa->producto_financiero_id;
 
         $tasa->update([
@@ -329,6 +243,8 @@ class ParametroFinancieroController extends Controller
 
     public function eliminar(ParametroFinanciero $tasa)
     {
+        abort_if($tasa->esSoloLecturaEnPanel(), 403);
+
         $productoId = $tasa->producto_financiero_id;
 
         $tasa->delete();
@@ -342,5 +258,105 @@ class ParametroFinancieroController extends Controller
                 'success',
                 'El parámetro fue eliminado definitivamente.'
             );
+    }
+
+    private function guardarVigencia(int $productoId, string $codigo, array $atributos, ?int $parametroId = null): bool
+    {
+        $conexion = (new ParametroFinanciero())->getConnection();
+
+        return $conexion->transaction(function () use ($productoId, $codigo, $atributos, $parametroId): bool {
+            $this->bloquearProducto($productoId);
+
+            $parametro = $parametroId === null
+                ? new ParametroFinanciero([
+                    'producto_financiero_id' => $productoId,
+                    'codigo' => $codigo,
+                    'activo' => true,
+                ])
+                : ParametroFinanciero::where('producto_financiero_id', $productoId)
+                    ->where('codigo', $codigo)
+                    ->lockForUpdate()
+                    ->findOrFail($parametroId);
+
+            $fechaInicio = $atributos['fecha_inicio_vigencia'];
+            $fechaFin = $atributos['fecha_fin_vigencia'];
+            $existeSuperposicion = $this->parametrosActivosEnIntervalo($productoId, $fechaInicio, $fechaFin)
+                ->where('codigo', $codigo)
+                ->when($parametroId !== null, fn ($consulta) => $consulta->where('id', '!=', $parametroId))
+                ->exists();
+
+            if ($existeSuperposicion) {
+                return false;
+            }
+
+            if ($parametro->activo) {
+                $this->validarLimitesCompatibles($productoId, $codigo, $atributos);
+            }
+
+            $parametro->fill($atributos)->save();
+
+            return true;
+        }, attempts: 3);
+    }
+
+    private function bloquearProducto(int $productoId): void
+    {
+        $consulta = ProductoFinanciero::whereKey($productoId);
+        $conexion = $consulta->getModel()->getConnection();
+
+        if ($conexion->getDriverName() === 'sqlite') {
+            // SQLite obtiene el bloqueo de escritura con la primera actualización.
+            $filas = $consulta->toBase()->update(['activo' => $conexion->raw('activo')]);
+            abort_unless($filas > 0, 404);
+
+            return;
+        }
+
+        $consulta->lockForUpdate()->firstOrFail();
+    }
+
+    private function parametrosActivosEnIntervalo(int $productoId, string $fechaInicio, ?string $fechaFin): Builder
+    {
+        return ParametroFinanciero::where('producto_financiero_id', $productoId)
+            ->where('activo', true)
+            ->where(fn ($consulta) => $consulta
+                ->whereNull('fecha_fin_vigencia')
+                ->orWhereDate('fecha_fin_vigencia', '>=', $fechaInicio))
+            ->when(
+                $fechaFin !== null,
+                fn ($consulta) => $consulta->whereDate('fecha_inicio_vigencia', '<=', $fechaFin),
+                fn ($consulta) => $consulta->whereNotNull('fecha_inicio_vigencia')
+            );
+    }
+
+    private function validarLimitesCompatibles(int $productoId, string $codigo, array $atributos): void
+    {
+        $tipoLimite = match ($codigo) {
+            'monto_minimo', 'monto_maximo' => 'monto',
+            'plazo_minimo', 'plazo_maximo' => 'plazo',
+            default => null,
+        };
+        if ($tipoLimite === null) {
+            return;
+        }
+
+        $esMinimo = $codigo === "{$tipoLimite}_minimo";
+        $codigoOpuesto = $esMinimo ? "{$tipoLimite}_maximo" : "{$tipoLimite}_minimo";
+        $existeLimiteIncompatible = $this->parametrosActivosEnIntervalo(
+            $productoId,
+            $atributos['fecha_inicio_vigencia'],
+            $atributos['fecha_fin_vigencia']
+        )
+            ->where('codigo', $codigoOpuesto)
+            ->where('valor', $esMinimo ? '<' : '>', $atributos['valor'])
+            ->exists();
+
+        if ($existeLimiteIncompatible) {
+            throw ValidationException::withMessages([
+                'valor' => $esMinimo
+                    ? "El $tipoLimite mínimo supera el $tipoLimite máximo del producto durante una vigencia compartida."
+                    : "El $tipoLimite máximo queda por debajo del $tipoLimite mínimo del producto durante una vigencia compartida.",
+            ]);
+        }
     }
 }

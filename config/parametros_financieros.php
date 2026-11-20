@@ -1,5 +1,8 @@
 <?php
 
+$unidadesTasaMensual = ['% M.V.', '% mensual'];
+$unidadesTasaEfectivaAnual = ['% E.A.'];
+
 return [
 
     'tasa_interes' => [
@@ -7,6 +10,7 @@ return [
         'categoria' => 'tasa',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '% M.V.',
+        'unidades_permitidas' => $unidadesTasaMensual,
     ],
 
     'tasa_interes_ea' => [
@@ -14,6 +18,7 @@ return [
         'categoria' => 'tasa',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '% E.A.',
+        'unidades_permitidas' => $unidadesTasaEfectivaAnual,
     ],
 
     'tasa_interes_afiliacion_hasta_5' => [
@@ -21,6 +26,7 @@ return [
         'categoria' => 'tasa',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '% M.V.',
+        'unidades_permitidas' => $unidadesTasaMensual,
     ],
 
     'tasa_interes_afiliacion_5_15' => [
@@ -28,6 +34,7 @@ return [
         'categoria' => 'tasa',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '% M.V.',
+        'unidades_permitidas' => $unidadesTasaMensual,
     ],
 
     'tasa_interes_afiliacion_mas_15' => [
@@ -35,6 +42,7 @@ return [
         'categoria' => 'tasa',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '% M.V.',
+        'unidades_permitidas' => $unidadesTasaMensual,
     ],
 
     'tasa_interes_90_dias' => [
@@ -42,6 +50,7 @@ return [
         'categoria' => 'tasa',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '% E.A.',
+        'unidades_permitidas' => $unidadesTasaEfectivaAnual,
     ],
 
     'tasa_interes_180_dias' => [
@@ -49,6 +58,7 @@ return [
         'categoria' => 'tasa',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '% E.A.',
+        'unidades_permitidas' => $unidadesTasaEfectivaAnual,
     ],
 
     'tasa_interes_360_dias' => [
@@ -56,6 +66,7 @@ return [
         'categoria' => 'tasa',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '% E.A.',
+        'unidades_permitidas' => $unidadesTasaEfectivaAnual,
     ],
 
     'monto_minimo' => [
@@ -112,6 +123,7 @@ return [
         'categoria' => 'condicion',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '%',
+        'valor_maximo' => 100,
     ],
 
     'porcentaje_financiacion_usado' => [
@@ -119,6 +131,7 @@ return [
         'categoria' => 'condicion',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '%',
+        'valor_maximo' => 100,
     ],
 
     'antiguedad_maxima_usado' => [
@@ -154,6 +167,7 @@ return [
         'categoria' => 'retencion',
         'tipo_dato' => 'decimal',
         'unidad_sugerida' => '%',
+        'valor_maximo' => 100,
     ],
 
     'base_calculo' => [

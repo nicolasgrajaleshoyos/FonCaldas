@@ -213,7 +213,7 @@
                                 id="monto-solicitado"
                                 name="monto"
                                 type="text"
-                                inputmode="numeric"
+                                inputmode="decimal"
                                 autocomplete="off"
                                 disabled
                                 value="{{ old('monto') }}"
@@ -347,7 +347,7 @@
                                 id="dato-especifico"
                                 name="dato_especifico"
                                 type="text"
-                                inputmode="numeric"
+                                inputmode="decimal"
                                 autocomplete="off"
                                 disabled
                                 value="{{ old('dato_especifico') }}"
@@ -401,6 +401,8 @@
 </div>
 
 
+@include('simuladores.formato-moneda')
+
 <script>
     const selectorCredito = document.getElementById('producto_credito');
     const descripcionProducto = document.getElementById('descripcion-producto');
@@ -438,16 +440,6 @@
     const formulario = document.getElementById('form-simulador-credito');
 
     const erroresSimulacion = document.getElementById('errores-simulacion');
-
-
-    const productosDatoMonetario = [
-        'credito_avances',
-        'credito_compra_cartera',
-        'credito_vehiculo',
-        'credito_motocicleta',
-        'credito_tecnologia',
-        'credito_turismo'
-    ];
 
 
     const configuracionProductos = {
@@ -578,18 +570,6 @@
     }
 
 
-    function valorNumericoMoneda(valor)
-    {
-        const limpio =
-            String(valor || '')
-                .replace(/[^\d]/g, '');
-
-        return limpio
-            ? Number(limpio)
-            : 0;
-    }
-
-
     function formatearTextoParametro(valor)
     {
         if (
@@ -613,33 +593,6 @@
                     /^./,
                     letra => letra.toUpperCase()
                 );
-    }
-
-
-    function configurarCampoMoneda(campo)
-    {
-        campo.type = 'text';
-        campo.inputMode = 'numeric';
-
-        campo.addEventListener(
-            'input',
-            function () {
-
-                this.setCustomValidity('');
-
-                this.value =
-                    formatearPesos(
-                        this.value
-                    );
-            }
-        );
-
-        if (campo.value) {
-            campo.value =
-                formatearPesos(
-                    campo.value
-                );
-        }
     }
 
 
@@ -1311,18 +1264,12 @@
             if (configuracion.monetario) {
 
                 datoEspecifico.type = 'text';
-                datoEspecifico.inputMode = 'numeric';
-
-                if (datoEspecifico.value) {
-                    datoEspecifico.value =
-                        formatearPesos(
-                            datoEspecifico.value
-                        );
-                }
+                datoEspecifico.inputMode = 'decimal';
 
             } else {
 
                 datoEspecifico.type = 'number';
+                datoEspecifico.inputMode = 'numeric';
                 datoEspecifico.min = '0';
                 datoEspecifico.step = '1';
             }
@@ -1489,36 +1436,6 @@
     }
 
 
-    configurarCampoMoneda(
-        montoSolicitado
-    );
-
-
-    datoEspecifico.addEventListener(
-        'input',
-        function () {
-
-            this.setCustomValidity('');
-
-            const codigo =
-                selectorCredito.value;
-
-
-            if (
-                productosDatoMonetario
-                    .includes(
-                        codigo
-                    )
-            ) {
-                this.value =
-                    formatearPesos(
-                        this.value
-                    );
-            }
-        }
-    );
-
-
     bloquearRuedaEnNumero(
         plazoInput
     );
@@ -1608,12 +1525,15 @@
         'submit',
         function (evento) {
 
-            const monto =
-                valorNumericoMoneda(
-                    montoSolicitado.value
-                );
+            const montoNormalizado = normalizarPesosEntrada(montoSolicitado.value);
+            if (montoNormalizado === null) {
+                montoSolicitado.setCustomValidity(mensajeFormatoPesos);
+                montoSolicitado.reportValidity();
+                evento.preventDefault();
+                return;
+            }
 
-
+            const monto = Number(montoNormalizado);
             montoSolicitado
                 .setCustomValidity('');
 
@@ -1704,6 +1624,8 @@
 
 
     configurarProducto();
+    configurarCampoMoneda(montoSolicitado);
+    configurarCampoMoneda(datoEspecifico, () => !datoEspecifico.disabled && datoEspecifico.type === 'text');
 
 </script>
 

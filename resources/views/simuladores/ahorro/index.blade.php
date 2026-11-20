@@ -70,6 +70,7 @@
                                 @foreach ($productos as $producto)
                                     <option value="{{ $producto->codigo }}"
                                         data-parametros='@json($producto->parametros_simulador)'
+                                        data-aportes-permitidos="{{ $producto->aportes_simulador_permitidos ? '1' : '0' }}"
                                         @selected(old('producto') === $producto->codigo)>
                                         {{ $producto->nombre }}
                                     </option>
@@ -89,7 +90,7 @@
                                 <span id="nombre-producto"></span>
                             </p>
 
-                            <p id="tasa-producto"
+                            <p id="tasa-producto" aria-live="polite"
                                 class="mt-2 text-sm text-slate-600 dark:text-slate-300">
                             </p>
 
@@ -121,7 +122,7 @@
                             <input id="monto"
                                 name="monto"
                                 type="text"
-                                inputmode="numeric"
+                                inputmode="decimal"
                                 autocomplete="off"
                                 disabled
                                 required
@@ -159,7 +160,7 @@
                                 </p>
                             </div>
 
-                            <div>
+                            <div id="campo-aporte-mensual" class="hidden">
                                 <label for="aporte-mensual"
                                     class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
                                     Aporte adicional mensual
@@ -171,7 +172,8 @@
                                 <input id="aporte-mensual"
                                     name="aporte_mensual"
                                     type="text"
-                                    inputmode="numeric"
+                                    disabled
+                                    inputmode="decimal"
                                     autocomplete="off"
                                     value="{{ old('aporte_mensual') }}"
                                     placeholder="Ej. 20.000"
@@ -195,6 +197,8 @@
 
                             <select id="plazo-dias"
                                 name="plazo_dias"
+                                aria-describedby="tasa-producto"
+                                disabled
                                 class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0C67A3]">
 
                                 <option value="">
@@ -235,12 +239,13 @@
         </div>
 
         <p class="mt-4 text-center text-xs text-slate-500 dark:text-slate-400">
-            Simulación informativa. Los resultados corresponden a una proyección
-            realizada con los parámetros configurados y no constituyen una oferta
-            financiera definitiva.
+            Simulación informativa. Los resultados están sujetos a las condiciones,
+            políticas y validaciones vigentes de FONCALDAS.
         </p>
     </div>
 </div>
+
+@include('simuladores.formato-moneda')
 
 <script>
     const selectorAhorro =
@@ -272,6 +277,9 @@
 
     const ayudaPlazo =
         document.getElementById('ayuda-plazo');
+
+    const campoAporte =
+        document.getElementById('campo-aporte-mensual');
 
     const aporteMensual =
         document.getElementById('aporte-mensual');
@@ -385,53 +393,6 @@
     }
 
 
-    function formatearPesosEntrada(valor)
-    {
-        const limpio =
-            String(valor || '')
-                .replace(
-                    /[^\d]/g,
-                    ''
-                );
-
-        if (!limpio) {
-            return '';
-        }
-
-        return new Intl.NumberFormat(
-            'es-CO',
-            {
-                maximumFractionDigits: 0
-            }
-        ).format(
-            Number(limpio)
-        );
-    }
-
-
-    function configurarMoneda(campo)
-    {
-        campo.addEventListener(
-            'input',
-            function () {
-                this.setCustomValidity('');
-
-                this.value =
-                    formatearPesosEntrada(
-                        this.value
-                    );
-            }
-        );
-
-        if (campo.value) {
-            campo.value =
-                formatearPesosEntrada(
-                    campo.value
-                );
-        }
-    }
-
-
     function bloquearNumero(campo)
     {
         campo.addEventListener(
@@ -511,6 +472,9 @@
             .classList
             .add('hidden');
 
+        campoAporte.classList.add('hidden');
+        aporteMensual.disabled = true;
+
         montoInput.disabled =
             true;
 
@@ -522,6 +486,8 @@
 
         plazoDias.required =
             false;
+        plazoDias.disabled =
+            true;
 
         botonSimular.disabled =
             true;
@@ -652,33 +618,21 @@
             }
 
 
-            const aporteMinimo =
-                obtenerParametro(
-                    parametros,
-                    'aporte_minimo'
-                );
+            if (opcion.dataset.aportesPermitidos === '1') {
+                campoAporte.classList.remove('hidden');
+                aporteMensual.disabled = false;
 
-
-            if (
-                aporteMinimo !== null
-            ) {
-                ayudaAporte.textContent =
-                    'Si realizas aportes adicionales, el aporte mensual mínimo configurado es $'
-                    + formatearPesos(
-                        aporteMinimo
-                    )
-                    + '.';
-
-                agregarCondicion(
-                    'Aporte adicional mínimo: $'
-                    + formatearPesos(
-                        aporteMinimo
-                    )
-                    + '.'
-                );
+                const aporteMinimo = obtenerParametro(parametros, 'aporte_minimo');
+                if (aporteMinimo !== null) {
+                    const minimoFormateado = formatearPesos(aporteMinimo);
+                    ayudaAporte.textContent =
+                        `Si realizas aportes adicionales, el aporte mensual mínimo configurado es $${minimoFormateado}.`;
+                    agregarCondicion(`El aporte adicional mínimo es de $${minimoFormateado}.`);
+                } else {
+                    ayudaAporte.textContent = 'El aporte adicional es opcional.';
+                }
             } else {
-                ayudaAporte.textContent =
-                    'El aporte adicional es opcional.';
+                agregarCondicion('Este producto no tiene habilitados aportes adicionales.');
             }
 
 
@@ -734,62 +688,31 @@
                 .classList
                 .remove('hidden');
 
-            plazoDias.required =
-                true;
+            let hayPlazosDisponibles = false;
+            for (const opcionPlazo of plazoDias.options) {
+                if (opcionPlazo.value === '') {
+                    continue;
+                }
 
+                const tasa = obtenerParametro(parametros, `tasa_interes_${opcionPlazo.value}_dias`);
+                const disponible = Number.isFinite(tasa) && tasa >= 0;
+                opcionPlazo.disabled = !disponible;
 
-            tasaProducto.textContent =
-                'La tasa depende del plazo seleccionado.';
-
-
-            const tasa90 =
-                obtenerParametro(
-                    parametros,
-                    'tasa_interes_90_dias'
-                );
-
-            const tasa180 =
-                obtenerParametro(
-                    parametros,
-                    'tasa_interes_180_dias'
-                );
-
-            const tasa360 =
-                obtenerParametro(
-                    parametros,
-                    'tasa_interes_360_dias'
-                );
-
-
-            if (
-                tasa90 !== null
-            ) {
-                agregarCondicion(
-                    '90 días: '
-                    + tasa90
-                    + ' % E.A.'
-                );
+                if (disponible) {
+                    hayPlazosDisponibles = true;
+                    agregarCondicion(`${opcionPlazo.value} días al ${tasa} % E.A.`);
+                }
             }
 
-            if (
-                tasa180 !== null
-            ) {
-                agregarCondicion(
-                    '180 días: '
-                    + tasa180
-                    + ' % E.A.'
-                );
+            if (plazoDias.selectedOptions[0]?.disabled) {
+                plazoDias.value = '';
             }
 
-            if (
-                tasa360 !== null
-            ) {
-                agregarCondicion(
-                    '360 días: '
-                    + tasa360
-                    + ' % E.A.'
-                );
-            }
+            plazoDias.disabled = !hayPlazosDisponibles;
+            plazoDias.required = hayPlazosDisponibles;
+            tasaProducto.textContent = hayPlazosDisponibles
+                ? 'La tasa depende del plazo seleccionado.'
+                : 'Por ahora no hay plazos de CDAT con tasa vigente.';
 
 
             const retencion =
@@ -821,6 +744,10 @@
             agregarCondicion(
                 'No se contempla retiro anticipado en esta simulación.'
             );
+
+            if (!hayPlazosDisponibles) {
+                return;
+            }
         }
 
 
@@ -835,13 +762,8 @@
     }
 
 
-    configurarMoneda(
-        montoInput
-    );
-
-    configurarMoneda(
-        aporteMensual
-    );
+    configurarCampoMoneda(montoInput);
+    configurarCampoMoneda(aporteMensual);
 
     bloquearNumero(
         plazoMeses
@@ -861,12 +783,14 @@
 
             montoInput.value =
                 '';
+            montoInput.setCustomValidity('');
 
             plazoMeses.value =
                 '';
 
             aporteMensual.value =
                 '';
+            aporteMensual.setCustomValidity('');
 
             plazoDias.value =
                 '';
@@ -875,6 +799,13 @@
         }
     );
 
+
+    window.addEventListener('pageshow', (evento) => {
+        if (evento.persisted && selectorAhorro.value === 'ahorro_cdat') {
+            // Aplica la disponibilidad después de que el indicador de carga restablece el botón.
+            window.requestAnimationFrame(configurarProducto);
+        }
+    });
 
     configurarProducto();
 </script>

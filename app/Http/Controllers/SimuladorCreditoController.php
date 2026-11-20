@@ -49,12 +49,7 @@ class SimuladorCreditoController extends Controller
             ->firstOrFail();
 
 
-        $parametros = $producto
-            ->parametrosVigentes
-            ->groupBy('codigo')
-            ->map(function ($registros) {
-                return $registros->first();
-            });
+        $parametros = $producto->parametrosVigentesPorCodigo();
 
 
         $monto =
@@ -174,21 +169,16 @@ class SimuladorCreditoController extends Controller
             );
 
 
-        return redirect()
-            ->route(
-                'simuladores.credito.resultado'
-            )
-            ->with(
-                'resultado',
-                $resultado
-            );
+        $request->session()->put('resultado_credito', $resultado);
+
+        return redirect()->route('simuladores.credito.resultado');
     }
 
 
     public function resultado()
     {
         $resultado =
-            session('resultado');
+            session('resultado_credito');
 
 
         if (!$resultado) {
@@ -210,10 +200,7 @@ class SimuladorCreditoController extends Controller
     private function obtenerProductos()
     {
         $productos =
-            ProductoFinanciero::with([
-                'tasaVigente',
-                'parametrosVigentes',
-            ])
+            ProductoFinanciero::with('parametrosVigentes')
                 ->where(
                     'tipo',
                     'credito'
@@ -233,45 +220,17 @@ class SimuladorCreditoController extends Controller
 
                 $producto->parametros_simulador =
                     $producto
-                        ->parametrosVigentes
-                        ->groupBy('codigo')
-                        ->map(
-                            function ($parametros) {
-
-                                $parametro =
-                                    $parametros->first();
-
-
-                                return [
-
-                                    'codigo' =>
-                                        $parametro->codigo,
-
-                                    'nombre' =>
-                                        $parametro->nombre,
-
-                                    'valor' =>
-                                        $parametro->valor !== null
-                                            ? (float) $parametro->valor
-                                            : null,
-
-                                    'valor_texto' =>
-                                        $parametro->valor_texto,
-
-                                    'tipo_dato' =>
-                                        $parametro->tipo_dato,
-
-                                    'unidad' =>
-                                        $parametro->unidad,
-
-                                    'categoria' =>
-                                        $parametro->categoria,
-
-                                    'origen' =>
-                                        $parametro->origen,
-                                ];
-                            }
-                        );
+                        ->parametrosVigentesPorCodigo()
+                        ->map(fn ($parametro) => [
+                            'codigo' => $parametro->codigo,
+                            'nombre' => $parametro->nombre,
+                            'valor' => $parametro->valor !== null ? (float) $parametro->valor : null,
+                            'valor_texto' => $parametro->valor_texto,
+                            'tipo_dato' => $parametro->tipo_dato,
+                            'unidad' => $parametro->unidad,
+                            'categoria' => $parametro->categoria,
+                            'origen' => $parametro->origen,
+                        ]);
             }
         );
 

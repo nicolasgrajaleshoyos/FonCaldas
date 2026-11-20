@@ -2,11 +2,21 @@
 
 namespace App\Http\Requests;
 
+use App\Support\FormatoNumericoFinanciero;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class SimularCreditoRequest extends FormRequest
 {
+    private const PRODUCTOS_CON_DATO_MONETARIO = [
+        'credito_avances',
+        'credito_compra_cartera',
+        'credito_vehiculo',
+        'credito_motocicleta',
+        'credito_tecnologia',
+        'credito_turismo',
+    ];
+
     public function authorize(): bool
     {
         return true;
@@ -24,31 +34,7 @@ class SimularCreditoRequest extends FormRequest
         ];
 
 
-        /*
-         * En estas líneas, dato_especifico representa
-         * un valor monetario:
-         *
-         * Avances       -> sueldo básico
-         * Compra cartera-> saldo obligación
-         * Vehículo      -> valor comercial
-         * Motocicleta   -> valor comercial
-         * Tecnología    -> cotización
-         * Turismo       -> cotización
-         */
-        if (
-            in_array(
-                $producto,
-                [
-                    'credito_avances',
-                    'credito_compra_cartera',
-                    'credito_vehiculo',
-                    'credito_motocicleta',
-                    'credito_tecnologia',
-                    'credito_turismo',
-                ],
-                true
-            )
-        ) {
+        if (in_array($producto, self::PRODUCTOS_CON_DATO_MONETARIO, true)) {
             $datos['dato_especifico'] =
                 $this->normalizarMoneda(
                     $this->input(
@@ -71,20 +57,14 @@ class SimularCreditoRequest extends FormRequest
             $this->input('tipo_bien');
 
 
-        $requiereDatoEspecifico =
-            in_array(
-                $producto,
-                [
-                    'credito_avances',
-                    'credito_libre_inversion',
-                    'credito_compra_cartera',
-                    'credito_vehiculo',
-                    'credito_motocicleta',
-                    'credito_tecnologia',
-                    'credito_turismo',
-                ],
-                true
-            );
+        $datoEsMonetario = in_array($producto, self::PRODUCTOS_CON_DATO_MONETARIO, true);
+        $requiereDatoEspecifico = $datoEsMonetario || $producto === 'credito_libre_inversion';
+        $reglasDatoEspecifico = ['bail', Rule::requiredIf($requiereDatoEspecifico), 'nullable'];
+        if ($datoEsMonetario) {
+            $reglasDatoEspecifico[] = FormatoNumericoFinanciero::REGLA_ENTERO;
+        }
+        $reglasDatoEspecifico[] = 'numeric';
+        $reglasDatoEspecifico[] = 'gt:0';
 
 
         $requiereTipoBien =
@@ -137,7 +117,9 @@ class SimularCreditoRequest extends FormRequest
              * controlador aplica además ese límite.
              */
             'monto' => [
+                'bail',
                 'required',
+                FormatoNumericoFinanciero::REGLA_ENTERO,
                 'numeric',
                 'gte:1000',
             ],
@@ -150,15 +132,7 @@ class SimularCreditoRequest extends FormRequest
             ],
 
 
-            'dato_especifico' => [
-                Rule::requiredIf(
-                    $requiereDatoEspecifico
-                ),
-
-                'nullable',
-                'numeric',
-                'gt:0',
-            ],
+            'dato_especifico' => $reglasDatoEspecifico,
 
 
             'tipo_bien' => [
@@ -205,6 +179,8 @@ class SimularCreditoRequest extends FormRequest
             'monto.numeric' =>
                 'El monto solicitado debe ser un valor numérico.',
 
+            'monto.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
+
             'monto.gte' =>
                 'Para realizar una simulación, el monto solicitado debe ser de al menos $1.000.',
 
@@ -224,6 +200,8 @@ class SimularCreditoRequest extends FormRequest
 
             'dato_especifico.numeric' =>
                 'La información adicional debe ser un valor numérico.',
+
+            'dato_especifico.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
 
             'dato_especifico.gt' =>
                 'La información adicional debe ser mayor que cero.',
@@ -248,41 +226,8 @@ class SimularCreditoRequest extends FormRequest
     }
 
 
-    private function normalizarMoneda(
-        mixed $valor
-    ): mixed {
-
-        if (
-            $valor === null
-            || $valor === ''
-        ) {
-            return $valor;
-        }
-
-
-        if (
-            is_int($valor)
-            || is_float($valor)
-        ) {
-            return $valor;
-        }
-
-
-        /*
-         * Permite que el usuario escriba:
-         *
-         * 8000000
-         * 8.000.000
-         * 8,000,000
-         *
-         * Laravel recibirá:
-         *
-         * 8000000
-         */
-        return preg_replace(
-            '/[\.\,\s]/',
-            '',
-            trim((string) $valor)
-        );
+    private function normalizarMoneda(mixed $valor): mixed
+    {
+        return is_string($valor) ? FormatoNumericoFinanciero::normalizarEnteroAgrupado($valor) : $valor;
     }
 }

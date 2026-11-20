@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\FormatoNumericoFinanciero;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,13 +15,8 @@ class SimularAhorroRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $normalizarMoneda = function ($valor) {
-            if ($valor === null || $valor === '') {
-                return $valor;
-            }
-
-            return preg_replace('/[.,\s]/', '', (string) $valor);
-        };
+        $normalizarMoneda = static fn (mixed $valor): mixed =>
+            is_string($valor) ? FormatoNumericoFinanciero::normalizarEnteroAgrupado($valor) : $valor;
 
         $this->merge([
             'monto' => $normalizarMoneda(
@@ -45,7 +41,9 @@ class SimularAhorroRequest extends FormRequest
             ],
 
             'monto' => [
+                'bail',
                 'required',
+                FormatoNumericoFinanciero::REGLA_ENTERO,
                 'numeric',
                 'gt:0',
             ],
@@ -60,7 +58,9 @@ class SimularAhorroRequest extends FormRequest
             ],
 
             'aporte_mensual' => [
+                'bail',
                 'nullable',
+                FormatoNumericoFinanciero::REGLA_ENTERO,
                 'numeric',
                 'gte:0',
             ],
@@ -95,6 +95,8 @@ class SimularAhorroRequest extends FormRequest
             'monto.numeric' =>
                 'El monto debe ser un valor numérico.',
 
+            'monto.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
+
             'monto.gt' =>
                 'El monto debe ser mayor que cero.',
 
@@ -109,6 +111,8 @@ class SimularAhorroRequest extends FormRequest
 
             'aporte_mensual.numeric' =>
                 'El aporte mensual debe ser un valor numérico.',
+
+            'aporte_mensual.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
 
             'aporte_mensual.gte' =>
                 'El aporte mensual no puede ser negativo.',

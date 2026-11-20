@@ -307,80 +307,83 @@
 
                                             {{-- Acciones --}}
                                             <td class="px-4 py-4">
+                                                @if ($parametro->esSoloLecturaEnPanel())
+                                                    <span class="text-xs text-slate-400">Solo lectura</span>
+                                                @else
 
-                                                <div class="flex flex-wrap gap-2">
+                                                    <div class="flex flex-wrap gap-2">
 
-                                                    {{-- Editar --}}
-                                                    <a
-                                                        href="{{ route(
-                                                            'admin.parametros-financieros.tasas.editar',
-                                                            $parametro
-                                                        ) }}"
-                                                        class="inline-flex items-center px-3 py-1.5 rounded-lg
-                                                            bg-sky-700 hover:bg-sky-600
-                                                            text-white text-xs font-medium transition">
+                                                        {{-- Editar --}}
+                                                        <a
+                                                            href="{{ route(
+                                                                'admin.parametros-financieros.tasas.editar',
+                                                                $parametro
+                                                            ) }}"
+                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg
+                                                                bg-sky-700 hover:bg-sky-600
+                                                                text-white text-xs font-medium transition">
 
-                                                        Editar
-                                                    </a>
+                                                            Editar
+                                                        </a>
 
 
-                                                    {{-- Desactivar --}}
-                                                    @if ($parametro->activo)
+                                                        {{-- Desactivar --}}
+                                                        @if ($parametro->activo)
 
+                                                            <form
+                                                                method="POST"
+                                                                action="{{ route(
+                                                                    'admin.parametros-financieros.tasas.desactivar',
+                                                                    $parametro
+                                                                ) }}"
+                                                                class="form-confirmacion"
+                                                                data-accion="desactivar"
+                                                                data-parametro="{{ $parametro->nombre }}">
+
+                                                                @csrf
+                                                                @method('PATCH')
+
+                                                                <button
+                                                                    type="submit"
+                                                                    class="inline-flex items-center px-3 py-1.5 rounded-lg
+                                                                        bg-amber-700 hover:bg-amber-600
+                                                                        text-white text-xs font-medium transition">
+
+                                                                    Desactivar
+                                                                </button>
+
+                                                            </form>
+
+                                                        @endif
+
+
+                                                        {{-- Eliminar --}}
                                                         <form
                                                             method="POST"
                                                             action="{{ route(
-                                                                'admin.parametros-financieros.tasas.desactivar',
+                                                                'admin.parametros-financieros.parametros.eliminar',
                                                                 $parametro
                                                             ) }}"
                                                             class="form-confirmacion"
-                                                            data-accion="desactivar"
+                                                            data-accion="eliminar"
                                                             data-parametro="{{ $parametro->nombre }}">
 
                                                             @csrf
-                                                            @method('PATCH')
+                                                            @method('DELETE')
 
                                                             <button
                                                                 type="submit"
                                                                 class="inline-flex items-center px-3 py-1.5 rounded-lg
-                                                                    bg-amber-700 hover:bg-amber-600
+                                                                    bg-red-700 hover:bg-red-600
                                                                     text-white text-xs font-medium transition">
 
-                                                                Desactivar
+                                                                Eliminar
                                                             </button>
 
                                                         </form>
 
-                                                    @endif
-
-
-                                                    {{-- Eliminar --}}
-                                                    <form
-                                                        method="POST"
-                                                        action="{{ route(
-                                                            'admin.parametros-financieros.parametros.eliminar',
-                                                            $parametro
-                                                        ) }}"
-                                                        class="form-confirmacion"
-                                                        data-accion="eliminar"
-                                                        data-parametro="{{ $parametro->nombre }}">
-
-                                                        @csrf
-                                                        @method('DELETE')
-
-                                                        <button
-                                                            type="submit"
-                                                            class="inline-flex items-center px-3 py-1.5 rounded-lg
-                                                                bg-red-700 hover:bg-red-600
-                                                                text-white text-xs font-medium transition">
-
-                                                            Eliminar
-                                                        </button>
-
-                                                    </form>
-
-                                                </div>
-
+                                                    </div>
+                                                @endif
                                             </td>
 
                                         </tr>

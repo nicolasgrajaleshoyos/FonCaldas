@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 
 class ProductoFinanciero extends Model
 {
@@ -35,6 +36,19 @@ class ProductoFinanciero extends Model
             ->vigente()
             ->orderBy('codigo')
             ->orderByDesc('fecha_inicio_vigencia');
+    }
+
+    /** @return Collection<string, ParametroFinanciero> */
+    public function parametrosVigentesPorCodigo(): Collection
+    {
+        return $this->parametrosVigentes
+            ->groupBy('codigo')
+            ->map(fn (Collection $registros) => $registros->sortByDesc(
+                fn (ParametroFinanciero $parametro) => [
+                    $parametro->fecha_inicio_vigencia->toDateString(),
+                    $parametro->getKey(),
+                ]
+            )->first());
     }
 
     public function tasaVigente(): HasOne
