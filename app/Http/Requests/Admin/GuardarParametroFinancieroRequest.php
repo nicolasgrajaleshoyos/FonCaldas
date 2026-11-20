@@ -76,6 +76,11 @@ class GuardarParametroFinancieroRequest extends FormRequest
             $reglasUnidad[] = Rule::in($unidadesPermitidas);
         }
 
+        $reglasTexto = ['nullable', 'string', 'max:255'];
+        if (isset($definicion['opciones_texto'])) {
+            $reglasTexto[] = Rule::in(array_keys($definicion['opciones_texto']));
+        }
+
         return [
             'producto_financiero_id' => [
                 'required',
@@ -89,11 +94,7 @@ class GuardarParametroFinancieroRequest extends FormRequest
 
             'valor' => $reglasValor,
 
-            'valor_texto' => [
-                'nullable',
-                'string',
-                'max:255',
-            ],
+            'valor_texto' => $reglasTexto,
 
             'unidad' => $reglasUnidad,
 

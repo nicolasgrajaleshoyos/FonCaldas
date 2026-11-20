@@ -11,7 +11,8 @@
         ];
 
         if ($resultado['tipo_resultado'] === 'ahorro_ordinario') {
-            $datos[] = ['etiqueta' => 'Aporte mensual', 'valor' => $pesos($resultado['aporte_mensual'])];
+            $frecuenciaAporte = $resultado['frecuencia_aporte'] ?? 'mensual';
+            $datos[] = ['etiqueta' => 'Aporte '.$frecuenciaAporte, 'valor' => $pesos($resultado['aporte_mensual'])];
             $datos[] = ['etiqueta' => 'Total de aportes adicionales', 'valor' => $pesos($resultado['total_aportes'])];
             $datos[] = ['etiqueta' => 'Rendimiento estimado', 'valor' => $pesos($resultado['rendimiento_estimado'])];
         } else {

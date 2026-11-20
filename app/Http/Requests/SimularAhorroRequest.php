@@ -110,12 +110,12 @@ class SimularAhorroRequest extends FormRequest
                 'El plazo debe ser mayor que cero.',
 
             'aporte_mensual.numeric' =>
-                'El aporte mensual debe ser un valor numérico.',
+                'El aporte debe ser un valor numérico.',
 
             'aporte_mensual.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
 
             'aporte_mensual.gte' =>
-                'El aporte mensual no puede ser negativo.',
+                'El aporte no puede ser negativo.',
 
             'plazo_dias.required' =>
                 'Selecciona el plazo del CDAT.',

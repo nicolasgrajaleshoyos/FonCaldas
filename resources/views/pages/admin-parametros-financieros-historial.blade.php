@@ -27,6 +27,21 @@
                             <p class="text-sm text-slate-400 mt-1">
                                 Tipo: {{ ucfirst($producto->tipo) }}
                             </p>
+                            @if (in_array($producto->codigo, ['credito_tecnologia', 'credito_turismo'], true))
+                                <p class="mt-2 text-sm text-slate-300">
+                                    Cotización obligatoria para simular este producto.
+                                </p>
+                            @endif
+                            @if (in_array($producto->codigo, ['ahorro_ordinario', 'ahorro_cdat'], true))
+                                <p class="mt-2 text-sm text-slate-300">
+                                    Base anual de cálculo · 365 días
+                                </p>
+                            @endif
+                            @if ($producto->codigo === 'ahorro_ordinario')
+                                <p class="mt-2 text-sm text-slate-300">
+                                    Capitalización diaria
+                                </p>
+                            @endif
 
                         </div>
 
@@ -179,6 +194,9 @@
 
                                             {{-- Valor --}}
                                             <td class="px-4 py-4 font-semibold">
+                                                @if (in_array($parametro->codigo, ['cotizacion_requerida', 'base_anual_dias', 'capitalizacion'], true))
+                                                    <span class="block text-xs font-normal text-slate-400">Valor guardado anteriormente</span>
+                                                @endif
                                                 {{ $valorMostrar }}
                                             </td>
 
@@ -309,6 +327,17 @@
                                             <td class="px-4 py-4">
                                                 @if ($parametro->esSoloLecturaEnPanel())
                                                     <span class="text-xs text-slate-400">Solo lectura</span>
+                                                    @unless ($parametro->esFijoEnPanel())
+                                                        <form method="POST" class="mt-2"
+                                                            action="{{ route('admin.parametros-financieros.tasas.habilitar-edicion', $parametro) }}">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit"
+                                                                class="inline-flex items-center px-3 py-1.5 rounded-lg bg-sky-700 hover:bg-sky-600 text-white text-xs font-medium transition">
+                                                                Habilitar edición
+                                                            </button>
+                                                        </form>
+                                                    @endunless
                                                 @else
 
                                                     <div class="flex flex-wrap gap-2">

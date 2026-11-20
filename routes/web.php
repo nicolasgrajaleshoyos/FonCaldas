@@ -117,6 +117,8 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
             ->name('parametros-financieros.tasas.actualizar');
         Route::patch('/parametros-financieros/tasas/{tasa}/desactivar', [ParametroFinancieroController::class, 'desactivar'])
             ->name('parametros-financieros.tasas.desactivar');
+        Route::patch('/parametros-financieros/tasas/{tasa}/habilitar-edicion', [ParametroFinancieroController::class, 'habilitarEdicion'])
+            ->name('parametros-financieros.tasas.habilitar-edicion');
 
         Route::delete(
             '/parametros-financieros/parametros/{tasa}',

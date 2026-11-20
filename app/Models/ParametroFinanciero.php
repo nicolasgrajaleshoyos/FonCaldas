@@ -35,9 +35,14 @@ class ParametroFinanciero extends Model
         'editable_admin' => 'boolean',
     ];
 
+    public function esFijoEnPanel(): bool
+    {
+        return in_array($this->codigo, ['tipo_calculo', 'cotizacion_requerida', 'base_anual_dias', 'capitalizacion'], true);
+    }
+
     public function esSoloLecturaEnPanel(): bool
     {
-        return $this->codigo === 'tipo_calculo';
+        return $this->esFijoEnPanel() || $this->editable_admin === false;
     }
 
     public function producto(): BelongsTo

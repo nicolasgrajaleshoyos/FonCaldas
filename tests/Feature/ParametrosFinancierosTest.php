@@ -88,3 +88,55 @@ test('la tasa se valida: no negativa y fecha final no anterior a la inicial', fu
     $this->actingAs($super)->post('/admin/parametros-financieros/tasas', datosTasa($producto, ['valor' => '-1']))->assertSessionHasErrors('valor');
     $this->actingAs($super)->post('/admin/parametros-financieros/tasas', datosTasa($producto, ['fecha_fin_vigencia' => '2025-12-31']))->assertSessionHasErrors('fecha_fin_vigencia');
 });
+
+test('la capitalizacion diaria de ahorro ordinario se muestra como regla fija y no se puede editar', function () {
+    $super = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
+    $producto = ProductoFinanciero::create([
+        'nombre' => 'Ahorro Ordinario',
+        'codigo' => 'ahorro_ordinario',
+        'tipo' => 'ahorro',
+        'activo' => true,
+    ]);
+    $capitalizacion = ParametroFinanciero::create([
+        'producto_financiero_id' => $producto->id,
+        'nombre' => 'Capitalización',
+        'codigo' => 'capitalizacion',
+        'valor_texto' => 'diaria',
+        'tipo_dato' => 'texto',
+        'categoria' => 'capitalizacion',
+        'origen' => 'referencia',
+        'editable_admin' => true,
+        'fecha_inicio_vigencia' => '2026-01-01',
+        'activo' => true,
+    ]);
+
+    $this->actingAs($super)
+        ->get("/admin/parametros-financieros/{$producto->id}/historial")
+        ->assertOk()
+        ->assertSee('Capitalización diaria')
+        ->assertSee('Valor guardado anteriormente')
+        ->assertSee('Solo lectura')
+        ->assertDontSee('Habilitar edición');
+
+    $this->actingAs($super)
+        ->get("/admin/parametros-financieros/tasas/{$capitalizacion->id}/editar")
+        ->assertForbidden();
+
+    $this->actingAs($super)
+        ->put("/admin/parametros-financieros/tasas/{$capitalizacion->id}", [
+            'producto_financiero_id' => $producto->id,
+            'codigo' => 'capitalizacion',
+            'valor_texto' => 'mensual',
+            'origen' => 'referencia',
+            'fecha_inicio_vigencia' => '2026-01-01',
+        ])
+        ->assertRedirect()
+        ->assertSessionHasErrors('codigo');
+
+    $this->actingAs($super)
+        ->patch("/admin/parametros-financieros/tasas/{$capitalizacion->id}/habilitar-edicion")
+        ->assertForbidden();
+
+    expect($capitalizacion->fresh()->valor_texto)->toBe('diaria')
+        ->and(config('parametros_por_producto.ahorro_ordinario'))->not->toContain('capitalizacion');
+});

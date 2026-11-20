@@ -160,6 +160,10 @@ return [
         'categoria' => 'condicion',
         'tipo_dato' => 'texto',
         'unidad_sugerida' => null,
+        'opciones_texto' => [
+            'mensual' => 'Mensual',
+            'trimestral' => 'Trimestral',
+        ],
     ],
 
     'porcentaje_retencion' => [

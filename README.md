@@ -181,6 +181,18 @@ El sitio queda disponible en `http://127.0.0.1:8000`. En Windows con Laravel Her
 
 **Comandos útiles:** `composer run dev` levanta servidor, cola y compilación de assets a la vez.
 
+### Carga opcional de parámetros de referencia
+
+En una base de desarrollo o demostración con las tablas creadas, ejecuta esta carga desde la raíz del proyecto.
+
+```bash
+php artisan db:seed --class=ParametrosFinancierosReferenciaSeeder
+```
+
+El comando crea los productos faltantes y registra los parámetros con origen **Referencia para desarrollo**. Su vigencia inicia el día de la carga. Para Avances incluye un tope provisional del 50 % del sueldo y un plazo máximo de 3 meses. Estos valores sirven para probar los simuladores. Las condiciones de FONCALDAS se configuran por separado según los valores aprobados para su uso.
+
+Si un producto ya tiene un registro para ese parámetro, se conserva, incluso si está inactivo, histórico o programado. El comando informa los parámetros creados y los límites que omite por incompatibilidad. Para comprobar la carga, abre el historial de un producto en **Parámetros financieros** y verifica que figure como **Referencia**.
+
 ## Configuración del correo
 
 > **Importante para FONCALDAS:** durante el desarrollo los correos salieron desde una cuenta personal del practicante. Esa cuenta **no** forma parte de la entrega. Antes de usar el sistema en producción, FONCALDAS debe configurar su propia cuenta de correo institucional siguiendo los pasos de esta sección; si no lo hace, el sistema no enviará avisos (o los enviará desde una cuenta ajena).
