@@ -65,6 +65,7 @@ class SimularCreditoRequest extends FormRequest
         }
         $reglasDatoEspecifico[] = 'numeric';
         $reglasDatoEspecifico[] = 'gt:0';
+        $reglasDatoEspecifico[] = 'lte:'.FormatoNumericoFinanciero::MONTO_MAXIMO;
 
 
         $requiereTipoBien =
@@ -122,6 +123,7 @@ class SimularCreditoRequest extends FormRequest
                 FormatoNumericoFinanciero::REGLA_ENTERO,
                 'numeric',
                 'gte:1000',
+                'lte:'.FormatoNumericoFinanciero::MONTO_MAXIMO,
             ],
 
 
@@ -129,6 +131,7 @@ class SimularCreditoRequest extends FormRequest
                 'required',
                 'integer',
                 'gt:0',
+                'max:'.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES,
             ],
 
 
@@ -157,6 +160,7 @@ class SimularCreditoRequest extends FormRequest
                 'nullable',
                 'integer',
                 'min:0',
+                'max:100',
             ],
         ];
     }
@@ -184,6 +188,9 @@ class SimularCreditoRequest extends FormRequest
             'monto.gte' =>
                 'Para realizar una simulación, el monto solicitado debe ser de al menos $1.000.',
 
+            'monto.lte' =>
+                'El monto solicitado supera el máximo que se puede simular.',
+
 
             'plazo.required' =>
                 'Debes ingresar el plazo.',
@@ -193,6 +200,9 @@ class SimularCreditoRequest extends FormRequest
 
             'plazo.gt' =>
                 'El plazo debe ser mayor que cero.',
+
+            'plazo.max' =>
+                'El plazo no puede superar '.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES.' meses.',
 
 
             'dato_especifico.required' =>
@@ -205,6 +215,9 @@ class SimularCreditoRequest extends FormRequest
 
             'dato_especifico.gt' =>
                 'La información adicional debe ser mayor que cero.',
+
+            'dato_especifico.lte' =>
+                'La información adicional supera el máximo permitido.',
 
 
             'tipo_bien.required' =>
@@ -222,6 +235,9 @@ class SimularCreditoRequest extends FormRequest
 
             'antiguedad_bien.min' =>
                 'La antigüedad no puede ser negativa.',
+
+            'antiguedad_bien.max' =>
+                'La antigüedad indicada no es válida.',
         ];
     }
 

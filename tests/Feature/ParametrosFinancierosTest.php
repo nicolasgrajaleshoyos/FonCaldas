@@ -88,3 +88,32 @@ test('la tasa se valida: no negativa y fecha final no anterior a la inicial', fu
     $this->actingAs($super)->post('/admin/parametros-financieros/tasas', datosTasa($producto, ['valor' => '-1']))->assertSessionHasErrors('valor');
     $this->actingAs($super)->post('/admin/parametros-financieros/tasas', datosTasa($producto, ['fecha_fin_vigencia' => '2025-12-31']))->assertSessionHasErrors('fecha_fin_vigencia');
 });
+
+test('los simuladores rechazan plazos y montos fuera de los topes técnicos', function () {
+    $this->post('/simuladores/ahorro', ['producto' => 'ahorro_ordinario', 'monto' => '1000', 'aporte_mensual' => '1000', 'plazo_meses' => 2000000000])
+        ->assertSessionHasErrors('plazo_meses');
+    $this->post('/simuladores/ahorro', ['producto' => 'ahorro_cdat', 'monto' => '999999999999999', 'plazo_dias' => 90])
+        ->assertSessionHasErrors('monto');
+
+    productoDePrueba(['simulable' => true]);
+    $this->post('/simuladores/credito', ['producto' => 'credito_avances', 'monto' => '1000000', 'plazo' => 9000000000, 'dato_especifico' => '2000000'])
+        ->assertSessionHasErrors('plazo');
+});
+
+test('la ruta de tasas no registra tasa mensual en productos que no la manejan', function () {
+    $super = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
+    $cdat = productoDePrueba(['nombre' => 'CDAT', 'codigo' => 'ahorro_cdat', 'tipo' => 'ahorro']);
+
+    $this->actingAs($super)->post('/admin/parametros-financieros/tasas', datosTasa($cdat))
+        ->assertSessionHasErrors('producto_financiero_id');
+    expect(ParametroFinanciero::count())->toBe(0);
+});
+
+test('el formulario conserva el origen elegido tras un error de validación', function () {
+    $super = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
+
+    $this->actingAs($super)->withSession(['_old_input' => ['origen' => 'pendiente']])
+        ->get('/admin/parametros-financieros')
+        ->assertSee('value="pendiente" selected', false)
+        ->assertDontSee(')}>', false);
+});

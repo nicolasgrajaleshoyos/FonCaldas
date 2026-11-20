@@ -46,6 +46,7 @@ class SimularAhorroRequest extends FormRequest
                 FormatoNumericoFinanciero::REGLA_ENTERO,
                 'numeric',
                 'gt:0',
+                'lte:'.FormatoNumericoFinanciero::MONTO_MAXIMO,
             ],
 
             'plazo_meses' => [
@@ -55,6 +56,7 @@ class SimularAhorroRequest extends FormRequest
                 'nullable',
                 'integer',
                 'gt:0',
+                'max:'.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES,
             ],
 
             'aporte_mensual' => [
@@ -63,6 +65,7 @@ class SimularAhorroRequest extends FormRequest
                 FormatoNumericoFinanciero::REGLA_ENTERO,
                 'numeric',
                 'gte:0',
+                'lte:'.FormatoNumericoFinanciero::MONTO_MAXIMO,
             ],
 
             'plazo_dias' => [
@@ -100,6 +103,9 @@ class SimularAhorroRequest extends FormRequest
             'monto.gt' =>
                 'El monto debe ser mayor que cero.',
 
+            'monto.lte' =>
+                'El monto supera el máximo que se puede simular.',
+
             'plazo_meses.required' =>
                 'Ingresa el plazo de la proyección.',
 
@@ -109,6 +115,9 @@ class SimularAhorroRequest extends FormRequest
             'plazo_meses.gt' =>
                 'El plazo debe ser mayor que cero.',
 
+            'plazo_meses.max' =>
+                'El plazo no puede superar '.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES.' meses.',
+
             'aporte_mensual.numeric' =>
                 'El aporte mensual debe ser un valor numérico.',
 
@@ -116,6 +125,9 @@ class SimularAhorroRequest extends FormRequest
 
             'aporte_mensual.gte' =>
                 'El aporte mensual no puede ser negativo.',
+
+            'aporte_mensual.lte' =>
+                'El aporte mensual supera el máximo que se puede simular.',
 
             'plazo_dias.required' =>
                 'Selecciona el plazo del CDAT.',

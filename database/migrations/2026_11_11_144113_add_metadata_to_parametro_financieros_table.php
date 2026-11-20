@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -37,21 +38,24 @@ return new class extends Migration
     }
 
     public function down(): void
-{
-    Schema::table('parametro_financieros', function (Blueprint $table) {
+    {
+        // Los parámetros de texto o booleanos no tienen valor numérico y no existían antes de esta migración:
+        // sin borrarlos, volver a exigir NOT NULL en valor falla a mitad del rollback.
+        DB::table('parametro_financieros')->whereNull('valor')->delete();
 
-        $table->decimal('valor', 15, 6)
-            ->nullable(false)
-            ->change();
+        Schema::table('parametro_financieros', function (Blueprint $table) {
+            $table->decimal('valor', 15, 6)
+                ->nullable(false)
+                ->change();
 
-        $table->dropColumn([
-            'valor_texto',
-            'tipo_dato',
-            'categoria',
-            'origen',
-            'editable_admin',
-        ]);
-    });
-}
+            $table->dropColumn([
+                'valor_texto',
+                'tipo_dato',
+                'categoria',
+                'origen',
+                'editable_admin',
+            ]);
+        });
+    }
 
 };

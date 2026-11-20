@@ -8,7 +8,15 @@ final class FormatoNumericoFinanciero
 
     public const REGLA_DECIMAL = 'regex:/\A[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)\z/';
 
-    public const MENSAJE_PESOS = 'Ingresa el valor en pesos enteros. Puedes separar los miles con puntos o comas.';
+    /*
+     * Topes técnicos de los simuladores públicos: evitan bucles de millones de meses
+     * y desbordes de enteros cuando el producto no tiene límites configurados.
+     */
+    public const MONTO_MAXIMO = 100000000000;
+
+    public const PLAZO_MAXIMO_MESES = 600;
+
+    public const MENSAJE_PESOS ='Ingresa el valor en pesos enteros. Puedes separar los miles con puntos o comas.';
 
     // La referencia al grupo exige usar el mismo separador en todos los miles.
     private const ENTERO_AGRUPADO = '[+-]?[0-9]{1,3}([., \x{00A0}\x{202F}])[0-9]{3}(?:\1[0-9]{3})*';

@@ -104,6 +104,9 @@ class ParametroFinancieroController extends Controller
         $guardado = $this->guardarVigencia($request->integer('producto_financiero_id'), 'tasa_interes', [
             'nombre' => 'Tasa de interés',
             'valor' => $request->input('valor'),
+            'tipo_dato' => 'decimal',
+            'categoria' => config('parametros_financieros.tasa_interes.categoria'),
+            'origen' => 'confirmado',
             'unidad' => $request->input('unidad'),
             'fecha_inicio_vigencia' => $request->date('fecha_inicio_vigencia')->toDateString(),
             'fecha_fin_vigencia' => $request->date('fecha_fin_vigencia')?->toDateString(),

@@ -137,11 +137,11 @@
 
                             <option value="">Selecciona una opción</option>
 
-                            <option value="true" @selected(old('valor_texto') === 'true')}>
+                            <option value="true" @selected(old('valor_texto') === 'true')>
                                 Sí
                             </option>
 
-                            <option value="false" @selected(old('valor_texto') === 'false')}>
+                            <option value="false" @selected(old('valor_texto') === 'false')>
                                 No
                             </option>
                         </select>
@@ -192,15 +192,15 @@
                                     Selecciona el origen
                                 </option>
 
-                                <option value="confirmado" @selected(old('origen') === 'confirmado')}>
+                                <option value="confirmado" @selected(old('origen') === 'confirmado')>
                                     Confirmado por FONCALDAS
                                 </option>
 
-                                <option value="referencia" @selected(old('origen', 'referencia') === 'referencia')}>
+                                <option value="referencia" @selected(old('origen', 'referencia') === 'referencia')>
                                     Referencia para desarrollo
                                 </option>
 
-                                <option value="pendiente" @selected(old('origen') === 'pendiente')}>
+                                <option value="pendiente" @selected(old('origen') === 'pendiente')>
                                     Pendiente de confirmación
                                 </option>
 

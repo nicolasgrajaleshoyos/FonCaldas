@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\ProductoFinanciero;
 use App\Support\FormatoNumericoFinanciero;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -37,6 +38,18 @@ class GuardarTasaFinancieraRequest extends FormRequest
             'fecha_fin_vigencia' => ['nullable', 'date', 'after_or_equal:fecha_inicio_vigencia'],
             'descripcion' => ['nullable', 'string', 'max:500'],
         ];
+    }
+
+    // Igual que el flujo de parámetros: si el producto no admite tasa_interes, la fila quedaría sin poder editarse.
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $producto = ProductoFinanciero::find($this->input('producto_financiero_id'));
+
+            if ($producto && ! in_array('tasa_interes', config("parametros_por_producto.{$producto->codigo}", []), true)) {
+                $validator->errors()->add('producto_financiero_id', 'Este producto no maneja tasa de interés mensual.');
+            }
+        });
     }
 
     public function messages(): array
