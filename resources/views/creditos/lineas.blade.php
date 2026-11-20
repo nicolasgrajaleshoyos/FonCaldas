@@ -30,10 +30,12 @@
                     </x-section-title>
 
                     <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Crédito de vehículo nuevo o seminuevo con una tasa especial desde el 1.10% mensual.
+                        Crédito de vehículo nuevo o seminuevo.
                         <br><br>
                         Aprovecha este beneficio exclusivo para nuestros asociados y pide tu asesoría personalizada hoy mismo.
                     </p>
+
+                    @include('creditos.condiciones-linea', ['parametros' => $parametrosPorProducto->get('credito_vehiculo')])
                 </div>
 
             </div>
@@ -100,10 +102,12 @@
                     <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
                         ¡Tu nueva moto te espera en FONCALDAS!
                         <br><br>
-                        Financia la moto que desees con una excelente tasa de interés del 1.10% mensual y plazos de hasta 84 meses.
+                        Financia la moto que desees.
                         <br><br>
                         Conduce tu libertad con respaldo y facilidades pensadas para nuestros asociados.
                     </p>
+
+                    @include('creditos.condiciones-linea', ['parametros' => $parametrosPorProducto->get('credito_motocicleta')])
                 </div>
 
             </div>

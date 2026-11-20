@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\TramiteTipoController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LineasCreditoController;
 use App\Http\Controllers\PqrsController;
 use App\Http\Controllers\SimuladorAhorroController;
 use App\Http\Controllers\SimuladorCreditoController;
@@ -148,7 +149,7 @@ Route::redirect('/inicio/organigrama', '/institucional#organigrama');
 
 Route::view('/creditos/expres', 'creditos.expres')->name('creditos.expres');
 
-Route::view('/creditos/lineas', 'creditos.lineas')->name('creditos.lineas');
+Route::get('/creditos/lineas', LineasCreditoController::class)->name('creditos.lineas');
 
 Route::get('/simuladores/credito', [SimuladorCreditoController::class, 'index'])
     ->name('simuladores.credito');
