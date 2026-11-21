@@ -71,6 +71,7 @@
                                     <option value="{{ $producto->codigo }}"
                                         data-parametros='@json($producto->parametros_simulador)'
                                         data-aportes-permitidos="{{ $producto->aportes_simulador_permitidos ? '1' : '0' }}"
+                                        data-frecuencia-aporte="{{ $producto->frecuencia_aporte_simulador }}"
                                         @selected(old('producto') === $producto->codigo)>
                                         {{ $producto->nombre }}
                                     </option>
@@ -163,7 +164,7 @@
                             <div id="campo-aporte-mensual" class="hidden">
                                 <label for="aporte-mensual"
                                     class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                                    Aporte adicional mensual
+                                    <span id="etiqueta-aporte">Aporte adicional mensual</span>
                                     <span class="text-slate-400 font-normal">
                                         (opcional)
                                     </span>
@@ -286,6 +287,9 @@
 
     const ayudaAporte =
         document.getElementById('ayuda-aporte');
+
+    const etiquetaAporte =
+        document.getElementById('etiqueta-aporte');
 
     const camposCdat =
         document.getElementById('campos-cdat');
@@ -622,14 +626,20 @@
                 campoAporte.classList.remove('hidden');
                 aporteMensual.disabled = false;
 
+                const frecuencia = opcion.dataset.frecuenciaAporte || 'mensual';
+                const cierrePeriodo = frecuencia === 'trimestral'
+                    ? 'El aporte se proyecta al final de cada trimestre completo.'
+                    : 'El aporte se proyecta al final de cada mes.';
+                etiquetaAporte.textContent = `Aporte adicional ${frecuencia}`;
+
                 const aporteMinimo = obtenerParametro(parametros, 'aporte_minimo');
                 if (aporteMinimo !== null) {
                     const minimoFormateado = formatearPesos(aporteMinimo);
                     ayudaAporte.textContent =
-                        `Si realizas aportes adicionales, el aporte mensual mínimo configurado es $${minimoFormateado}.`;
+                        `${cierrePeriodo} Aporte mínimo por período: $${minimoFormateado}.`;
                     agregarCondicion(`El aporte adicional mínimo es de $${minimoFormateado}.`);
                 } else {
-                    ayudaAporte.textContent = 'El aporte adicional es opcional.';
+                    ayudaAporte.textContent = cierrePeriodo;
                 }
             } else {
                 agregarCondicion('Este producto no tiene habilitados aportes adicionales.');

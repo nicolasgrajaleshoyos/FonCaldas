@@ -123,27 +123,20 @@
                         @enderror
                     </div>
 
-                    {{-- VALOR BOOLEANO --}}
-                    <div id="contenedor_valor_booleano" class="hidden">
+                    {{-- VALOR CON OPCIONES --}}
+                    <div id="contenedor_valor_opciones" class="hidden">
 
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                             Valor
                         </label>
 
-                        <select name="valor_texto" id="valor_booleano" disabled
+                        <select name="valor_texto" id="valor_opciones" disabled
                             class="w-full rounded-xl border border-slate-300 dark:border-slate-600
                                 bg-white dark:bg-slate-900
                                 text-slate-900 dark:text-slate-100 px-4 py-3">
 
                             <option value="">Selecciona una opción</option>
 
-                            <option value="true" @selected(old('valor_texto') === 'true')>
-                                Sí
-                            </option>
-
-                            <option value="false" @selected(old('valor_texto') === 'false')>
-                                No
-                            </option>
                         </select>
 
                         @error('valor_texto')
@@ -261,13 +254,18 @@
 
                     {{-- Editable --}}
                     <div>
-                        <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="hidden" name="editable_admin" value="0">
+                        <label class="grid grid-cols-[auto_1fr] items-center gap-x-3 cursor-pointer">
 
                             <input type="checkbox" name="editable_admin" value="1" @checked(old('editable_admin', true))
-                                class="h-4 w-4 rounded border-slate-300 text-[#0C67A3]">
+                                class="peer h-4 w-4 rounded border-slate-300 text-[#0C67A3]">
 
                             <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
                                 Permitir modificación desde el panel administrativo
+                            </span>
+
+                            <span class="col-start-2 mt-1 text-xs text-slate-600 dark:text-slate-300 peer-checked:hidden">
+                                Este parámetro quedará en solo lectura. Puedes volver a habilitar su edición desde el historial.
                             </span>
 
                         </label>
@@ -459,8 +457,8 @@
             const contenedorTexto =
                 document.getElementById('contenedor_valor_texto');
 
-            const contenedorBooleano =
-                document.getElementById('contenedor_valor_booleano');
+            const contenedorOpciones =
+                document.getElementById('contenedor_valor_opciones');
 
             const valorNumerico =
                 document.getElementById('valor');
@@ -468,8 +466,8 @@
             const valorTexto =
                 document.getElementById('valor_texto');
 
-            const valorBooleano =
-                document.getElementById('valor_booleano');
+            const valorOpciones =
+                document.getElementById('valor_opciones');
 
             const unidad =
                 document.getElementById('unidad');
@@ -483,16 +481,17 @@
             const codigoAnterior =
                 @json(old('codigo'));
 
+            let valorAnteriorOpcion = @json(old('valor_texto'));
 
             function ocultarCamposValor() {
 
                 contenedorNumerico.classList.add('hidden');
                 contenedorTexto.classList.add('hidden');
-                contenedorBooleano.classList.add('hidden');
+                contenedorOpciones.classList.add('hidden');
 
                 valorNumerico.disabled = true;
                 valorTexto.disabled = true;
-                valorBooleano.disabled = true;
+                valorOpciones.disabled = true;
             }
 
 
@@ -598,6 +597,8 @@
 
                 const unidadSugerida =
                     opcion?.dataset?.unidad || '';
+                const opciones = catalogo[parametro.value]?.opciones_texto
+                    ?? (tipo === 'booleano' ? { true: 'Sí', false: 'No' } : null);
 
 
                 if (tipo === 'decimal') {
@@ -618,7 +619,7 @@
                 }
 
 
-                if (tipo === 'texto') {
+                if (tipo === 'texto' && !opciones) {
 
                     contenedorTexto.classList.remove('hidden');
 
@@ -626,11 +627,15 @@
                 }
 
 
-                if (tipo === 'booleano') {
-
-                    contenedorBooleano.classList.remove('hidden');
-
-                    valorBooleano.disabled = false;
+                if (opciones) {
+                    const valor = valorOpciones.value || valorAnteriorOpcion;
+                    valorOpciones.replaceChildren(new Option('Selecciona una opción', ''));
+                    Object.entries(opciones).forEach(([codigo, etiqueta]) => {
+                        valorOpciones.add(new Option(etiqueta, codigo));
+                    });
+                    valorOpciones.value = Object.hasOwn(opciones, valor) ? valor : '';
+                    contenedorOpciones.classList.remove('hidden');
+                    valorOpciones.disabled = false;
                 }
 
 
@@ -644,7 +649,8 @@
 
                 valorNumerico.value = '';
                 valorTexto.value = '';
-                valorBooleano.value = '';
+                valorOpciones.value = '';
+                valorAnteriorOpcion = '';
                 unidad.value = '';
 
                 cargarParametros();
@@ -655,7 +661,8 @@
 
                 valorNumerico.value = '';
                 valorTexto.value = '';
-                valorBooleano.value = '';
+                valorOpciones.value = '';
+                valorAnteriorOpcion = '';
 
                 actualizarFormulario(true);
             });

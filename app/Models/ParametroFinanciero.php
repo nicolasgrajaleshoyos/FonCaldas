@@ -35,18 +35,14 @@ class ParametroFinanciero extends Model
         'editable_admin' => 'boolean',
     ];
 
-    public function esSoloLecturaEnPanel(): bool
+    public function esFijoEnPanel(): bool
     {
-        return $this->codigo === 'tipo_calculo';
+        return in_array($this->codigo, ['tipo_calculo', 'cotizacion_requerida', 'base_anual_dias', 'capitalizacion'], true);
     }
 
-    /**
-     * Con "Permitir modificación desde el panel" desmarcado, el parámetro queda protegido contra cambios
-     * accidentales: no se puede desactivar ni eliminar, y para editarlo hay que volver a marcar la casilla.
-     */
-    public function estaProtegido(): bool
+    public function esSoloLecturaEnPanel(): bool
     {
-        return ! $this->editable_admin;
+        return $this->esFijoEnPanel() || $this->editable_admin === false;
     }
 
     public function producto(): BelongsTo

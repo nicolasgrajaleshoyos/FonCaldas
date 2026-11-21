@@ -118,7 +118,7 @@ test('el formulario conserva el origen elegido tras un error de validación', fu
         ->assertDontSee(')}>', false);
 });
 
-test('un parámetro protegido no se desactiva ni elimina, y solo se edita volviendo a marcar la casilla', function () {
+test('un parámetro protegido no se desactiva, elimina ni edita hasta habilitar su edición', function () {
     $super = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
     $producto = productoDePrueba();
     $tasa = ParametroFinanciero::create(datosTasa($producto) + [
@@ -134,9 +134,10 @@ test('un parámetro protegido no se desactiva ni elimina, y solo se edita volvie
         'producto_financiero_id' => $producto->id, 'codigo' => 'tasa_interes', 'valor' => '1.50', 'unidad' => '% mensual',
         'origen' => 'confirmado', 'fecha_inicio_vigencia' => '2026-01-01',
     ];
-    $this->actingAs($super)->put("/admin/parametros-financieros/tasas/{$tasa->id}", $edicion)->assertSessionHasErrors('editable_admin');
+    $this->actingAs($super)->put("/admin/parametros-financieros/tasas/{$tasa->id}", $edicion + ['editable_admin' => '1'])->assertForbidden();
     expect((float) $tasa->fresh()->valor)->toBe(1.35);
 
+    $this->actingAs($super)->patch("/admin/parametros-financieros/tasas/{$tasa->id}/habilitar-edicion")->assertRedirect();
     $this->actingAs($super)->put("/admin/parametros-financieros/tasas/{$tasa->id}", $edicion + ['editable_admin' => '1'])->assertSessionHasNoErrors();
     expect((float) $tasa->fresh()->valor)->toBe(1.5)->and($tasa->fresh()->editable_admin)->toBeTrue();
 });
@@ -155,4 +156,56 @@ test('el simulador de crédito mantiene los topes por saldo y por monto configur
 
     $this->post('/simuladores/credito', ['producto' => 'credito_compra_cartera', 'monto' => '1000000', 'plazo' => 12, 'dato_especifico' => '1500000'])
         ->assertSessionHasNoErrors();
+});
+
+test('la capitalizacion diaria de ahorro ordinario se muestra como regla fija y no se puede editar', function () {
+    $super = User::factory()->create(['is_super_admin' => true, 'is_active' => true]);
+    $producto = ProductoFinanciero::create([
+        'nombre' => 'Ahorro Ordinario',
+        'codigo' => 'ahorro_ordinario',
+        'tipo' => 'ahorro',
+        'activo' => true,
+    ]);
+    $capitalizacion = ParametroFinanciero::create([
+        'producto_financiero_id' => $producto->id,
+        'nombre' => 'Capitalización',
+        'codigo' => 'capitalizacion',
+        'valor_texto' => 'diaria',
+        'tipo_dato' => 'texto',
+        'categoria' => 'capitalizacion',
+        'origen' => 'referencia',
+        'editable_admin' => true,
+        'fecha_inicio_vigencia' => '2026-01-01',
+        'activo' => true,
+    ]);
+
+    $this->actingAs($super)
+        ->get("/admin/parametros-financieros/{$producto->id}/historial")
+        ->assertOk()
+        ->assertSee('Capitalización diaria')
+        ->assertSee('Valor guardado anteriormente')
+        ->assertSee('Solo lectura')
+        ->assertDontSee('Habilitar edición');
+
+    $this->actingAs($super)
+        ->get("/admin/parametros-financieros/tasas/{$capitalizacion->id}/editar")
+        ->assertForbidden();
+
+    $this->actingAs($super)
+        ->put("/admin/parametros-financieros/tasas/{$capitalizacion->id}", [
+            'producto_financiero_id' => $producto->id,
+            'codigo' => 'capitalizacion',
+            'valor_texto' => 'mensual',
+            'origen' => 'referencia',
+            'fecha_inicio_vigencia' => '2026-01-01',
+        ])
+        ->assertRedirect()
+        ->assertSessionHasErrors('codigo');
+
+    $this->actingAs($super)
+        ->patch("/admin/parametros-financieros/tasas/{$capitalizacion->id}/habilitar-edicion")
+        ->assertForbidden();
+
+    expect($capitalizacion->fresh()->valor_texto)->toBe('diaria')
+        ->and(config('parametros_por_producto.ahorro_ordinario'))->not->toContain('capitalizacion');
 });

@@ -124,7 +124,6 @@ return [
         'plazo_minimo',
         'plazo_maximo',
         'periodicidad_tasa',
-        'cotizacion_requerida',
     ],
 
     'credito_turismo' => [
@@ -134,7 +133,6 @@ return [
         'plazo_minimo',
         'plazo_maximo',
         'periodicidad_tasa',
-        'cotizacion_requerida',
     ],
 
     /*
@@ -150,8 +148,6 @@ return [
         'aporte_minimo',
         'frecuencia_aporte',
         'base_calculo',
-        'base_anual_dias',
-        'capitalizacion',
         'aportes_permitidos',
         'retiros_permitidos',
         'plazo_maximo_simulacion',
@@ -164,7 +160,6 @@ return [
         'monto_minimo',
         'monto_maximo',
         'base_calculo',
-        'base_anual_dias',
         'porcentaje_retencion',
         'retiro_anticipado_permitido',
         'renovacion_automatica',

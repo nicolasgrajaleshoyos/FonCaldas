@@ -119,12 +119,12 @@ class SimularAhorroRequest extends FormRequest
                 'El plazo no puede superar '.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES.' meses.',
 
             'aporte_mensual.numeric' =>
-                'El aporte mensual debe ser un valor numérico.',
+                'El aporte debe ser un valor numérico.',
 
             'aporte_mensual.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
 
             'aporte_mensual.gte' =>
-                'El aporte mensual no puede ser negativo.',
+                'El aporte no puede ser negativo.',
 
             'aporte_mensual.lte' =>
                 'El aporte mensual supera el máximo que se puede simular.',

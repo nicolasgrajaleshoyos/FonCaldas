@@ -29,14 +29,6 @@
                 @endif
 
 
-                @if ($tasa->estaProtegido())
-                    <div class="mb-6 rounded-xl border border-amber-700 bg-amber-950/40 p-4 text-sm text-amber-200">
-                        Este parámetro está protegido contra cambios. Para guardar modificaciones, marca
-                        «Permitir modificación desde el panel administrativo».
-                    </div>
-                @endif
-
-
                 <form method="POST" action="{{ route('admin.parametros-financieros.tasas.actualizar', $tasa) }}"
                     class="space-y-6">
 
@@ -131,7 +123,7 @@
                             @enderror
 
                         </div>
-                    @elseif ($definicion['tipo_dato'] === 'booleano')
+                    @elseif ($definicion['tipo_dato'] === 'booleano' || isset($definicion['opciones_texto']))
                         <div>
 
                             <label class="block text-sm font-medium text-slate-200 mb-2">
@@ -144,13 +136,14 @@
                                     text-white px-4 py-3"
                                 required>
 
-                                <option value="true" @selected(old('valor_texto', $tasa->valor_texto) === 'true')>
-                                    Sí
-                                </option>
-
-                                <option value="false" @selected(old('valor_texto', $tasa->valor_texto) === 'false')>
-                                    No
-                                </option>
+                                @if (isset($definicion['opciones_texto']))
+                                    <option value="">Selecciona una opción</option>
+                                @endif
+                                @foreach ($definicion['opciones_texto'] ?? ['true' => 'Sí', 'false' => 'No'] as $valor => $etiqueta)
+                                    <option value="{{ $valor }}" @selected(old('valor_texto', $tasa->valor_texto) === $valor)>
+                                        {{ $etiqueta }}
+                                    </option>
+                                @endforeach
 
                             </select>
 
@@ -276,13 +269,18 @@
                     {{-- Editable --}}
                     <div>
 
-                        <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="hidden" name="editable_admin" value="0">
+                        <label class="grid grid-cols-[auto_1fr] items-center gap-x-3 cursor-pointer">
 
                             <input type="checkbox" name="editable_admin" value="1" @checked(old('editable_admin', $tasa->editable_admin))
-                                class="h-4 w-4 rounded border-slate-500 text-sky-600">
+                                class="peer h-4 w-4 rounded border-slate-500 text-sky-600">
 
                             <span class="text-sm font-medium text-slate-200">
                                 Permitir modificación desde el panel administrativo
+                            </span>
+
+                            <span class="col-start-2 mt-1 text-xs text-slate-300 peer-checked:hidden">
+                                Este parámetro quedará en solo lectura. Puedes volver a habilitar su edición desde el historial.
                             </span>
 
                         </label>

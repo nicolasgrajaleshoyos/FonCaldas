@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\GuardarTasaFinancieraRequest;
 use App\Http\Requests\Admin\GuardarParametroFinancieroRequest;
 use App\Models\ParametroFinanciero;
 use App\Models\ProductoFinanciero;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
@@ -64,7 +65,7 @@ class ParametroFinancieroController extends Controller
                 : $definicion['unidad_sugerida'],
             'categoria' => $definicion['categoria'],
             'origen' => $request->input('origen'),
-            'editable_admin' => $request->boolean('editable_admin'),
+            'editable_admin' => $request->boolean('editable_admin', true),
             'fecha_inicio_vigencia' => $request->date('fecha_inicio_vigencia')->toDateString(),
             'fecha_fin_vigencia' => $request->date('fecha_fin_vigencia')?->toDateString(),
             'descripcion' => $request->input('descripcion'),
@@ -147,15 +148,6 @@ class ParametroFinancieroController extends Controller
     ) {
         abort_if($tasa->esSoloLecturaEnPanel(), 403);
 
-        if ($tasa->estaProtegido() && ! $request->boolean('editable_admin')) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'editable_admin' =>
-                    'Este parámetro está protegido. Marca "Permitir modificación desde el panel administrativo" para poder cambiarlo.',
-                ]);
-        }
-
         /*
      * Por seguridad, desde la edición no permitimos cambiar
      * el producto ni el tipo de parámetro.
@@ -206,7 +198,7 @@ class ParametroFinancieroController extends Controller
                 ? $request->input('unidad')
                 : $definicion['unidad_sugerida'],
             'origen' => $request->input('origen'),
-            'editable_admin' => $request->boolean('editable_admin'),
+            'editable_admin' => $request->boolean('editable_admin', true),
             'fecha_inicio_vigencia' => $request->date('fecha_inicio_vigencia')->toDateString(),
             'fecha_fin_vigencia' => $request->date('fecha_fin_vigencia')?->toDateString(),
             'descripcion' => $request->input('descripcion'),
@@ -232,20 +224,31 @@ class ParametroFinancieroController extends Controller
             );
     }
 
+    public function habilitarEdicion(ParametroFinanciero $tasa)
+    {
+        $this->conBloqueoDeParametro($tasa, static function (ParametroFinanciero $parametro): void {
+            abort_if($parametro->esFijoEnPanel(), 403);
+
+            $parametro->update(['editable_admin' => true]);
+        });
+
+        return redirect()
+            ->route('admin.parametros-financieros.historial', $tasa->producto_financiero_id)
+            ->with('success', 'La edición del parámetro fue habilitada.');
+    }
+
     public function desactivar(ParametroFinanciero $tasa)
     {
-        abort_if($tasa->esSoloLecturaEnPanel() || $tasa->estaProtegido(), 403);
+        $this->conBloqueoDeParametro($tasa, static function (ParametroFinanciero $parametro): void {
+            abort_if($parametro->esSoloLecturaEnPanel(), 403);
 
-        $productoId = $tasa->producto_financiero_id;
-
-        $tasa->update([
-            'activo' => false,
-        ]);
+            $parametro->update(['activo' => false]);
+        });
 
         return redirect()
             ->route(
                 'admin.parametros-financieros.historial',
-                $productoId
+                $tasa->producto_financiero_id
             )
             ->with(
                 'success',
@@ -255,21 +258,31 @@ class ParametroFinancieroController extends Controller
 
     public function eliminar(ParametroFinanciero $tasa)
     {
-        abort_if($tasa->esSoloLecturaEnPanel() || $tasa->estaProtegido(), 403);
+        $this->conBloqueoDeParametro($tasa, static function (ParametroFinanciero $parametro): void {
+            abort_if($parametro->esSoloLecturaEnPanel(), 403);
 
-        $productoId = $tasa->producto_financiero_id;
-
-        $tasa->delete();
+            $parametro->delete();
+        });
 
         return redirect()
             ->route(
                 'admin.parametros-financieros.historial',
-                $productoId
+                $tasa->producto_financiero_id
             )
             ->with(
                 'success',
                 'El parámetro fue eliminado definitivamente.'
             );
+    }
+
+    private function conBloqueoDeParametro(ParametroFinanciero $tasa, Closure $operacion): void
+    {
+        $tasa->getConnection()->transaction(function () use ($tasa, $operacion): void {
+            $this->bloquearProducto((int) $tasa->producto_financiero_id);
+
+            $parametro = $tasa->newQuery()->lockForUpdate()->findOrFail($tasa->getKey());
+            $operacion($parametro);
+        }, attempts: 3);
     }
 
     private function guardarVigencia(int $productoId, string $codigo, array $atributos, ?int $parametroId = null): bool
@@ -289,6 +302,8 @@ class ParametroFinancieroController extends Controller
                     ->where('codigo', $codigo)
                     ->lockForUpdate()
                     ->findOrFail($parametroId);
+
+            abort_if($parametroId !== null && $parametro->esSoloLecturaEnPanel(), 403);
 
             $fechaInicio = $atributos['fecha_inicio_vigencia'];
             $fechaFin = $atributos['fecha_fin_vigencia'];

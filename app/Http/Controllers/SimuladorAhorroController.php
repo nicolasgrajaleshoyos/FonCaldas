@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\LeeParametrosSimulador;
 use App\Http\Requests\SimularAhorroRequest;
 use App\Models\ProductoFinanciero;
 use App\Services\CalculadoraFinanciera;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 class SimuladorAhorroController extends Controller
@@ -192,7 +193,10 @@ class SimuladorAhorroController extends Controller
             $plazoMeses * 30;
 
 
-        $aporteMensual =
+        $frecuenciaAporte = $this->frecuenciaAporte($parametros);
+        $mesesEntreAportes = $frecuenciaAporte === 'trimestral' ? 3 : 1;
+
+        $aporte =
             isset(
                 $datos[
                     'aporte_mensual'
@@ -212,7 +216,7 @@ class SimuladorAhorroController extends Controller
 
 
         if (
-            $aporteMensual > 0
+            $aporte > 0
             && $aportesPermitidos === false
         ) {
             throw ValidationException::withMessages([
@@ -230,13 +234,13 @@ class SimuladorAhorroController extends Controller
 
 
         if (
-            $aporteMensual > 0
+            $aporte > 0
             && $aporteMinimo !== null
-            && $aporteMensual < $aporteMinimo
+            && $aporte < $aporteMinimo
         ) {
             throw ValidationException::withMessages([
                 'aporte_mensual' =>
-                    'El aporte mensual mínimo permitido es $'
+                    "El aporte {$frecuenciaAporte} mínimo permitido es $"
                     . number_format(
                         $aporteMinimo,
                         0,
@@ -266,21 +270,18 @@ class SimuladorAhorroController extends Controller
 
 
         /*
-         * Para la proyección de aportes mensuales
-         * se asume el aporte al finalizar cada mes.
-         *
-         * Cada aporte comienza a generar rendimiento
-         * durante el tiempo restante de la proyección.
+         * Cada aporte se suma al finalizar su período completo
+         * y genera rendimiento durante el tiempo restante.
          */
-        if ($aporteMensual > 0) {
+        if ($aporte > 0) {
 
             for (
-                $mes = 1;
+                $mes = $mesesEntreAportes;
                 $mes <= $plazoMeses;
-                $mes++
+                $mes += $mesesEntreAportes
             ) {
                 $totalAportes +=
-                    $aporteMensual;
+                    $aporte;
 
 
                 $diasRestantes =
@@ -296,7 +297,7 @@ class SimuladorAhorroController extends Controller
                     $calculoAporte =
                         $calculadora
                             ->calcularAhorroOrdinario(
-                                $aporteMensual,
+                                $aporte,
                                 $tasa,
                                 $diasRestantes,
                                 $this->baseAnualDias($parametros)
@@ -363,9 +364,11 @@ class SimuladorAhorroController extends Controller
             'unidad_tasa' =>
                 '% E.A.',
 
+            'frecuencia_aporte' => $frecuenciaAporte,
+
             'aporte_mensual' =>
                 (int) round(
-                    $aporteMensual,
+                    $aporte,
                     0,
                     PHP_ROUND_HALF_UP
                 ),
@@ -399,7 +402,10 @@ class SimuladorAhorroController extends Controller
                 ),
 
             'nota_calculo' =>
-                'La proyección utiliza una equivalencia de 30 días por mes. Cuando se ingresan aportes mensuales, se proyectan al finalizar cada mes.',
+                'La proyección utiliza una equivalencia de 30 días por mes. '
+                . ($frecuenciaAporte === 'trimestral'
+                    ? 'Cuando se ingresan aportes trimestrales, se proyectan al finalizar cada trimestre completo.'
+                    : 'Cuando se ingresan aportes mensuales, se proyectan al finalizar cada mes.'),
         ];
     }
 
@@ -558,6 +564,8 @@ class SimuladorAhorroController extends Controller
             $producto->aportes_simulador_permitidos =
                 $this->valorBooleano($parametros, 'aportes_permitidos') !== false;
 
+            $producto->frecuencia_aporte_simulador = $this->frecuenciaAporte($parametros);
+
             $producto->parametros_simulador = $parametros
                 ->map(fn ($parametro) => [
                     'valor' => $parametro->valor,
@@ -583,6 +591,14 @@ class SimuladorAhorroController extends Controller
         $base = (int) $this->valorNumerico($parametros, 'base_anual_dias');
 
         return in_array($base, [360, 365], true) ? $base : 365;
+    }
+
+
+    private function frecuenciaAporte(Collection $parametros): string
+    {
+        $frecuencia = strtolower(trim($parametros->get('frecuencia_aporte')?->valor_texto ?? ''));
+
+        return $frecuencia === 'trimestral' ? 'trimestral' : 'mensual';
     }
 
 
