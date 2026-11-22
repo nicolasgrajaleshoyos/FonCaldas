@@ -22,7 +22,6 @@ class SimularCreditoRequest extends FormRequest
         return true;
     }
 
-
     protected function prepareForValidation(): void
     {
         $producto = $this->input('producto');
@@ -33,7 +32,6 @@ class SimularCreditoRequest extends FormRequest
             ),
         ];
 
-
         if (in_array($producto, self::PRODUCTOS_CON_DATO_MONETARIO, true)) {
             $datos['dato_especifico'] =
                 $this->normalizarMoneda(
@@ -43,10 +41,8 @@ class SimularCreditoRequest extends FormRequest
                 );
         }
 
-
         $this->merge($datos);
     }
-
 
     public function rules(): array
     {
@@ -55,7 +51,6 @@ class SimularCreditoRequest extends FormRequest
 
         $tipoBien =
             $this->input('tipo_bien');
-
 
         $datoEsMonetario = in_array($producto, self::PRODUCTOS_CON_DATO_MONETARIO, true);
         $requiereDatoEspecifico = $datoEsMonetario || $producto === 'credito_libre_inversion';
@@ -67,7 +62,6 @@ class SimularCreditoRequest extends FormRequest
         $reglasDatoEspecifico[] = 'gt:0';
         $reglasDatoEspecifico[] = 'lte:'.FormatoNumericoFinanciero::MONTO_MAXIMO;
 
-
         $requiereTipoBien =
             in_array(
                 $producto,
@@ -78,11 +72,9 @@ class SimularCreditoRequest extends FormRequest
                 true
             );
 
-
         $requiereAntiguedadBien =
             $requiereTipoBien
             && $tipoBien === 'usado';
-
 
         return [
 
@@ -108,7 +100,6 @@ class SimularCreditoRequest extends FormRequest
                     ),
             ],
 
-
             /*
              * $1.000 se utiliza únicamente como
              * mínimo técnico del simulador.
@@ -126,7 +117,6 @@ class SimularCreditoRequest extends FormRequest
                 'lte:'.FormatoNumericoFinanciero::MONTO_MAXIMO,
             ],
 
-
             'plazo' => [
                 'required',
                 'integer',
@@ -134,9 +124,7 @@ class SimularCreditoRequest extends FormRequest
                 'max:'.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES,
             ],
 
-
             'dato_especifico' => $reglasDatoEspecifico,
-
 
             'tipo_bien' => [
                 Rule::requiredIf(
@@ -151,7 +139,6 @@ class SimularCreditoRequest extends FormRequest
                 ]),
             ],
 
-
             'antiguedad_bien' => [
                 Rule::requiredIf(
                     $requiereAntiguedadBien
@@ -165,82 +152,55 @@ class SimularCreditoRequest extends FormRequest
         ];
     }
 
-
     public function messages(): array
     {
         return [
 
-            'producto.required' =>
-                'Debes seleccionar una línea de crédito.',
+            'producto.required' => 'Debes seleccionar una línea de crédito.',
 
-            'producto.exists' =>
-                'La línea seleccionada no está disponible para simulación.',
+            'producto.exists' => 'La línea seleccionada no está disponible para simulación.',
 
+            'monto.required' => 'Debes ingresar el monto solicitado.',
 
-            'monto.required' =>
-                'Debes ingresar el monto solicitado.',
-
-            'monto.numeric' =>
-                'El monto solicitado debe ser un valor numérico.',
+            'monto.numeric' => 'El monto solicitado debe ser un valor numérico.',
 
             'monto.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
 
-            'monto.gte' =>
-                'Para realizar una simulación, el monto solicitado debe ser de al menos $1.000.',
+            'monto.gte' => 'Para realizar una simulación, el monto solicitado debe ser de al menos $1.000.',
 
-            'monto.lte' =>
-                'El monto solicitado supera el máximo que se puede simular.',
+            'monto.lte' => 'El monto solicitado supera el máximo que se puede simular.',
 
+            'plazo.required' => 'Debes ingresar el plazo.',
 
-            'plazo.required' =>
-                'Debes ingresar el plazo.',
+            'plazo.integer' => 'El plazo debe expresarse en meses completos.',
 
-            'plazo.integer' =>
-                'El plazo debe expresarse en meses completos.',
+            'plazo.gt' => 'El plazo debe ser mayor que cero.',
 
-            'plazo.gt' =>
-                'El plazo debe ser mayor que cero.',
+            'plazo.max' => 'El plazo no puede superar '.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES.' meses.',
 
-            'plazo.max' =>
-                'El plazo no puede superar '.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES.' meses.',
+            'dato_especifico.required' => 'Debes completar la información adicional requerida para esta línea.',
 
-
-            'dato_especifico.required' =>
-                'Debes completar la información adicional requerida para esta línea.',
-
-            'dato_especifico.numeric' =>
-                'La información adicional debe ser un valor numérico.',
+            'dato_especifico.numeric' => 'La información adicional debe ser un valor numérico.',
 
             'dato_especifico.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
 
-            'dato_especifico.gt' =>
-                'La información adicional debe ser mayor que cero.',
+            'dato_especifico.gt' => 'La información adicional debe ser mayor que cero.',
 
-            'dato_especifico.lte' =>
-                'La información adicional supera el máximo permitido.',
+            'dato_especifico.lte' => 'La información adicional supera el máximo permitido.',
 
+            'tipo_bien.required' => 'Debes indicar si el vehículo o motocicleta es nuevo o usado.',
 
-            'tipo_bien.required' =>
-                'Debes indicar si el vehículo o motocicleta es nuevo o usado.',
+            'tipo_bien.in' => 'Selecciona si el vehículo o motocicleta es nuevo o usado.',
 
-            'tipo_bien.in' =>
-                'Selecciona si el vehículo o motocicleta es nuevo o usado.',
+            'antiguedad_bien.required' => 'Debes indicar la antigüedad del vehículo o motocicleta usada.',
 
+            'antiguedad_bien.integer' => 'La antigüedad debe expresarse en años completos.',
 
-            'antiguedad_bien.required' =>
-                'Debes indicar la antigüedad del vehículo o motocicleta usada.',
+            'antiguedad_bien.min' => 'La antigüedad no puede ser negativa.',
 
-            'antiguedad_bien.integer' =>
-                'La antigüedad debe expresarse en años completos.',
-
-            'antiguedad_bien.min' =>
-                'La antigüedad no puede ser negativa.',
-
-            'antiguedad_bien.max' =>
-                'La antigüedad indicada no es válida.',
+            'antiguedad_bien.max' => 'La antigüedad indicada no es válida.',
         ];
     }
-
 
     private function normalizarMoneda(mixed $valor): mixed
     {

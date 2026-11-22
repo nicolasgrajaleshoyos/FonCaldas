@@ -168,7 +168,6 @@ Route::get('/simuladores/credito', [SimuladorCreditoController::class, 'index'])
 Route::post('/simuladores/credito', [SimuladorCreditoController::class, 'simular'])
     ->name('simuladores.credito.simular');
 
-
 Route::get('/simuladores/credito/resultado', [SimuladorCreditoController::class, 'resultado'])
     ->name('simuladores.credito.resultado');
 

@@ -37,7 +37,7 @@ test('el formulario de crédito entrega la tasa vigente y el de ahorro abre', fu
     ]) + $atributosTasa);
 
     $respuesta = $this->get('/simuladores/credito')->assertOk()->assertSee('Crédito Avances');
-    $html = new DOMDocument();
+    $html = new DOMDocument;
     $html->loadHTML($respuesta->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
     $opcion = (new DOMXPath($html))->query('//select[@id="producto_credito"]//option[@value="credito_avances"]')->item(0);
     expect($opcion)->toBeInstanceOf(DOMElement::class);

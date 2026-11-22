@@ -2,10 +2,9 @@
 
 use App\Services\CalculadoraFinanciera;
 
-
 test('calcula correctamente un credito de cuota fija', function () {
 
-    $calculadora = new CalculadoraFinanciera();
+    $calculadora = new CalculadoraFinanciera;
 
     $resultado = $calculadora->calcularCreditoCuotaFija(
         1_000_000,
@@ -21,10 +20,9 @@ test('calcula correctamente un credito de cuota fija', function () {
         ->toBe(1083100);
 });
 
-
 test('calcula correctamente un avance a 30 dias', function () {
 
-    $calculadora = new CalculadoraFinanciera();
+    $calculadora = new CalculadoraFinanciera;
 
     $resultado = $calculadora->calcularAvance(
         1_000_000,
@@ -38,10 +36,9 @@ test('calcula correctamente un avance a 30 dias', function () {
         ->toBe(1016000);
 });
 
-
 test('calcula el ejemplo de ahorro ordinario de foncaldas', function () {
 
-    $calculadora = new CalculadoraFinanciera();
+    $calculadora = new CalculadoraFinanciera;
 
     $resultado = $calculadora->calcularAhorroOrdinario(
         1_000_000,
@@ -55,10 +52,9 @@ test('calcula el ejemplo de ahorro ordinario de foncaldas', function () {
         ->toBe(1002432);
 });
 
-
 test('calcula el ejemplo de cdat de foncaldas', function () {
 
-    $calculadora = new CalculadoraFinanciera();
+    $calculadora = new CalculadoraFinanciera;
 
     $resultado = $calculadora->calcularCdat(
         5_000_000,
@@ -77,10 +73,9 @@ test('calcula el ejemplo de cdat de foncaldas', function () {
         ->toBe(5197047);
 });
 
-
 test('permite credito con tasa cero', function () {
 
-    $calculadora = new CalculadoraFinanciera();
+    $calculadora = new CalculadoraFinanciera;
 
     $resultado = $calculadora->calcularCreditoCuotaFija(
         1_200_000,
@@ -96,10 +91,9 @@ test('permite credito con tasa cero', function () {
         ->toBe(1200000);
 });
 
-
 test('rechaza capitales menores o iguales a cero', function () {
 
-    $calculadora = new CalculadoraFinanciera();
+    $calculadora = new CalculadoraFinanciera;
 
     $calculadora->calcularCreditoCuotaFija(
         0,
@@ -108,14 +102,13 @@ test('rechaza capitales menores o iguales a cero', function () {
     );
 
 })->throws(
-    \InvalidArgumentException::class,
+    InvalidArgumentException::class,
     'El capital debe ser mayor que cero.'
 );
 
-
 test('rechaza periodos menores o iguales a cero', function () {
 
-    $calculadora = new CalculadoraFinanciera();
+    $calculadora = new CalculadoraFinanciera;
 
     $calculadora->calcularAvance(
         1_000_000,
@@ -124,12 +117,12 @@ test('rechaza periodos menores o iguales a cero', function () {
     );
 
 })->throws(
-   \InvalidArgumentException::class,
+    InvalidArgumentException::class,
     'El periodo debe ser mayor que cero.'
 );
 
 test('el CDAT y el ahorro ordinario respetan la base anual configurada', function () {
-    $calculadora = new \App\Services\CalculadoraFinanciera();
+    $calculadora = new CalculadoraFinanciera;
 
     // Con base 360, un CDAT a 360 días rinde exactamente la tasa E.A.
     expect($calculadora->calcularCdat(1000000, 10, 360, 0, 360)['rendimiento_bruto'])->toBe(100000)

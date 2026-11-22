@@ -9,9 +9,9 @@ class CalculadoraFinanciera
     /**
      * Crédito con cuota mensual fija - Sistema francés.
      *
-     * @param float $capital Capital solicitado en pesos.
-     * @param float $tasaMensualPorcentaje Tasa mensual expresada en porcentaje.
-     * @param int $numeroCuotas Número de cuotas mensuales.
+     * @param  float  $capital  Capital solicitado en pesos.
+     * @param  float  $tasaMensualPorcentaje  Tasa mensual expresada en porcentaje.
+     * @param  int  $numeroCuotas  Número de cuotas mensuales.
      */
     public function calcularCreditoCuotaFija(
         float $capital,
@@ -93,7 +93,7 @@ class CalculadoraFinanciera
      * Se calcula la tasa diaria a partir de la tasa E.A.
      * y se acumula el rendimiento diariamente.
      *
-     * @param int $baseAnualDias Días del año financiero (365 o 360, según el parámetro base_anual_dias).
+     * @param  int  $baseAnualDias  Días del año financiero (365 o 360, según el parámetro base_anual_dias).
      */
     public function calcularAhorroOrdinario(
         float $capital,
@@ -139,7 +139,7 @@ class CalculadoraFinanciera
     /**
      * CDAT.
      *
-     * @param int $baseAnualDias Días del año financiero (365 o 360, según el parámetro base_anual_dias).
+     * @param  int  $baseAnualDias  Días del año financiero (365 o 360, según el parámetro base_anual_dias).
      */
     public function calcularCdat(
         float $capital,

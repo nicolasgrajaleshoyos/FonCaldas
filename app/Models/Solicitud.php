@@ -65,6 +65,7 @@ class Solicitud extends Model
         return 'FC';
     }
 
+    /** @return BelongsTo<TramiteTipo, $this> */
     public function tramiteTipo(): BelongsTo
     {
         return $this->belongsTo(TramiteTipo::class);

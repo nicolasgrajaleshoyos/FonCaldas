@@ -23,7 +23,6 @@ class SimuladorAhorroController extends Controller
         );
     }
 
-
     public function simular(
         SimularAhorroRequest $request,
         CalculadoraFinanciera $calculadora
@@ -37,21 +36,16 @@ class SimuladorAhorroController extends Controller
             ->where('simulable', true)
             ->first();
 
-
-        if (!$producto) {
+        if (! $producto) {
             throw ValidationException::withMessages([
-                'producto' =>
-                    'El producto seleccionado no está disponible para simulación.',
+                'producto' => 'El producto seleccionado no está disponible para simulación.',
             ]);
         }
 
-
         $parametros = $producto->parametrosVigentesPorCodigo();
-
 
         $monto =
             (float) $datos['monto'];
-
 
         $this->validarLimitesMonto(
             $parametros,
@@ -59,7 +53,6 @@ class SimuladorAhorroController extends Controller
             'El monto mínimo permitido es ',
             'El monto máximo permitido es '
         );
-
 
         if (
             $producto->codigo ===
@@ -89,24 +82,19 @@ class SimuladorAhorroController extends Controller
 
         } else {
             throw ValidationException::withMessages([
-                'producto' =>
-                    'No existe un método de cálculo configurado para este producto.',
+                'producto' => 'No existe un método de cálculo configurado para este producto.',
             ]);
         }
 
-
         session([
-            'resultado_ahorro' =>
-                $resultado,
+            'resultado_ahorro' => $resultado,
         ]);
-
 
         return redirect()
             ->route(
                 'simuladores.ahorro.resultado'
             );
     }
-
 
     public function resultado()
     {
@@ -115,21 +103,18 @@ class SimuladorAhorroController extends Controller
                 'resultado_ahorro'
             );
 
-
-        if (!$resultado) {
+        if (! $resultado) {
             return redirect()
                 ->route(
                     'simuladores.ahorro'
                 );
         }
 
-
         return view(
             'simuladores.ahorro.resultado',
             compact('resultado')
         );
     }
-
 
     private function simularAhorroOrdinario(
         ProductoFinanciero $producto,
@@ -144,20 +129,16 @@ class SimuladorAhorroController extends Controller
                 'tasa_interes_ea'
             );
 
-
         if ($tasa === null) {
             throw ValidationException::withMessages([
-                'producto' =>
-                    'No es posible realizar la simulación porque la tasa E.A. de Ahorro Ordinario no está configurada.',
+                'producto' => 'No es posible realizar la simulación porque la tasa E.A. de Ahorro Ordinario no está configurada.',
             ]);
         }
-
 
         $plazoMeses =
             (int) $datos[
                 'plazo_meses'
             ];
-
 
         /*
          * Este parámetro corresponde a un límite técnico
@@ -170,20 +151,17 @@ class SimuladorAhorroController extends Controller
                 'plazo_maximo_simulacion'
             );
 
-
         if (
             $plazoMaximoSimulacion !== null
             && $plazoMeses >
                 $plazoMaximoSimulacion
         ) {
             throw ValidationException::withMessages([
-                'plazo_meses' =>
-                    'El plazo máximo permitido por el simulador es de '
-                    . (int) $plazoMaximoSimulacion
-                    . ' meses.',
+                'plazo_meses' => 'El plazo máximo permitido por el simulador es de '
+                    .(int) $plazoMaximoSimulacion
+                    .' meses.',
             ]);
         }
-
 
         /*
          * Para la proyección se utiliza una equivalencia
@@ -191,7 +169,6 @@ class SimuladorAhorroController extends Controller
          */
         $dias =
             $plazoMeses * 30;
-
 
         $frecuenciaAporte = $this->frecuenciaAporte($parametros);
         $mesesEntreAportes = $frecuenciaAporte === 'trimestral' ? 3 : 1;
@@ -207,24 +184,20 @@ class SimuladorAhorroController extends Controller
                 ]
                 : 0;
 
-
         $aportesPermitidos =
             $this->valorBooleano(
                 $parametros,
                 'aportes_permitidos'
             );
 
-
         if (
             $aporte > 0
             && $aportesPermitidos === false
         ) {
             throw ValidationException::withMessages([
-                'aporte_mensual' =>
-                    'Este producto no tiene habilitados aportes adicionales.',
+                'aporte_mensual' => 'Este producto no tiene habilitados aportes adicionales.',
             ]);
         }
-
 
         $aporteMinimo =
             $this->valorNumerico(
@@ -232,25 +205,22 @@ class SimuladorAhorroController extends Controller
                 'aporte_minimo'
             );
 
-
         if (
             $aporte > 0
             && $aporteMinimo !== null
             && $aporte < $aporteMinimo
         ) {
             throw ValidationException::withMessages([
-                'aporte_mensual' =>
-                    "El aporte {$frecuenciaAporte} mínimo permitido es $"
-                    . number_format(
+                'aporte_mensual' => "El aporte {$frecuenciaAporte} mínimo permitido es $"
+                    .number_format(
                         $aporteMinimo,
                         0,
                         ',',
                         '.'
                     )
-                    . '.',
+                    .'.',
             ]);
         }
-
 
         /*
          * Rendimiento del monto inicial.
@@ -264,10 +234,8 @@ class SimuladorAhorroController extends Controller
                     $this->baseAnualDias($parametros)
                 );
 
-
         $rendimientoAportes = 0;
         $totalAportes = 0;
-
 
         /*
          * Cada aporte se suma al finalizar su período completo
@@ -283,13 +251,11 @@ class SimuladorAhorroController extends Controller
                 $totalAportes +=
                     $aporte;
 
-
                 $diasRestantes =
                     (
                         $plazoMeses
                         - $mes
                     ) * 30;
-
 
                 if (
                     $diasRestantes > 0
@@ -303,7 +269,6 @@ class SimuladorAhorroController extends Controller
                                 $this->baseAnualDias($parametros)
                             );
 
-
                     $rendimientoAportes +=
                         $calculoAporte[
                             'rendimiento_exacto'
@@ -312,103 +277,83 @@ class SimuladorAhorroController extends Controller
             }
         }
 
-
         $rendimientoTotal =
             $calculoInicial[
                 'rendimiento_exacto'
             ]
             + $rendimientoAportes;
 
-
         $capitalTotal =
             $monto
             + $totalAportes;
-
 
         $valorFinal =
             $capitalTotal
             + $rendimientoTotal;
 
-
         return [
-            'producto_codigo' =>
-                $producto->codigo,
+            'producto_codigo' => $producto->codigo,
 
-            'producto_nombre' =>
-                $producto->nombre,
+            'producto_nombre' => $producto->nombre,
 
-            'tipo_resultado' =>
-                'ahorro_ordinario',
+            'tipo_resultado' => 'ahorro_ordinario',
 
-            'monto_inicial' =>
-                (int) round(
-                    $monto,
-                    0,
-                    PHP_ROUND_HALF_UP
-                ),
+            'monto_inicial' => (int) round(
+                $monto,
+                0,
+                PHP_ROUND_HALF_UP
+            ),
 
-            'plazo' =>
-                $plazoMeses,
+            'plazo' => $plazoMeses,
 
-            'unidad_plazo' =>
-                $plazoMeses === 1
+            'unidad_plazo' => $plazoMeses === 1
                     ? 'mes'
                     : 'meses',
 
-            'dias_proyectados' =>
-                $dias,
+            'dias_proyectados' => $dias,
 
-            'tasa' =>
-                $tasa,
+            'tasa' => $tasa,
 
-            'unidad_tasa' =>
-                '% E.A.',
+            'unidad_tasa' => '% E.A.',
 
             'frecuencia_aporte' => $frecuenciaAporte,
 
-            'aporte_mensual' =>
-                (int) round(
-                    $aporte,
-                    0,
-                    PHP_ROUND_HALF_UP
-                ),
+            'aporte_mensual' => (int) round(
+                $aporte,
+                0,
+                PHP_ROUND_HALF_UP
+            ),
 
-            'total_aportes' =>
-                (int) round(
-                    $totalAportes,
-                    0,
-                    PHP_ROUND_HALF_UP
-                ),
+            'total_aportes' => (int) round(
+                $totalAportes,
+                0,
+                PHP_ROUND_HALF_UP
+            ),
 
-            'capital_total' =>
-                (int) round(
-                    $capitalTotal,
-                    0,
-                    PHP_ROUND_HALF_UP
-                ),
+            'capital_total' => (int) round(
+                $capitalTotal,
+                0,
+                PHP_ROUND_HALF_UP
+            ),
 
-            'rendimiento_estimado' =>
-                (int) round(
-                    $rendimientoTotal,
-                    0,
-                    PHP_ROUND_HALF_UP
-                ),
+            'rendimiento_estimado' => (int) round(
+                $rendimientoTotal,
+                0,
+                PHP_ROUND_HALF_UP
+            ),
 
-            'valor_final' =>
-                (int) round(
-                    $valorFinal,
-                    0,
-                    PHP_ROUND_HALF_UP
-                ),
+            'valor_final' => (int) round(
+                $valorFinal,
+                0,
+                PHP_ROUND_HALF_UP
+            ),
 
-            'nota_calculo' =>
-                'La proyección utiliza una equivalencia de 30 días por mes. '
-                . ($frecuenciaAporte === 'trimestral'
-                    ? 'Cuando se ingresan aportes trimestrales, se proyectan al finalizar cada trimestre completo.'
-                    : 'Cuando se ingresan aportes mensuales, se proyectan al finalizar cada mes.'),
+            'nota_calculo' => 'La proyección utiliza una equivalencia de 30 días por mes. '
+                .($frecuenciaAporte === 'trimestral'
+                ? 'Cuando se ingresan aportes trimestrales, se proyectan al finalizar cada trimestre completo.'
+                : 'Cuando se ingresan aportes mensuales, se proyectan al finalizar cada mes.'),
         ];
     }
-
 
     private function simularCdat(
         ProductoFinanciero $producto,
@@ -422,30 +367,22 @@ class SimuladorAhorroController extends Controller
                 'plazo_dias'
             ];
 
-
         $codigoTasa =
             match ($dias) {
-                90 =>
-                    'tasa_interes_90_dias',
+                90 => 'tasa_interes_90_dias',
 
-                180 =>
-                    'tasa_interes_180_dias',
+                180 => 'tasa_interes_180_dias',
 
-                360 =>
-                    'tasa_interes_360_dias',
+                360 => 'tasa_interes_360_dias',
 
-                default =>
-                    null,
+                default => null,
             };
 
-
-        if (!$codigoTasa) {
+        if (! $codigoTasa) {
             throw ValidationException::withMessages([
-                'plazo_dias' =>
-                    'El plazo seleccionado no está disponible para CDAT.',
+                'plazo_dias' => 'El plazo seleccionado no está disponible para CDAT.',
             ]);
         }
-
 
         $tasa =
             $this->valorNumerico(
@@ -453,21 +390,17 @@ class SimuladorAhorroController extends Controller
                 $codigoTasa
             );
 
-
         if ($tasa === null) {
             throw ValidationException::withMessages([
-                'producto' =>
-                    'No se encuentra configurada la tasa correspondiente al plazo seleccionado.',
+                'producto' => 'No se encuentra configurada la tasa correspondiente al plazo seleccionado.',
             ]);
         }
-
 
         $retencion =
             $this->valorNumerico(
                 $parametros,
                 'porcentaje_retencion'
             ) ?? 0;
-
 
         $calculo =
             $calculadora
@@ -479,59 +412,44 @@ class SimuladorAhorroController extends Controller
                     $this->baseAnualDias($parametros)
                 );
 
-
         return [
-            'producto_codigo' =>
-                $producto->codigo,
+            'producto_codigo' => $producto->codigo,
 
-            'producto_nombre' =>
-                $producto->nombre,
+            'producto_nombre' => $producto->nombre,
 
-            'tipo_resultado' =>
-                'cdat',
+            'tipo_resultado' => 'cdat',
 
-            'monto_inicial' =>
-                $calculo[
+            'monto_inicial' => $calculo[
                     'capital'
                 ],
 
-            'plazo' =>
-                $dias,
+            'plazo' => $dias,
 
-            'unidad_plazo' =>
-                'días',
+            'unidad_plazo' => 'días',
 
-            'tasa' =>
-                $tasa,
+            'tasa' => $tasa,
 
-            'unidad_tasa' =>
-                '% E.A.',
+            'unidad_tasa' => '% E.A.',
 
-            'rendimiento_bruto' =>
-                $calculo[
+            'rendimiento_bruto' => $calculo[
                     'rendimiento_bruto'
                 ],
 
-            'porcentaje_retencion' =>
-                $retencion,
+            'porcentaje_retencion' => $retencion,
 
-            'retencion' =>
-                $calculo[
+            'retencion' => $calculo[
                     'retencion'
                 ],
 
-            'rendimiento_neto' =>
-                $calculo[
+            'rendimiento_neto' => $calculo[
                     'rendimiento_neto'
                 ],
 
-            'valor_final' =>
-                $calculo[
+            'valor_final' => $calculo[
                     'valor_final'
                 ],
         ];
     }
-
 
     private function obtenerProductos()
     {
@@ -554,10 +472,8 @@ class SimuladorAhorroController extends Controller
                 )
                 ->get();
 
-
         foreach (
-            $productos
-            as $producto
+            $productos as $producto
         ) {
             $parametros = $producto->parametrosVigentesPorCodigo();
 
@@ -577,10 +493,8 @@ class SimuladorAhorroController extends Controller
                 ->toArray();
         }
 
-
         return $productos;
     }
-
 
     /**
      * Base anual configurada en el panel (base_anual_dias). Sin configurar, o con un valor distinto
@@ -593,33 +507,29 @@ class SimuladorAhorroController extends Controller
         return in_array($base, [360, 365], true) ? $base : 365;
     }
 
-
     private function frecuenciaAporte(Collection $parametros): string
     {
-        $frecuencia = strtolower(trim($parametros->get('frecuencia_aporte')?->valor_texto ?? ''));
+        $frecuencia = strtolower(trim($parametros->get('frecuencia_aporte')->valor_texto ?? ''));
 
         return $frecuencia === 'trimestral' ? 'trimestral' : 'mensual';
     }
-
 
     private function valorBooleano(
         $parametros,
         string $codigo
     ): ?bool {
         if (
-            !$parametros->has(
+            ! $parametros->has(
                 $codigo
             )
         ) {
             return null;
         }
 
-
         $parametro =
             $parametros->get(
                 $codigo
             );
-
 
         if (
             $parametro->valor_texto !== null
@@ -631,7 +541,6 @@ class SimuladorAhorroController extends Controller
             );
         }
 
-
         if (
             $parametro->valor !== null
         ) {
@@ -639,7 +548,6 @@ class SimuladorAhorroController extends Controller
                 (float) $parametro->valor
                 !== 0.0;
         }
-
 
         return null;
     }

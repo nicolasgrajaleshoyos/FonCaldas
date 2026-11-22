@@ -15,8 +15,7 @@ class SimularAhorroRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $normalizarMoneda = static fn (mixed $valor): mixed =>
-            is_string($valor) ? FormatoNumericoFinanciero::normalizarEnteroAgrupado($valor) : $valor;
+        $normalizarMoneda = static fn (mixed $valor): mixed => is_string($valor) ? FormatoNumericoFinanciero::normalizarEnteroAgrupado($valor) : $valor;
 
         $this->merge([
             'monto' => $normalizarMoneda(
@@ -86,54 +85,39 @@ class SimularAhorroRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'producto.required' =>
-                'Selecciona un producto de ahorro.',
+            'producto.required' => 'Selecciona un producto de ahorro.',
 
-            'producto.in' =>
-                'El producto de ahorro seleccionado no es válido.',
+            'producto.in' => 'El producto de ahorro seleccionado no es válido.',
 
-            'monto.required' =>
-                'Ingresa el monto que deseas simular.',
+            'monto.required' => 'Ingresa el monto que deseas simular.',
 
-            'monto.numeric' =>
-                'El monto debe ser un valor numérico.',
+            'monto.numeric' => 'El monto debe ser un valor numérico.',
 
             'monto.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
 
-            'monto.gt' =>
-                'El monto debe ser mayor que cero.',
+            'monto.gt' => 'El monto debe ser mayor que cero.',
 
-            'monto.lte' =>
-                'El monto supera el máximo que se puede simular.',
+            'monto.lte' => 'El monto supera el máximo que se puede simular.',
 
-            'plazo_meses.required' =>
-                'Ingresa el plazo de la proyección.',
+            'plazo_meses.required' => 'Ingresa el plazo de la proyección.',
 
-            'plazo_meses.integer' =>
-                'El plazo debe expresarse en meses completos.',
+            'plazo_meses.integer' => 'El plazo debe expresarse en meses completos.',
 
-            'plazo_meses.gt' =>
-                'El plazo debe ser mayor que cero.',
+            'plazo_meses.gt' => 'El plazo debe ser mayor que cero.',
 
-            'plazo_meses.max' =>
-                'El plazo no puede superar '.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES.' meses.',
+            'plazo_meses.max' => 'El plazo no puede superar '.FormatoNumericoFinanciero::PLAZO_MAXIMO_MESES.' meses.',
 
-            'aporte_mensual.numeric' =>
-                'El aporte debe ser un valor numérico.',
+            'aporte_mensual.numeric' => 'El aporte debe ser un valor numérico.',
 
             'aporte_mensual.regex' => FormatoNumericoFinanciero::MENSAJE_PESOS,
 
-            'aporte_mensual.gte' =>
-                'El aporte no puede ser negativo.',
+            'aporte_mensual.gte' => 'El aporte no puede ser negativo.',
 
-            'aporte_mensual.lte' =>
-                'El aporte mensual supera el máximo que se puede simular.',
+            'aporte_mensual.lte' => 'El aporte mensual supera el máximo que se puede simular.',
 
-            'plazo_dias.required' =>
-                'Selecciona el plazo del CDAT.',
+            'plazo_dias.required' => 'Selecciona el plazo del CDAT.',
 
-            'plazo_dias.in' =>
-                'El plazo del CDAT debe ser de 90, 180 o 360 días.',
+            'plazo_dias.in' => 'El plazo del CDAT debe ser de 90, 180 o 360 días.',
         ];
     }
 }

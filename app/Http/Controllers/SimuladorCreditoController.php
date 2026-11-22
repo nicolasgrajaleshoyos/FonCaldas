@@ -22,13 +22,11 @@ class SimuladorCreditoController extends Controller
         );
     }
 
-
     public function simular(
         SimularCreditoRequest $request,
         CalculadoraFinanciera $calculadora
     ) {
         $datos = $request->validated();
-
 
         $producto = ProductoFinanciero::with(
             'parametrosVigentes'
@@ -51,16 +49,13 @@ class SimuladorCreditoController extends Controller
             )
             ->firstOrFail();
 
-
         $parametros = $producto->parametrosVigentesPorCodigo();
-
 
         $monto =
             (float) $datos['monto'];
 
         $plazo =
             (int) $datos['plazo'];
-
 
         /*
          * VALIDACIONES GENERALES
@@ -72,12 +67,10 @@ class SimuladorCreditoController extends Controller
             'El monto solicitado supera el máximo configurado de '
         );
 
-
         $this->validarPlazo(
             $plazo,
             $parametros
         );
-
 
         /*
          * VALIDACIONES ESPECÍFICAS
@@ -89,7 +82,6 @@ class SimuladorCreditoController extends Controller
             $parametros
         );
 
-
         /*
          * DETERMINAR TASA
          */
@@ -99,15 +91,12 @@ class SimuladorCreditoController extends Controller
             $parametros
         );
 
-
         if ($tasa === null) {
 
             throw ValidationException::withMessages([
-                'producto' =>
-                    'Este producto no tiene una tasa vigente configurada para realizar la simulación.',
+                'producto' => 'Este producto no tiene una tasa vigente configurada para realizar la simulación.',
             ]);
         }
-
 
         /*
          * CÁLCULO
@@ -120,7 +109,6 @@ class SimuladorCreditoController extends Controller
             $dias =
                 $plazo * 30;
 
-
             $resultado =
                 $calculadora->calcularAvance(
                     $monto,
@@ -128,10 +116,8 @@ class SimuladorCreditoController extends Controller
                     $dias
                 );
 
-
             $resultado['tipo_resultado'] =
                 'pago_unico';
-
 
             $resultado['plazo_meses'] =
                 $plazo;
@@ -145,11 +131,9 @@ class SimuladorCreditoController extends Controller
                     $plazo
                 );
 
-
             $resultado['tipo_resultado'] =
                 'cuota_fija';
         }
-
 
         /*
          * DATOS COMPLEMENTARIOS DEL RESULTADO
@@ -157,14 +141,11 @@ class SimuladorCreditoController extends Controller
         $resultado['producto'] =
             $producto->nombre;
 
-
         $resultado['codigo_producto'] =
             $producto->codigo;
 
-
         $resultado['tasa_aplicada'] =
             $tasa;
-
 
         $resultado['unidad_tasa'] =
             $this->obtenerUnidadTasa(
@@ -173,20 +154,17 @@ class SimuladorCreditoController extends Controller
                 $parametros
             );
 
-
         $request->session()->put('resultado_credito', $resultado);
 
         return redirect()->route('simuladores.credito.resultado');
     }
-
 
     public function resultado()
     {
         $resultado =
             session('resultado_credito');
 
-
-        if (!$resultado) {
+        if (! $resultado) {
 
             return redirect()
                 ->route(
@@ -194,13 +172,11 @@ class SimuladorCreditoController extends Controller
                 );
         }
 
-
         return view(
             'simuladores.credito.resultado',
             compact('resultado')
         );
     }
-
 
     private function obtenerProductos()
     {
@@ -216,7 +192,6 @@ class SimuladorCreditoController extends Controller
                 )
                 ->orderBy('nombre')
                 ->get();
-
 
         $productos->each(
             function (
@@ -239,10 +214,8 @@ class SimuladorCreditoController extends Controller
             }
         );
 
-
         return $productos;
     }
-
 
     private function determinarTasa(
         string $codigoProducto,
@@ -260,7 +233,6 @@ class SimuladorCreditoController extends Controller
                     'dato_especifico'
                 ];
 
-
             if (
                 $antiguedad <= 5
             ) {
@@ -270,7 +242,6 @@ class SimuladorCreditoController extends Controller
                     'tasa_interes_afiliacion_hasta_5'
                 );
             }
-
 
             if (
                 $antiguedad <= 15
@@ -282,20 +253,17 @@ class SimuladorCreditoController extends Controller
                 );
             }
 
-
             return $this->valorNumerico(
                 $parametros,
                 'tasa_interes_afiliacion_mas_15'
             );
         }
 
-
         return $this->valorNumerico(
             $parametros,
             'tasa_interes'
         );
     }
-
 
     private function validarPlazo(
         int $plazo,
@@ -308,13 +276,11 @@ class SimuladorCreditoController extends Controller
                 'plazo_minimo'
             );
 
-
         $plazoMaximo =
             $this->valorNumerico(
                 $parametros,
                 'plazo_maximo'
             );
-
 
         if (
             $plazoMinimo !== null
@@ -322,13 +288,11 @@ class SimuladorCreditoController extends Controller
         ) {
 
             throw ValidationException::withMessages([
-                'plazo' =>
-                    'El plazo seleccionado es inferior al mínimo configurado de '
-                    . (int) $plazoMinimo
-                    . ' meses.',
+                'plazo' => 'El plazo seleccionado es inferior al mínimo configurado de '
+                    .(int) $plazoMinimo
+                    .' meses.',
             ]);
         }
-
 
         if (
             $plazoMaximo !== null
@@ -336,14 +300,12 @@ class SimuladorCreditoController extends Controller
         ) {
 
             throw ValidationException::withMessages([
-                'plazo' =>
-                    'El plazo seleccionado supera el máximo configurado de '
-                    . (int) $plazoMaximo
-                    . ' meses.',
+                'plazo' => 'El plazo seleccionado supera el máximo configurado de '
+                    .(int) $plazoMaximo
+                    .' meses.',
             ]);
         }
     }
-
 
     private function validarReglasEspecificas(
         string $codigoProducto,
@@ -369,7 +331,6 @@ class SimuladorCreditoController extends Controller
             return;
         }
 
-
         /*
          * VEHÍCULO Y MOTOCICLETA
          */
@@ -393,7 +354,6 @@ class SimuladorCreditoController extends Controller
 
             return;
         }
-
 
         /*
          * TECNOLOGÍA Y TURISMO
@@ -421,7 +381,6 @@ class SimuladorCreditoController extends Controller
             return;
         }
 
-
         /*
          * COMPRA DE CARTERA
          *
@@ -441,7 +400,6 @@ class SimuladorCreditoController extends Controller
         }
     }
 
-
     private function validarFinanciacionVehiculoMotocicleta(
         string $codigoProducto,
         array $datos,
@@ -455,12 +413,10 @@ class SimuladorCreditoController extends Controller
                 'tipo_bien'
             ];
 
-
         $valorComercial =
             (float) $datos[
                 'dato_especifico'
             ];
-
 
         $codigoPorcentaje =
             $tipoBien ===
@@ -468,13 +424,11 @@ class SimuladorCreditoController extends Controller
                 ? 'porcentaje_financiacion_nuevo'
                 : 'porcentaje_financiacion_usado';
 
-
         $porcentajeFinanciacion =
             $this->valorNumerico(
                 $parametros,
                 $codigoPorcentaje
             );
-
 
         if (
             $porcentajeFinanciacion ===
@@ -482,13 +436,11 @@ class SimuladorCreditoController extends Controller
         ) {
 
             throw ValidationException::withMessages([
-                'producto' =>
-                    'No es posible realizar la simulación porque el porcentaje máximo de financiación para bienes '
-                    . $tipoBien
-                    . ' no está configurado.',
+                'producto' => 'No es posible realizar la simulación porque el porcentaje máximo de financiación para bienes '
+                    .$tipoBien
+                    .' no está configurado.',
             ]);
         }
-
 
         $montoMaximoFinanciable =
             $valorComercial
@@ -497,7 +449,6 @@ class SimuladorCreditoController extends Controller
                 $porcentajeFinanciacion
                 / 100
             );
-
 
         if (
             $montoSolicitado >
@@ -510,24 +461,21 @@ class SimuladorCreditoController extends Controller
                     ? 'motocicleta'
                     : 'vehículo';
 
-
             throw ValidationException::withMessages([
-                'monto' =>
-                    'El monto solicitado supera el '
-                    . $porcentajeFinanciacion
-                    . ' % máximo financiable para el '
-                    . $nombreBien
-                    . '. El valor máximo financiable para esta simulación es $'
-                    . number_format(
+                'monto' => 'El monto solicitado supera el '
+                    .$porcentajeFinanciacion
+                    .' % máximo financiable para el '
+                    .$nombreBien
+                    .'. El valor máximo financiable para esta simulación es $'
+                    .number_format(
                         $montoMaximoFinanciable,
                         0,
                         ',',
                         '.'
                     )
-                    . '.',
+                    .'.',
             ]);
         }
-
 
         if (
             $tipoBien ===
@@ -540,24 +488,20 @@ class SimuladorCreditoController extends Controller
                     'antiguedad_maxima_usado'
                 );
 
-
             if (
                 $antiguedadMaxima ===
                 null
             ) {
 
                 throw ValidationException::withMessages([
-                    'producto' =>
-                        'No es posible realizar la simulación porque la antigüedad máxima permitida para bienes usados no está configurada.',
+                    'producto' => 'No es posible realizar la simulación porque la antigüedad máxima permitida para bienes usados no está configurada.',
                 ]);
             }
-
 
             $antiguedadBien =
                 (int) $datos[
                     'antiguedad_bien'
                 ];
-
 
             if (
                 $antiguedadBien >
@@ -565,15 +509,13 @@ class SimuladorCreditoController extends Controller
             ) {
 
                 throw ValidationException::withMessages([
-                    'antiguedad_bien' =>
-                        'La antigüedad del vehículo o motocicleta supera el máximo permitido de '
-                        . (int) $antiguedadMaxima
-                        . ' años.',
+                    'antiguedad_bien' => 'La antigüedad del vehículo o motocicleta supera el máximo permitido de '
+                        .(int) $antiguedadMaxima
+                        .' años.',
                 ]);
             }
         }
     }
-
 
     private function validarAvances(
         array $datos,
@@ -586,13 +528,11 @@ class SimuladorCreditoController extends Controller
                 'dato_especifico'
             ];
 
-
         $porcentajeMaximo =
             $this->valorNumerico(
                 $parametros,
                 'porcentaje_maximo_salario'
             );
-
 
         if (
             $porcentajeMaximo ===
@@ -600,11 +540,9 @@ class SimuladorCreditoController extends Controller
         ) {
 
             throw ValidationException::withMessages([
-                'producto' =>
-                    'No es posible simular Avances porque el porcentaje máximo del salario no está configurado.',
+                'producto' => 'No es posible simular Avances porque el porcentaje máximo del salario no está configurado.',
             ]);
         }
-
 
         $montoMaximo =
             $sueldoBasico
@@ -614,29 +552,26 @@ class SimuladorCreditoController extends Controller
                 / 100
             );
 
-
         if (
             $monto >
             $montoMaximo
         ) {
 
             throw ValidationException::withMessages([
-                'monto' =>
-                    'El monto solicitado supera el '
-                    . $porcentajeMaximo
-                    . ' % del sueldo básico permitido para esta línea. '
-                    . 'El valor máximo permitido para esta simulación es $'
-                    . number_format(
+                'monto' => 'El monto solicitado supera el '
+                    .$porcentajeMaximo
+                    .' % del sueldo básico permitido para esta línea. '
+                    .'El valor máximo permitido para esta simulación es $'
+                    .number_format(
                         $montoMaximo,
                         0,
                         ',',
                         '.'
                     )
-                    . '.',
+                    .'.',
             ]);
         }
     }
-
 
     /**
      * Tecnología/turismo (cotización) y compra de cartera (saldo): el monto no puede superar
@@ -653,7 +588,6 @@ class SimuladorCreditoController extends Controller
         }
     }
 
-
     private function obtenerUnidadTasa(
         string $codigoProducto,
         array $datos,
@@ -662,7 +596,6 @@ class SimuladorCreditoController extends Controller
 
         $codigoTasa =
             'tasa_interes';
-
 
         if (
             $codigoProducto ===
@@ -673,7 +606,6 @@ class SimuladorCreditoController extends Controller
                 (float) $datos[
                     'dato_especifico'
                 ];
-
 
             if (
                 $antiguedad <= 5
@@ -695,7 +627,6 @@ class SimuladorCreditoController extends Controller
                     'tasa_interes_afiliacion_mas_15';
             }
         }
-
 
         return $parametros
             ->get(

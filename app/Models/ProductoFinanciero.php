@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
 
+/**
+ * Atributos calculados que los simuladores agregan al producto antes de enviarlo a la vista.
+ *
+ * @property bool|null $aportes_simulador_permitidos
+ * @property string|null $frecuencia_aporte_simulador
+ * @property array<string, mixed>|Collection<string, mixed>|null $parametros_simulador
+ */
 class ProductoFinanciero extends Model
 {
     protected $table = 'producto_financieros';
@@ -30,6 +37,7 @@ class ProductoFinanciero extends Model
         return $this->hasMany(ParametroFinanciero::class);
     }
 
+    /** @return HasMany<ParametroFinanciero, $this> */
     public function parametrosVigentes(): HasMany
     {
         return $this->hasMany(ParametroFinanciero::class)

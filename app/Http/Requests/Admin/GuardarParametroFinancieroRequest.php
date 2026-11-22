@@ -14,7 +14,6 @@ class GuardarParametroFinancieroRequest extends FormRequest
         return true;
     }
 
-
     protected function prepareForValidation(): void
     {
         $valor = $this->input('valor');
@@ -26,7 +25,7 @@ class GuardarParametroFinancieroRequest extends FormRequest
         $valorNormalizado = match ($formato) {
             'monto', 'entero' => FormatoNumericoFinanciero::normalizarEnteroAgrupado($valor),
             'plazo' => trim($valor),
-            'decimal' => FormatoNumericoFinanciero::normalizarDecimal($valor),
+            default => FormatoNumericoFinanciero::normalizarDecimal($valor),
         };
 
         $this->merge(['valor' => $valorNormalizado]);
@@ -130,7 +129,6 @@ class GuardarParametroFinancieroRequest extends FormRequest
         ];
     }
 
-
     public function withValidator(
         $validator
     ): void {
@@ -144,7 +142,6 @@ class GuardarParametroFinancieroRequest extends FormRequest
 
                 $definicion = $this->definicionParametro();
 
-
                 $productoId =
                     $this->input(
                         'producto_financiero_id'
@@ -155,7 +152,6 @@ class GuardarParametroFinancieroRequest extends FormRequest
                         $productoId
                     );
 
-
                 if ($producto) {
 
                     $permitidos =
@@ -164,9 +160,8 @@ class GuardarParametroFinancieroRequest extends FormRequest
                             []
                         );
 
-
                     if (
-                        !in_array(
+                        ! in_array(
                             $codigo,
                             $permitidos,
                             true
@@ -183,17 +178,14 @@ class GuardarParametroFinancieroRequest extends FormRequest
                     }
                 }
 
-
-                if (!$definicion) {
+                if (! $definicion) {
                     return;
                 }
-
 
                 $tipoDato =
                     $definicion[
                         'tipo_dato'
                     ];
-
 
                 if (
                     in_array(
@@ -201,7 +193,7 @@ class GuardarParametroFinancieroRequest extends FormRequest
                         ['decimal', 'entero'],
                         true
                     )
-                    && !$this->filled(
+                    && ! $this->filled(
                         'valor'
                     )
                 ) {
@@ -213,14 +205,13 @@ class GuardarParametroFinancieroRequest extends FormRequest
                         );
                 }
 
-
                 if (
                     in_array(
                         $tipoDato,
                         ['texto', 'booleano'],
                         true
                     )
-                    && !$this->filled(
+                    && ! $this->filled(
                         'valor_texto'
                     )
                 ) {
@@ -235,24 +226,18 @@ class GuardarParametroFinancieroRequest extends FormRequest
         );
     }
 
-
     public function messages(): array
     {
         return [
-            'producto_financiero_id.required' =>
-                'Debes seleccionar un producto financiero.',
+            'producto_financiero_id.required' => 'Debes seleccionar un producto financiero.',
 
-            'producto_financiero_id.exists' =>
-                'El producto seleccionado no es válido.',
+            'producto_financiero_id.exists' => 'El producto seleccionado no es válido.',
 
-            'codigo.required' =>
-                'Debes seleccionar el parámetro que deseas configurar.',
+            'codigo.required' => 'Debes seleccionar el parámetro que deseas configurar.',
 
-            'codigo.in' =>
-                'El parámetro seleccionado no es válido.',
+            'codigo.in' => 'El parámetro seleccionado no es válido.',
 
-            'valor.numeric' =>
-                'El valor numérico debe ser válido. Puedes usar punto o coma para los decimales.',
+            'valor.numeric' => 'El valor numérico debe ser válido. Puedes usar punto o coma para los decimales.',
 
             'valor.regex' => match ($this->formatoNumerico($this->definicionParametro())) {
                 'monto' => 'Ingresa el valor en pesos enteros. Puedes separar los miles con puntos o comas.',
@@ -261,26 +246,19 @@ class GuardarParametroFinancieroRequest extends FormRequest
                 default => 'Ingresa un número válido. Puedes usar punto o coma para los decimales.',
             },
 
-            'valor.min' =>
-                'El valor numérico no puede ser negativo.',
+            'valor.min' => 'El valor numérico no puede ser negativo.',
 
-            'valor.max' =>
-                'El valor numérico no puede superar :max.',
+            'valor.max' => 'El valor numérico no puede superar :max.',
 
-            'valor.in' =>
-                'Para este parámetro, el valor debe ser uno de: :values.',
+            'valor.in' => 'Para este parámetro, el valor debe ser uno de: :values.',
 
-            'unidad.in' =>
-                'Para esta tasa, usa una de las unidades permitidas (:values).',
+            'unidad.in' => 'Para esta tasa, usa una de las unidades permitidas (:values).',
 
-            'origen.required' =>
-                'Debes indicar el origen del parámetro.',
+            'origen.required' => 'Debes indicar el origen del parámetro.',
 
-            'fecha_inicio_vigencia.required' =>
-                'Debes indicar la fecha de inicio de vigencia.',
+            'fecha_inicio_vigencia.required' => 'Debes indicar la fecha de inicio de vigencia.',
 
-            'fecha_fin_vigencia.after_or_equal' =>
-                'La fecha final no puede ser anterior a la fecha inicial.',
+            'fecha_fin_vigencia.after_or_equal' => 'La fecha final no puede ser anterior a la fecha inicial.',
         ];
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\GuardarTasaFinancieraRequest;
 use App\Http\Requests\Admin\GuardarParametroFinancieroRequest;
+use App\Http\Requests\Admin\GuardarTasaFinancieraRequest;
 use App\Models\ParametroFinanciero;
 use App\Models\ProductoFinanciero;
 use Closure;
@@ -75,8 +75,7 @@ class ParametroFinancieroController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'fecha_inicio_vigencia' =>
-                    'Ya existe un parámetro activo con el mismo código para este producto cuya vigencia se superpone con las fechas indicadas.',
+                    'fecha_inicio_vigencia' => 'Ya existe un parámetro activo con el mismo código para este producto cuya vigencia se superpone con las fechas indicadas.',
                 ]);
         }
 
@@ -159,8 +158,7 @@ class ParametroFinancieroController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'producto_financiero_id' =>
-                    'No es posible cambiar el producto financiero desde esta edición.',
+                    'producto_financiero_id' => 'No es posible cambiar el producto financiero desde esta edición.',
                 ]);
         }
 
@@ -168,8 +166,7 @@ class ParametroFinancieroController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'codigo' =>
-                    'No es posible cambiar el tipo de parámetro desde esta edición.',
+                    'codigo' => 'No es posible cambiar el tipo de parámetro desde esta edición.',
                 ]);
         }
 
@@ -208,8 +205,7 @@ class ParametroFinancieroController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'fecha_inicio_vigencia' =>
-                    'Ya existe otro parámetro activo del mismo tipo cuya vigencia se superpone con las fechas indicadas.',
+                    'fecha_inicio_vigencia' => 'Ya existe otro parámetro activo del mismo tipo cuya vigencia se superpone con las fechas indicadas.',
                 ]);
         }
 
@@ -287,7 +283,7 @@ class ParametroFinancieroController extends Controller
 
     private function guardarVigencia(int $productoId, string $codigo, array $atributos, ?int $parametroId = null): bool
     {
-        $conexion = (new ParametroFinanciero())->getConnection();
+        $conexion = (new ParametroFinanciero)->getConnection();
 
         return $conexion->transaction(function () use ($productoId, $codigo, $atributos, $parametroId): bool {
             $this->bloquearProducto($productoId);

@@ -16,7 +16,7 @@ final class FormatoNumericoFinanciero
 
     public const PLAZO_MAXIMO_MESES = 600;
 
-    public const MENSAJE_PESOS ='Ingresa el valor en pesos enteros. Puedes separar los miles con puntos o comas.';
+    public const MENSAJE_PESOS = 'Ingresa el valor en pesos enteros. Puedes separar los miles con puntos o comas.';
 
     // La referencia al grupo exige usar el mismo separador en todos los miles.
     private const ENTERO_AGRUPADO = '[+-]?[0-9]{1,3}([., \x{00A0}\x{202F}])[0-9]{3}(?:\1[0-9]{3})*';

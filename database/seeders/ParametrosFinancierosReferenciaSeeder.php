@@ -10,7 +10,7 @@ class ParametrosFinancierosReferenciaSeeder extends Seeder
 {
     public function run(CargarProductosFinancieros $cargaProductos): void
     {
-        $conexion = (new ProductoFinanciero())->getConnection();
+        $conexion = (new ProductoFinanciero)->getConnection();
         $definiciones = config('parametros_financieros');
         $referencias = config('parametros_financieros_referencia');
         $inicio = today()->toDateString();

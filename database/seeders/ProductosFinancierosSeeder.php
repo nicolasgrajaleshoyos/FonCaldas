@@ -9,6 +9,6 @@ class ProductosFinancierosSeeder extends Seeder
 {
     public function run(): void
     {
-        (new CargarProductosFinancieros())->cargarFaltantes();
+        (new CargarProductosFinancieros)->cargarFaltantes();
     }
 }
