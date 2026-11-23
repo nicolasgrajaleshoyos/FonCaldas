@@ -5,8 +5,3 @@ parameters:
     paths:
         - app
     level: 5
-    ignoreErrors:
-        # solicitud_eventos.user_id es nullable (nullOnDelete): el ?-> es necesario aunque la relación no lo declare.
-        -
-            identifier: nullsafe.neverNull
-            path: app/Models/SolicitudEvento.php
